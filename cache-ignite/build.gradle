@@ -3,6 +3,8 @@ dependencies {
     annotationProcessor "io.micronaut.docs:micronaut-docs-asciidoc-config-props:$micronautDocsVersion"
 
     api "io.micronaut:micronaut-inject"
+    api "org.apache.ignite:ignite-core:$igniteVersion"
+    api group:'io.micronaut.cache', name:'micronaut-cache-core', version: micronautVersion
 
     testImplementation("org.spockframework:spock-core:${spockVersion}") {
         exclude module:'groovy-all'
