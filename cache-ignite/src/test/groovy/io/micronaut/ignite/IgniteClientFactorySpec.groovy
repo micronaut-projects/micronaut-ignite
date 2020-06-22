@@ -20,6 +20,7 @@ import io.micronaut.core.io.socket.SocketUtils
 import org.apache.ignite.Ignition
 import org.apache.ignite.client.ClientCache
 import org.apache.ignite.client.IgniteClient
+import org.apache.ignite.configuration.IgniteConfiguration
 import spock.lang.Specification
 
 /**
@@ -30,7 +31,9 @@ class IgniteClientFactorySpec extends Specification {
 
     void "test ignite server connection by default port"() {
         given:
-        Ignition.start()
+        IgniteConfiguration igniteConfiguration = new IgniteConfiguration()
+        igniteConfiguration.setWorkDirectory(System.getProperty("java.io.tmpdir") + File.separator + System.currentTimeMillis() + File.separator + "work")
+        Ignition.start(igniteConfiguration)
 
         when:
         ApplicationContext applicationContext = ApplicationContext.run()
@@ -39,12 +42,10 @@ class IgniteClientFactorySpec extends Specification {
 
         then:
         ClientCache<String, String> testClientCache = igniteClient.getOrCreateCache("test")
-        // tag::commands[]
 
         testClientCache.put("foo", "bar")
         testClientCache.containsKey("foo")
         testClientCache.get("foo") == "bar"
-        // end::commands[]
 
         cleanup:
         Ignition.stopAll(true)
