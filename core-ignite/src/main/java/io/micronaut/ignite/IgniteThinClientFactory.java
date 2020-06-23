@@ -17,7 +17,6 @@ public class IgniteThinClientFactory implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(IgniteThinClientFactory.class);
     private final List<IgniteClient> sessions = new ArrayList<>(2);
 
-
     @EachBean(IgniteThinClientConfiguration.class)
     @Bean(preDestroy = "close")
     public IgniteClient thinClientConfiguration(IgniteThinClientConfiguration configuration) {

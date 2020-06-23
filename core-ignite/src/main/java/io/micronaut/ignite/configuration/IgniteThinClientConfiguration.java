@@ -1,6 +1,5 @@
 package io.micronaut.ignite.configuration;
 
-
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.EachProperty;
