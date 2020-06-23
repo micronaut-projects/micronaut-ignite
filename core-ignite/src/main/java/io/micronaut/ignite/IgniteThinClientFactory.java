@@ -2,7 +2,7 @@ package io.micronaut.ignite;
 
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.ignite.configuration.IgniteThinClientConfiguration;
+import io.micronaut.ignite.configuration.ThinClientConfiguration;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.client.IgniteClient;
 import org.slf4j.Logger;
@@ -16,8 +16,8 @@ public class IgniteThinClientFactory implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(IgniteThinClientFactory.class);
     private final List<IgniteClient> sessions = new ArrayList<>(2);
 
-    @EachBean(IgniteThinClientConfiguration.class)
-    public IgniteClient thinClientConfiguration(IgniteThinClientConfiguration configuration) {
+    @EachBean(ThinClientConfiguration.class)
+    public IgniteClient thinClientConfiguration(ThinClientConfiguration configuration) {
         IgniteClient client = Ignition.startClient(configuration.getConfiguration());
         sessions.add(client);
         return client;

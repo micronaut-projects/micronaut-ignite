@@ -14,7 +14,6 @@ class IgniteConfigurationSpec extends Specification{
     GenericContainer ignite = new GenericContainer("apacheignite/ignite:2.8.0")
         .withExposedPorts(47500, 47100)
 
-
     def "test ignite instance"() {
 
         given:
@@ -23,10 +22,13 @@ class IgniteConfigurationSpec extends Specification{
             "ignite.client.default.path": "classpath:example/test.cfg"
         ])
         when:
-        Ignite item = ctx.getBean(Ignite)
+        Ignite ign = ctx.getBean(Ignite)
 
         then:
-        item.configuration().clientMode
+        ign != null
+
 
     }
+
+
 }

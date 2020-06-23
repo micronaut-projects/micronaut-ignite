@@ -10,8 +10,8 @@ import org.apache.ignite.configuration.ClientTransactionConfiguration;
 
 import javax.annotation.Nonnull;
 
-@EachProperty(value = IgniteThinClientConfiguration.PREFIX, primary = "default")
-public class IgniteThinClientConfiguration implements Named {
+@EachProperty(value = ThinClientConfiguration.PREFIX, primary = "default")
+public class ThinClientConfiguration implements Named {
     public static final String PREFIX = IgniteConfig.PREFIX + "." + "thin-client";
 
     private final String name;
@@ -22,7 +22,7 @@ public class IgniteThinClientConfiguration implements Named {
     /**
      * @param name Name or key of the client.
      */
-    public IgniteThinClientConfiguration(@Parameter String name, TransactionConfiguration transaction) {
+    public ThinClientConfiguration(@Parameter String name, TransactionConfiguration transaction) {
         this.name = name;
         configuration.setTransactionConfiguration(transaction.getConfiguration());
     }

@@ -6,8 +6,8 @@ import io.micronaut.core.naming.Named;
 
 import javax.annotation.Nonnull;
 
-@EachProperty(value = IgniteClientConfiguration.PREFIX)
-public class IgniteClientConfiguration implements Named {
+@EachProperty(value = ClientConfiguration.PREFIX)
+public class ClientConfiguration implements Named {
     public static final String PREFIX = IgniteConfig.PREFIX + "." + "client";
 
     private final String name;
@@ -22,7 +22,7 @@ public class IgniteClientConfiguration implements Named {
         return path;
     }
 
-    public IgniteClientConfiguration(@Parameter String name) {
+    public ClientConfiguration(@Parameter String name) {
         this.name = name;
     }
 
