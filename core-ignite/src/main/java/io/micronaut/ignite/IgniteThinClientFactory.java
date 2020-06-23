@@ -1,6 +1,5 @@
 package io.micronaut.ignite;
 
-import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.ignite.configuration.IgniteThinClientConfiguration;
@@ -18,7 +17,6 @@ public class IgniteThinClientFactory implements AutoCloseable {
     private final List<IgniteClient> sessions = new ArrayList<>(2);
 
     @EachBean(IgniteThinClientConfiguration.class)
-    @Bean(preDestroy = "close")
     public IgniteClient thinClientConfiguration(IgniteThinClientConfiguration configuration) {
         IgniteClient client = Ignition.startClient(configuration.getConfiguration());
         sessions.add(client);

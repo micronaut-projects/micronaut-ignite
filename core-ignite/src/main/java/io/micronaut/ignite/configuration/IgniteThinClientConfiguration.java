@@ -28,7 +28,7 @@ public class IgniteThinClientConfiguration implements Named {
     }
 
     @ConfigurationProperties("transaction")
-    public static class TransactionConfiguration{
+    public static class TransactionConfiguration {
         @ConfigurationBuilder(value = "transactionConfiguration")
         private final ClientTransactionConfiguration configuration = new ClientTransactionConfiguration();
 
