@@ -1,6 +1,9 @@
 import io.micronaut.context.ApplicationContext
 import io.micronaut.ignite.configuration.IgniteClientConfiguration
+import io.micronaut.inject.qualifiers.Qualifiers
+import org.apache.ignite.spi.collision.fifoqueue.FifoQueueCollisionSpi
 import org.apache.ignite.spi.collision.jobstealing.JobStealingCollisionSpi
+import org.apache.ignite.spi.collision.priorityqueue.PriorityQueueCollisionSpi
 import spock.lang.Specification
 
 class IgniteCacheSpec extends Specification {
@@ -8,16 +11,19 @@ class IgniteCacheSpec extends Specification {
     void "test ignite cache instance"() {
         given:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
-            "ignite.enabled"                                                : true,
-            "ignite.client.default.force-return-values"          : true,
-            "ignite.client.default.collision-spi.job-stealing.enabled"          : true,
+            "ignite.enabled"                        : true,
+            "ignite.clients.test.enabled"           : true,
+            "ignite.clients.test.fifo-queue.enabled": true,
+            "ignite.clients.one.enabled"            : true,
+            "ignite.clients.one.priority-queue.enabled" : true,
         ])
         when:
-        Collection<IgniteClientConfiguration> cacheConfiguration = ctx.getBeansOfType(IgniteClientConfiguration.class)
+        IgniteClientConfiguration test = ctx.getBean(IgniteClientConfiguration.class, Qualifiers.byName("test"))
+        IgniteClientConfiguration one = ctx.getBean(IgniteClientConfiguration.class, Qualifiers.byName("one"))
 
         then:
-        cacheConfiguration != null
-        cacheConfiguration.size() == 1
-        cacheConfiguration.first().getConfiguration().collisionSpi instanceof JobStealingCollisionSpi
+        test.getConfiguration().getCollisionSpi() instanceof FifoQueueCollisionSpi
+        one.getConfiguration().getCollisionSpi() instanceof PriorityQueueCollisionSpi
+
     }
 }
