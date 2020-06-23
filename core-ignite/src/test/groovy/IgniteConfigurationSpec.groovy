@@ -15,7 +15,6 @@ class IgniteConfigurationSpec extends Specification{
         .withExposedPorts(47500, 47100)
 
     def "test ignite instance"() {
-
         given:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
             "ignite.enabled"            : true,
