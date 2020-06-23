@@ -20,7 +20,7 @@ public class IgniteClientFactory implements AutoCloseable {
     @EachBean(IgniteClientConfiguration.class)
     @Bean(preDestroy = "close")
     public Ignite clientConfiguration(IgniteClientConfiguration configuration) {
-        Ignite client = Ignition.start(configuration.getConfiguration());
+        Ignite client = Ignition.start(configuration.getPath());
         sessions.add(client);
         return client;
     }

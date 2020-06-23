@@ -13,9 +13,9 @@ class IgniteCacheSpec extends Specification {
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
             "ignite.enabled"                        : true,
             "ignite.clients.test.enabled"           : true,
-            "ignite.clients.test.fifo-queue.enabled": true,
+            "ignite.clients.test.collision-spi.fifo-queue.enabled": true,
             "ignite.clients.one.enabled"            : true,
-            "ignite.clients.one.priority-queue.enabled" : true,
+            "ignite.clients.one.collision-spi.priority-queue.enabled" : true,
         ])
         when:
         IgniteClientConfiguration test = ctx.getBean(IgniteClientConfiguration.class, Qualifiers.byName("test"))
