@@ -21,26 +21,46 @@ import io.micronaut.core.naming.Named;
 
 import javax.annotation.Nonnull;
 
-@EachProperty(value = ClientConfiguration.PREFIX)
-public class ClientConfiguration implements Named {
+/**
+ *  Configuration class for an Ignite client.
+ *
+ *  @author Michael Pollind
+ */
+@EachProperty(value = IgniteClientConfiguration.PREFIX)
+public class IgniteClientConfiguration implements Named {
     public static final String PREFIX = IgniteConfig.PREFIX + "." + "client";
 
     private final String name;
+    private String path;
 
-    public String path;
+    /**
+     * @param name Name or key of the client.
+     */
+    public IgniteClientConfiguration(@Parameter String name) {
+        this.name = name;
+    }
 
+    /**
+     * path to load in bean configuration.
+     *
+     * @param path bean config to load.
+     */
     public void setPath(String path) {
         this.path = path;
     }
 
+    /**
+     * path to load in bean configuration.
+     *
+     * @return bean config to load.
+     */
     public String getPath() {
         return path;
     }
 
-    public ClientConfiguration(@Parameter String name) {
-        this.name = name;
-    }
-
+    /**
+     * @return name or key for client
+     */
     @Nonnull
     @Override
     public String getName() {

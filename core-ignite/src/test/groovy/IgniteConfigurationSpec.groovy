@@ -8,7 +8,7 @@ import spock.lang.Specification
 
 @Testcontainers
 @Retry
-class IgniteConfigurationSpec extends Specification{
+class IgniteConfigurationSpec extends Specification {
 
     @Shared
     GenericContainer ignite = new GenericContainer("apacheignite/ignite:2.8.0")
@@ -26,8 +26,5 @@ class IgniteConfigurationSpec extends Specification{
         then:
         ign != null
 
-
     }
-
-
 }
