@@ -46,8 +46,6 @@ public class IgniteCacheFactory {
     }
 
     /**
-     * /**
-     *
      * @param configuration   the configuration
      * @param service         the conversion service
      * @param executorService the executor
@@ -62,6 +60,12 @@ public class IgniteCacheFactory {
         return new IgniteSyncCache(service, ignite.getOrCreateCache(configuration.getConfiguration()), executorService);
     }
 
+    /**
+     * @param configuration   the configuration
+     * @param service         the conversion service
+     * @param executorService the executor
+     * @return the sync cache
+     */
     @EachBean(IgniteThinCacheConfiguration.class)
     public IgniteThinSyncCache syncCacheThin(IgniteThinCacheConfiguration configuration,
                                              ConversionService<?> service,
