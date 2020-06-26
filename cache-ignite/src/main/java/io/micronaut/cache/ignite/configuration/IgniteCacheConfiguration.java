@@ -27,6 +27,8 @@ import org.apache.ignite.configuration.CacheConfiguration;
  */
 @EachProperty(value = "ignite.caches", primary = "default")
 public class IgniteCacheConfiguration implements Named {
+//    public static final String PREFIX = IgniteConfig.PREFIX + "." + "client";
+
     private final String name;
     private String client = "default";
 
