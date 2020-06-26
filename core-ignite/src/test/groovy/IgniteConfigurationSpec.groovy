@@ -18,7 +18,7 @@ class IgniteConfigurationSpec extends Specification {
         given:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
             "ignite.enabled"            : true,
-            "ignite.client.default.path": "classpath:example/test.cfg"
+            "ignite.client.default.path": "classpath:example/standard.cfg"
         ])
 
         when:

@@ -1,5 +1,4 @@
 import io.micronaut.context.ApplicationContext
-import io.micronaut.ignite.configuration.IgniteThinClientConfiguration
 import io.micronaut.inject.qualifiers.Qualifiers
 import org.apache.ignite.client.IgniteClient
 import org.apache.ignite.client.SslMode
@@ -7,6 +6,7 @@ import org.apache.ignite.transactions.TransactionConcurrency
 import org.apache.ignite.transactions.TransactionIsolation
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.spock.Testcontainers
+import io.micronaut.ignite.configuration.IgniteThinClientConfiguration;
 import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification

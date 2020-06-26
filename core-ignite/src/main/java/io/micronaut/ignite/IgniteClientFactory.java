@@ -51,8 +51,8 @@ public class IgniteClientFactory implements AutoCloseable {
      * @param configuration the configuration read it as a bean
      * @return {@link Ignite}
      */
-    @EachBean(IgniteClientConfiguration.class)
     @Singleton
+    @EachBean(IgniteClientConfiguration.class)
     public Ignite igniteClient(IgniteClientConfiguration configuration) {
         try {
             Optional<URL> template = resourceResolver.getResource(configuration.getPath());
@@ -72,8 +72,8 @@ public class IgniteClientFactory implements AutoCloseable {
      * @param configuration the configuration read it as a bean
      * @return {@link IgniteClient}
      */
-    @EachBean(IgniteThinClientConfiguration.class)
     @Singleton
+    @EachBean(IgniteThinClientConfiguration.class)
     public IgniteClient igniteThinClient(IgniteThinClientConfiguration configuration) {
         try {
             return Ignition.startClient(configuration.getConfiguration());
