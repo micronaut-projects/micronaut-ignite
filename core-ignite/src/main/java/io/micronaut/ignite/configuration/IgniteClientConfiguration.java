@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
  */
 @EachProperty(value = IgniteClientConfiguration.PREFIX)
 public class IgniteClientConfiguration implements Named {
-    public static final String PREFIX = IgniteConfig.PREFIX + "." + "client";
+    public static final String PREFIX = IgniteConfig.PREFIX + "." + "clients";
 
     private final String name;
     private String path;

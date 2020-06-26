@@ -22,8 +22,8 @@ class IgniteThinClientConfigurationSpec extends Specification {
         given:
         ApplicationContext ctx = ApplicationContext.run([
             "ignite.enabled"                  : true,
-            "ignite.thin-client.default.addresses": ["127.0.0.1:${ignite.getMappedPort(10800)}"],
-            "ignite.thin-client.other.addresses"  : ["127.0.0.1:${ignite.getMappedPort(10800)}"]
+            "ignite.thin-clients.default.addresses": ["127.0.0.1:${ignite.getMappedPort(10800)}"],
+            "ignite.thin-clients.other.addresses"  : ["127.0.0.1:${ignite.getMappedPort(10800)}"]
         ])
 
         when:
@@ -39,11 +39,11 @@ class IgniteThinClientConfigurationSpec extends Specification {
         given:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
             "ignite.enabled"                                                  : true,
-            "ignite.thin-client.default.addresses"                                : ["localhost:1080"],
-            "ignite.thin-client.default.ssl-mode"                                 : "REQUIRED",
-            "ignite.thin-client.default.ssl-client-certificate-key-store-password": "password",
-            "ignite.thin-client.default.timeout"                                  : 5000,
-            "ignite.thin-client.default.send-buffer-size"                         : 200
+            "ignite.thin-clients.default.addresses"                                : ["localhost:1080"],
+            "ignite.thin-clients.default.ssl-mode"                                 : "REQUIRED",
+            "ignite.thin-clients.default.ssl-client-certificate-key-store-password": "password",
+            "ignite.thin-clients.default.timeout"                                  : 5000,
+            "ignite.thin-clients.default.send-buffer-size"                         : 200
         ])
         when:
         IgniteThinClientConfiguration clientConfiguration = ctx.getBean(IgniteThinClientConfiguration.class)
@@ -60,8 +60,8 @@ class IgniteThinClientConfigurationSpec extends Specification {
         when:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
             "ignite.enabled"                  : false,
-            "ignite.thin-client.default.addresses": ["localhost:1080"],
-            "ignite.thin-client.default.client"    : "test",
+            "ignite.thin-clients.default.addresses": ["localhost:1080"],
+            "ignite.thin-clients.default.client"    : "test",
         ])
 
         then:
@@ -73,10 +73,10 @@ class IgniteThinClientConfigurationSpec extends Specification {
         given:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
             "ignite.enabled"                                                         : true,
-            "ignite.thin-client.default.addresses"                                       : ["localhost:1080"],
-            "ignite.thin-client.default.transaction-configuration.default-tx-isolation"  : "REPEATABLE_READ",
-            "ignite.thin-client.default.transaction-configuration.default-tx-concurrency": "PESSIMISTIC",
-            "ignite.thin-client.default.transaction-configuration.default-tx-timeout"    : 5000,
+            "ignite.thin-clients.default.addresses"                                       : ["localhost:1080"],
+            "ignite.thin-clients.default.transaction-configuration.default-tx-isolation"  : "REPEATABLE_READ",
+            "ignite.thin-clients.default.transaction-configuration.default-tx-concurrency": "PESSIMISTIC",
+            "ignite.thin-clients.default.transaction-configuration.default-tx-timeout"    : 5000,
         ])
         when:
         IgniteThinClientConfiguration clientConfiguration = ctx.getBean(IgniteThinClientConfiguration.class)

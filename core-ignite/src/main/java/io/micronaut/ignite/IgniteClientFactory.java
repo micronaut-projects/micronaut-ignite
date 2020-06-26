@@ -15,6 +15,7 @@
  */
 package io.micronaut.ignite;
 
+import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.core.io.ResourceResolver;
@@ -53,6 +54,7 @@ public class IgniteClientFactory implements AutoCloseable {
      */
     @Singleton
     @EachBean(IgniteClientConfiguration.class)
+    @Bean(preDestroy = "close")
     public Ignite igniteClient(IgniteClientConfiguration configuration) {
         try {
             Optional<URL> template = resourceResolver.getResource(configuration.getPath());
@@ -74,6 +76,7 @@ public class IgniteClientFactory implements AutoCloseable {
      */
     @Singleton
     @EachBean(IgniteThinClientConfiguration.class)
+    @Bean(preDestroy = "close")
     public IgniteClient igniteThinClient(IgniteThinClientConfiguration configuration) {
         try {
             return Ignition.startClient(configuration.getConfiguration());
