@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
  */
 @EachProperty(value = IgniteThinClientConfiguration.PREFIX)
 public class IgniteThinClientConfiguration implements Named {
-    public static final String PREFIX = IgniteConfig.PREFIX + "." + "thin-client";
+    public static final String PREFIX = IgniteConfig.PREFIX + "." + "thin-clients";
 
     private final String name;
 
