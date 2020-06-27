@@ -50,10 +50,10 @@
                 <p></p>
             </div>
 <div class="sect2">
-<h3 id="_core_ignite_config_properties">Core Ignite Config Properties</h3>
-<a id="io.micronaut.ignite.configuration.IgniteClientConfiguration" href="#io.micronaut.ignite.configuration.IgniteClientConfiguration">&#128279;</a>
+<h3 id="_cache_ignite_config_properties">Cache Ignite Config Properties</h3>
+<a id="io.micronaut.ignite.configuration.IgniteCacheConfiguration" href="#io.micronaut.ignite.configuration.IgniteCacheConfiguration">&#128279;</a>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. Configuration Properties for <a href="../api/io/micronaut/ignite/configuration/IgniteClientConfiguration.html">IgniteClientConfiguration</a></caption>
+<caption class="title">Table 1. Configuration Properties for <a href="../api/io/micronaut/ignite/configuration/IgniteCacheConfiguration.html">IgniteCacheConfiguration</a></caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -68,7 +68,508 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.client.*.path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.client</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">name of client to reference when building cache.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.group-name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.data-region-name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.eviction-policy-factory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">javax.cache.configuration.Factory</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.onheap-cache-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.sql-onheap-cache-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.sql-onheap-cache-max-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.near-configuration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.configuration.NearCacheConfiguration</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.write-synchronization-mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.CacheWriteSynchronizationMode</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.node-filter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.lang.IgnitePredicate</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.eviction-filter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.eviction.EvictionFilter</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.eager-ttl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.load-previous-value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.cache-store-factory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">javax.cache.configuration.Factory</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.store-keep-binary</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.store-concurrent-load-all-threshold</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.affinity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.affinity.AffinityFunction</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.cache-mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.CacheMode</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.atomicity-mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.CacheAtomicityMode</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.backups</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.default-lock-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.invalidate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.rebalance-mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.CacheRebalanceMode</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.rebalance-order</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.max-concurrent-async-operations</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.sql-index-max-inline-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.write-behind-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.write-behind-flush-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.write-behind-flush-frequency</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.write-behind-flush-thread-count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.write-behind-batch-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.write-behind-coalescing</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.rebalance-delay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.affinity-mapper</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.affinity.AffinityKeyMapper</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.max-query-iterators-count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.interceptor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.CacheInterceptor</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.read-from-backup</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.copy-on-read</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.sql-function-classes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.Class[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.query-detail-metrics-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.sql-schema</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.sql-escape-all</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.indexed-types</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.Class[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.plugin-configurations</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.plugin.CachePluginConfiguration[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.partition-loss-policy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.PartitionLossPolicy</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.query-entities</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.Collection</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.query-parallelism</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.topology-validator</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.configuration.TopologyValidator</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.cache-store-session-listener-factories</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">javax.cache.configuration.Factory[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.statistics-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.management-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.cache-loader-factory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">javax.cache.configuration.Factory</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.cache-writer-factory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">javax.cache.configuration.Factory</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.expiry-policy-factory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">javax.cache.configuration.Factory</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.read-through</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.write-through</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.store-by-value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.events-disabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.key-configuration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.CacheKeyConfiguration[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.encryption-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.disk-page-compression</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.configuration.DiskPageCompression</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.caches.*.disk-page-compression-level</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.Integer</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div style="page-break-after: always;"></div>
+<a id="io.micronaut.ignite.configuration.IgniteThinCacheConfiguration" href="#io.micronaut.ignite.configuration.IgniteThinCacheConfiguration">&#128279;</a>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 2. Configuration Properties for <a href="../api/io/micronaut/ignite/configuration/IgniteThinCacheConfiguration.html">IgniteThinCacheConfiguration</a></caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.client</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">name of client to reference when building cache.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.atomicity-mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.CacheAtomicityMode</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.backups</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.cache-mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.CacheMode</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.eager-ttl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.group-name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.default-lock-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.partition-loss-policy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.PartitionLossPolicy</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.read-from-backup</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.rebalance-batch-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.rebalance-batches-prefetch-count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.rebalance-delay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.rebalance-mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.CacheRebalanceMode</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.rebalance-order</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.rebalance-throttle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.rebalance-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.write-synchronization-mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.cache.CacheWriteSynchronizationMode</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.copy-on-read</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.max-concurrent-async-operations</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.data-region-name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.statistics-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.max-query-iterators-count</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.onheap-cache-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.query-detail-metrics-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.query-parallelism</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.sql-escape-all</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.sql-index-max-inline-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.sql-schema</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-caches.*.expiry-policy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">javax.cache.expiry.ExpiryPolicy</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
+<h3 id="_core_ignite_config_properties">Core Ignite Config Properties</h3>
+<a id="io.micronaut.ignite.configuration.IgniteClientConfiguration" href="#io.micronaut.ignite.configuration.IgniteClientConfiguration">&#128279;</a>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 3. Configuration Properties for <a href="../api/io/micronaut/ignite/configuration/IgniteClientConfiguration.html">IgniteClientConfiguration</a></caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.clients.*.path</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">path to load in bean configuration.</p></td>
 </tr>
@@ -77,7 +578,7 @@
 <div style="page-break-after: always;"></div>
 <a id="io.micronaut.ignite.configuration.IgniteThinClientConfiguration" href="#io.micronaut.ignite.configuration.IgniteThinClientConfiguration">&#128279;</a>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 2. Configuration Properties for <a href="../api/io/micronaut/ignite/configuration/IgniteThinClientConfiguration.html">IgniteThinClientConfiguration</a></caption>
+<caption class="title">Table 4. Configuration Properties for <a href="../api/io/micronaut/ignite/configuration/IgniteThinClientConfiguration.html">IgniteThinClientConfiguration</a></caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -92,117 +593,117 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.addresses</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.addresses</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String[]</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.tcp-no-delay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.tcp-no-delay</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.timeout</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.send-buffer-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.send-buffer-size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.receive-buffer-size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.receive-buffer-size</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.ssl-mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.ssl-mode</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.client.SslMode</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.ssl-client-certificate-key-store-path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.ssl-client-certificate-key-store-path</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.ssl-client-certificate-key-store-password</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.ssl-client-certificate-key-store-password</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.ssl-client-certificate-key-store-type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.ssl-client-certificate-key-store-type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.ssl-trust-certificate-key-store-path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.ssl-trust-certificate-key-store-path</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.ssl-trust-certificate-key-store-password</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.ssl-trust-certificate-key-store-password</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.ssl-trust-certificate-key-store-type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.ssl-trust-certificate-key-store-type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.ssl-key-algorithm</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.ssl-key-algorithm</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.ssl-trust-all</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.ssl-trust-all</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.ssl-protocol</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.ssl-protocol</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.client.SslProtocol</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.user-name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.user-name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.user-password</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.user-password</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">java.lang.String</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.partition-awareness-enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.partition-awareness-enabled</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.reconnect-throttling-period</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.reconnect-throttling-period</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.reconnect-throttling-retries</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.reconnect-throttling-retries</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.transaction-configuration.default-tx-concurrency</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.transaction-configuration.default-tx-concurrency</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.transactions.TransactionConcurrency</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.transaction-configuration.default-tx-isolation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.transaction-configuration.default-tx-isolation</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">org.apache.ignite.transactions.TransactionIsolation</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-client.*.transaction-configuration.default-tx-timeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.thin-clients.*.transaction-configuration.default-tx-timeout</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
