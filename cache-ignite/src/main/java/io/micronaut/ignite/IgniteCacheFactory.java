@@ -27,7 +27,6 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.client.IgniteClient;
 
 import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.concurrent.ExecutorService;
 
 

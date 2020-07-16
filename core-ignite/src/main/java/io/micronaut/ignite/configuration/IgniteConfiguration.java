@@ -15,7 +15,7 @@
  */
 package io.micronaut.ignite.configuration;
 
-public class IgniteConfig {
+public class IgniteConfiguration {
     public static final String PREFIX = "ignite";
 
 }

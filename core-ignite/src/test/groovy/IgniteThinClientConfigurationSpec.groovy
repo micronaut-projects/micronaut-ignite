@@ -15,7 +15,7 @@ import spock.lang.Specification
 @Retry
 class IgniteThinClientConfigurationSpec extends Specification {
     @Shared
-    GenericContainer ignite = new GenericContainer("apacheignite/ignite:2.8.0")
+    GenericContainer ignite = new GenericContainer("apacheignite/ignite:2.8.1")
         .withExposedPorts(10800)
 
     void "test ignite thin client instance is created"() {

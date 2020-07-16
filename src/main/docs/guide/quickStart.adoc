@@ -1,1 +1,6 @@
-TODO
+To add support for Ignite to an existing project, you should first add the Micronaut Ignite Core configuration to your build configuration. For example in Gradle:
+
+dependency:core-ignite[groupId="io.micronaut.ignite"]
+
+The minimum requirement for configure Ignite is set the value of the `ignite.enabled` property in `application.yaml`.
+

@@ -11,7 +11,7 @@ import spock.lang.Specification
 class IgniteConfigurationSpec extends Specification {
 
     @Shared
-    GenericContainer igniteContainer = new GenericContainer("apacheignite/ignite:2.8.0")
+    GenericContainer igniteContainer = new GenericContainer("apacheignite/ignite:2.8.1")
         .withExposedPorts(47500, 47100)
 
     def "test ignite instance is created"() {

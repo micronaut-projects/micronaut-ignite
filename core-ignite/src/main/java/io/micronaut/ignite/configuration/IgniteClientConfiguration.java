@@ -26,9 +26,9 @@ import javax.annotation.Nonnull;
  *
  *  @author Michael Pollind
  */
-@EachProperty(value = IgniteClientConfiguration.PREFIX)
+@EachProperty(value = IgniteClientConfiguration.PREFIX, primary = "default")
 public class IgniteClientConfiguration implements Named {
-    public static final String PREFIX = IgniteConfig.PREFIX + "." + "clients";
+    public static final String PREFIX = IgniteConfiguration.PREFIX + "." + "clients";
 
     private final String name;
     private String path;

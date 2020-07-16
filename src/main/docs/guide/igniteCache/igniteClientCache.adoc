@@ -1,0 +1,19 @@
+.Configuration Ignite Cache
+[source,yaml]
+----
+ignite:
+  enabled: true
+  clients:
+    default:
+      path: "classpath:default.cfg"
+  thin-caches:
+    default:
+      client: "default"
+
+----
+
+The full list of configurable options can be found here:
+
+include::{includedir}configurationProperties/io.micronaut.ignite.configuration.IgniteCacheConfiguration.adoc[]
+
+

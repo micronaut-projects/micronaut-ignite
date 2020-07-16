@@ -26,7 +26,7 @@ import org.apache.ignite.client.ClientCacheConfiguration;
  */
 @EachProperty(value = IgniteThinCacheConfiguration.PREFIX, primary = "default")
 public class IgniteThinCacheConfiguration {
-    public static final String PREFIX = IgniteConfig.PREFIX + "." + "thin-caches";
+    public static final String PREFIX = IgniteConfiguration.PREFIX + "." + "thin-caches";
 
     private final String name;
     private String client = "default";

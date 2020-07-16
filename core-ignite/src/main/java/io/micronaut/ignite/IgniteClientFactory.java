@@ -18,8 +18,10 @@ package io.micronaut.ignite;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.io.ResourceResolver;
 import io.micronaut.ignite.configuration.IgniteClientConfiguration;
+import io.micronaut.ignite.configuration.IgniteConfiguration;
 import io.micronaut.ignite.configuration.IgniteThinClientConfiguration;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
@@ -37,6 +39,7 @@ import java.util.Optional;
  * @author Michael Pollind
  */
 @Factory
+@Requires(property = IgniteConfiguration.PREFIX + ".enabled", value = "true", defaultValue = "false")
 public class IgniteClientFactory implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(IgniteClientFactory.class);
 

@@ -14,7 +14,7 @@ import spock.lang.Shared
 class IgniteClientAsyncCacheSpec extends AbstractAsyncCacheSpec {
 
     @Shared
-    GenericContainer ignite = new GenericContainer("apacheignite/ignite:2.8.0")
+    GenericContainer ignite = new GenericContainer("apacheignite/ignite:2.8.1")
         .withExposedPorts(47500, 47100)
 
     @Override
