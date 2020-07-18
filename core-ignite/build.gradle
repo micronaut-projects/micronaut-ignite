@@ -2,10 +2,14 @@ dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-inject-groovy"
     annotationProcessor "io.micronaut.docs:micronaut-docs-asciidoc-config-props:$micronautDocsVersion"
+    annotationProcessor(project(":ignite-processor"))
 
     api "io.micronaut:micronaut-inject"
+
     api "org.apache.ignite:ignite-core:$igniteVersion"
-    api("org.apache.ignite:ignite-spring:$igniteVersion")
+    api "org.apache.ignite:ignite-spring:$igniteVersion"
+
+    compileOnly "io.micronaut:micronaut-aop"
 
     testImplementation("org.spockframework:spock-core:${spockVersion}") {
         exclude module:'groovy-all'

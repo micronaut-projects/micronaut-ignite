@@ -1,0 +1,4 @@
+dependencies {
+    implementation "io.micronaut:micronaut-inject-java"
+    api "org.apache.ignite:ignite-core:$igniteVersion"
+}
