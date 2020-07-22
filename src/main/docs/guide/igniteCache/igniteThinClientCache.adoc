@@ -1,0 +1,21 @@
+.Configuration Ignite Thin Cache
+[source,yaml]
+----
+ignite:
+  enabled: true
+  thin-clients:
+    default:
+      address:
+      - "127.0.0.1:10800"
+      - "127.0.0.1:10801"
+  thin-caches:
+    default:
+      client: "default"
+
+----
+
+The full list of configurable options can be found here:
+
+include::{includedir}configurationProperties/io.micronaut.ignite.configuration.IgniteThinCacheConfiguration.adoc[]
+
+

@@ -1,1 +1,6 @@
-TODO
+https://ignite.apache.org/[Apache Ignite] is a horizontally distributed fault tolerant compute platform for real-time applications that can process
+terabytes of data with in-memory speed.
+
+This project adds support for Apache Ignite and bridges support to other Micronaut components : https://github.com/micronaut-projects/micronaut-cache[Micronaut Cache]
+
+

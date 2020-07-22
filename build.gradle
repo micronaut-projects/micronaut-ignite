@@ -42,6 +42,7 @@ subprojects { Project subproject ->
         testImplementation "io.micronaut.test:micronaut-test-spock:$micronautTestVersion"
     }
     tasks.withType(Test) {
+        systemProperty("igniteVersion", igniteVersion)
         useJUnitPlatform()
     }
 }
