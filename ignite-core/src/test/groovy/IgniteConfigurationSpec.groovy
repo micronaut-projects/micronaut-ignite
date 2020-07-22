@@ -10,8 +10,10 @@ import spock.lang.Specification
 @Retry
 class IgniteConfigurationSpec extends Specification {
 
+    final static String IGNITE_VERSION = System.getProperty("igniteVersion")
+
     @Shared
-    GenericContainer igniteContainer = new GenericContainer("apacheignite/ignite:2.8.1")
+    GenericContainer igniteContainer = new GenericContainer("apacheignite/ignite:${IGNITE_VERSION}")
         .withExposedPorts(47500, 47100)
 
     def "test ignite instance is created"() {

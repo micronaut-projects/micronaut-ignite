@@ -12,8 +12,11 @@ import spock.lang.Shared
 @Retry
 @IgnoreIf({System.getenv('GITHUB_WORKFLOW')})
 class IgniteThinClientAsyncCacheSpec extends AbstractAsyncCacheSpec {
+
+    final static String IGNITE_VERSION = System.getProperty("igniteVersion")
+
     @Shared
-    GenericContainer ignite = new GenericContainer("apacheignite/ignite:2.8.1")
+    GenericContainer ignite = new GenericContainer("apacheignite/ignite:${IGNITE_VERSION}")
         .withExposedPorts(47500, 47100)
 
     @Override
