@@ -3,3 +3,5 @@ rootProject.name = 'micronaut-ignite'
 include 'cache-ignite'
 include 'core-ignite'
 include 'ignite-processor'
+include 'ignite-aop'
+

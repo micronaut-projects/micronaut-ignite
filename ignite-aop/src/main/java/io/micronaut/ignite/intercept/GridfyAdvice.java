@@ -4,6 +4,8 @@ import io.micronaut.aop.MethodInterceptor;
 import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.BeanContext;
 import io.micronaut.core.annotation.AnnotationValue;
+import io.micronaut.core.reflect.exception.InvocationException;
+import io.micronaut.inject.ExecutableMethod;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCheckedException;
 import org.apache.ignite.compute.ComputeTask;
@@ -46,24 +48,24 @@ public class GridfyAdvice implements MethodInterceptor<Object,Object> {
         String igniteInstanceName = opt.get().stringValue("igniteInstanceName").orElse(opt.get().stringValue("gridName").orElse(null));
 
         if (F.isEmpty(igniteInstanceName)) {
-            throw new RuntimeException(new IgniteCheckedException("Grid is not locally started: " + igniteInstanceName));
+            throw new InvocationException("Grid is not locally started: " + igniteInstanceName, new IgniteCheckedException());
         }
 
         if (G.state(igniteInstanceName) != STARTED) {
-            throw new RuntimeException(new IgniteCheckedException("Grid is not locally started: " + igniteInstanceName));
+            throw new InvocationException("Grid is not locally started: " + igniteInstanceName, new IgniteCheckedException());
         }
 
         // Initialize defaults.
-        Method mtd = context.getTargetMethod();
+        ExecutableMethod<Object, Object> mtd = context.getExecutableMethod();
 
-        GridifyArgument arg = new GridifyArgumentAdapter(mtd.getDeclaringClass(), mtd.getName(),
-            mtd.getParameterTypes(), context.getParameterValues(), context.getTarget());
+        GridifyArgument arg = new GridifyArgumentAdapter(context.getTarget().getClass(), mtd.getName(),
+            context.getArgumentTypes(), context.getParameterValues(), context.getTarget());
 
         Class<? extends GridifyInterceptor> value = (Class<? extends GridifyInterceptor>) opt.get().classValue("interceptor").orElse(GridifyInterceptor.class);
 
         if (!value.equals(GridifyInterceptor.class)) {
             GridifyInterceptor interceptor = beanContext.getBean(value);
-            Annotation annotation = mtd.getAnnotation(Gridify.class);
+            Annotation annotation = context.getTargetMethod().getAnnotation(Gridify.class);
             try {
                 if (!interceptor.isGridify(annotation, arg))
                     return context.proceed();
@@ -84,7 +86,7 @@ public class GridfyAdvice implements MethodInterceptor<Object,Object> {
         }
 
         if (!taskName.isPresent()) {
-            return ignite.compute().withTimeout(timeout).execute(new GridifyDefaultTask(mtd.getDeclaringClass()), arg);
+            return ignite.compute().withTimeout(timeout).execute(new GridifyDefaultTask(context.getTarget().getClass()), arg);
         }
         return ignite.compute().withTimeout(timeout).execute(taskName.get(), arg);
     }
