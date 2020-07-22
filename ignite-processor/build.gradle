@@ -1,4 +1,5 @@
 dependencies {
-    implementation "io.micronaut:micronaut-inject-java"
+    compileOnly "io.micronaut:micronaut-inject:$micronautVersion"
+    compileOnly "io.micronaut:micronaut-aop:$micronautVersion"
     api "org.apache.ignite:ignite-core:$igniteVersion"
 }

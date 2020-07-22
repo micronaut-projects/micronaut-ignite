@@ -1,9 +1,11 @@
-# Micronaut Ignite (WIP)
+# Micronaut Ignite
 
 <!-- [![Maven Central](https://img.shields.io/maven-central/v/io.micronaut.ignite/micronaut-ignite.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.micronaut.ignite%22%20AND%20a:%22micronaut-ignite%22) -->
 [![Build Status](https://github.com/micronaut-projects/micronaut-ignite/workflows/Java%20CI/badge.svg)](https://github.com/micronaut-projects/micronaut-ignite/actions)
 
-This project is a WIP and has no release yet.
+This project includes integration between [Micronaut](http://micronaut.io) and [Ignite](https://ignite.apache.org/).
+
+NOTE: WIP PROJECT AND NOT YET RELEASED
 
 ## Documentation
 
@@ -11,9 +13,9 @@ This project is a WIP and has no release yet.
 
 See the [Snapshot Documentation](https://micronaut-projects.github.io/micronaut-ignite/snapshot/guide/) for the current development docs.
 
-<!-- ## Examples -->
+## Examples
 
-<!-- Examples can be found in the [examples](https://github.com/micronaut-projects/micronaut-ignite/tree/master/examples) directory. -->
+Examples can be found in the [examples](https://github.com/micronaut-projects/micronaut-ignite/tree/master/examples) directory.
 
 ## Snapshots and Releases
 

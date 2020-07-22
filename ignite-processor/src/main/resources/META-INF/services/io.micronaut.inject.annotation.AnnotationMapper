@@ -1,0 +1,3 @@
+io.micronaut.ignite.mapper.GridfySetToSetAnnotationMapper
+io.micronaut.ignite.mapper.GridfySetToValueAnnotationMapper
+io.micronaut.ignite.mapper.GridifyAnnotationMapper
