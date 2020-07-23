@@ -27,8 +27,10 @@ subprojects { Project subproject ->
             force "com.h2database:h2:1.4.197"
         }
     }
+    if (subproject.name != 'ignite-processor') {
+        apply plugin: "io.micronaut.build.publishing"
+    }
 
-    apply plugin: "io.micronaut.build.publishing"
     dependencies {
         annotationProcessor "io.micronaut:micronaut-inject-java"
         if (subproject.name != 'cache-tck') {

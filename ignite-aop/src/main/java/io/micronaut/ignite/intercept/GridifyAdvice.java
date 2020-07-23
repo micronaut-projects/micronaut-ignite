@@ -39,7 +39,7 @@ import java.util.Optional;
 import static org.apache.ignite.IgniteState.STARTED;
 
 @Singleton
-public class GridifyAdvice implements MethodInterceptor<Object,Object> {
+public class GridifyAdvice implements MethodInterceptor<Object, Object> {
 
     private final BeanContext beanContext;
 
@@ -67,9 +67,12 @@ public class GridifyAdvice implements MethodInterceptor<Object,Object> {
         ExecutableMethod<Object, Object> mtd = context.getExecutableMethod();
         Object target = context.getTarget();
 
-
-        GridifyArgument arg = new GridifyArgumentAdapter(target.getClass(), mtd.getName(),
-            context.getArgumentTypes(), context.getParameterValues(), target);
+        GridifyArgument arg = new GridifyArgumentAdapter(
+            target.getClass(),
+            mtd.getName(),
+            context.getArgumentTypes(),
+            context.getParameterValues(),
+            target);
 
         Class<? extends GridifyInterceptor> value = (Class<? extends GridifyInterceptor>) opt.get().classValue("interceptor").orElse(GridifyInterceptor.class);
 
@@ -77,8 +80,9 @@ public class GridifyAdvice implements MethodInterceptor<Object,Object> {
             GridifyInterceptor interceptor = beanContext.getBean(value);
             Annotation annotation = context.getTargetMethod().getAnnotation(Gridify.class);
             try {
-                if (!interceptor.isGridify(annotation, arg))
+                if (!interceptor.isGridify(annotation, arg)) {
                     return context.proceed();
+                }
             } catch (IgniteCheckedException e) {
                 throw new RuntimeException(e);
             }
