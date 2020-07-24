@@ -1,7 +1,5 @@
 dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java"
-    annotationProcessor project(":ignite-processor")
-    annotationProcessor "io.micronaut:micronaut-inject-groovy"
     annotationProcessor "io.micronaut.docs:micronaut-docs-asciidoc-config-props:$micronautDocsVersion"
 
     implementation project(":ignite-core")
@@ -10,12 +8,14 @@ dependencies {
     compileOnly "org.apache.ignite:ignite-core:$igniteVersion"
     compileOnly "io.micronaut:micronaut-aop"
 
+    testAnnotationProcessor project(":ignite-processor")
+    testAnnotationProcessor "io.micronaut:micronaut-inject-java"
     testImplementation("org.spockframework:spock-core:${spockVersion}") {
         exclude module:'groovy-all'
     }
-
     testImplementation "io.micronaut.test:micronaut-test-spock:$micronautTestVersion"
     testImplementation "io.micronaut.cache:micronaut-cache-tck:2.0.0"
     testImplementation "org.testcontainers:spock:1.14.3"
     testImplementation "org.apache.ignite:ignite-core:$igniteVersion"
+    testImplementation "io.micronaut:micronaut-aop"
 }

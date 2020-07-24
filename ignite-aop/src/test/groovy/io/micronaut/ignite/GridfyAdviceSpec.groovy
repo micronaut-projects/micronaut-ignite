@@ -5,7 +5,7 @@ import org.testcontainers.containers.GenericContainer
 import spock.lang.Shared
 import spock.lang.Specification
 
-class GridfyAdviceSpec extends Specification{
+class GridfyAdviceSpec extends Specification {
     final static String IGNITE_VERSION = System.getProperty("igniteVersion")
 
     @Shared

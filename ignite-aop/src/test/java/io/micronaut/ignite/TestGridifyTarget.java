@@ -1,7 +1,5 @@
 package io.micronaut.ignite;
 
-
-
 import org.apache.ignite.compute.gridify.Gridify;
 
 import javax.inject.Singleton;

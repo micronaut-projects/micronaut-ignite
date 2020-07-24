@@ -15,29 +15,29 @@
  */
 package io.micronaut.ignite.processor.mapper;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.aop.Around;
 import io.micronaut.context.annotation.Type;
+import io.micronaut.core.annotation.AnnotationClassValue;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.AnnotationValueBuilder;
-import io.micronaut.inject.annotation.NamedAnnotationMapper;
+import io.micronaut.inject.annotation.TypedAnnotationMapper;
 import io.micronaut.inject.visitor.VisitorContext;
+import org.apache.ignite.compute.gridify.GridifySetToValue;
 
-import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 
-public class GridfySetToValueAnnotationMapper implements NamedAnnotationMapper {
+public class GridfySetToValueAnnotationMapper implements TypedAnnotationMapper<GridifySetToValue> {
 
-    @NonNull
     @Override
-    public String getName() {
-        return "org.apache.ignite.compute.gridify.GridifySetToValue";
+    public Class<GridifySetToValue> annotationType() {
+        return GridifySetToValue.class;
     }
 
     @Override
-    public List<AnnotationValue<?>> map(AnnotationValue<Annotation> annotation, VisitorContext visitorContext) {
-        final AnnotationValueBuilder builder = AnnotationValue.builder(getName());
+    public List<AnnotationValue<?>> map(AnnotationValue<GridifySetToValue> annotation, VisitorContext visitorContext) {
+        final AnnotationValueBuilder builder = AnnotationValue.builder(GridifySetToValue.class);
+
 
         annotation.classValue("nodeFilter").ifPresent(s -> builder.member("nodeFilter", s));
         annotation.longValue("timeout").ifPresent(s -> builder.member("timeout", s));
@@ -47,13 +47,15 @@ public class GridfySetToValueAnnotationMapper implements NamedAnnotationMapper {
         annotation.stringValue("gridName").ifPresent(s -> builder.member("gridName", s));
         annotation.stringValue("igniteInstanceName").ifPresent(s -> builder.member("igniteInstanceName", s));
 
+
         AnnotationValueBuilder<Type> typeAnnotationValueBuilder =
-            AnnotationValue.builder(Type.class).member("value", "io.micronaut.ignite.intercept.GridfySetToValueAdvice");
+            AnnotationValue.builder(Type.class).member("value", new AnnotationClassValue<>("io.micronaut.ignite.intercept.GridfySetToValueAdvice"));
+
 
         AnnotationValueBuilder<Around> aroundAnnotationValueBuilder =
             AnnotationValue.builder(Around.class);
 
-        return Arrays.asList(typeAnnotationValueBuilder.build(), aroundAnnotationValueBuilder.build(), builder.build());
 
+        return Arrays.asList(aroundAnnotationValueBuilder.build(),typeAnnotationValueBuilder.build(), builder.build());
     }
 }

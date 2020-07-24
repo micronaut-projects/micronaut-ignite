@@ -1,6 +1,6 @@
 package io.micronaut.ignite;
 
-public class TestGridifyException extends RuntimeException{
+public class TestGridifyException extends RuntimeException {
     /**
      * @param msg Message.
      */
@@ -9,7 +9,7 @@ public class TestGridifyException extends RuntimeException{
     }
 
     /**
-     * @param msg Message.
+     * @param msg   Message.
      * @param cause Exception cause.
      */
     public TestGridifyException(String msg, Throwable cause) {

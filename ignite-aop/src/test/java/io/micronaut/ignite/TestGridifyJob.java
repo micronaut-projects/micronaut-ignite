@@ -6,7 +6,9 @@ import org.apache.ignite.compute.ComputeJobAdapter;
 import org.apache.ignite.resources.LoggerResource;
 
 public class TestGridifyJob extends ComputeJobAdapter {
-    /** */
+    /**
+     *
+     */
     @LoggerResource
     private IgniteLogger log;
 
@@ -33,8 +35,7 @@ public class TestGridifyJob extends ComputeJobAdapter {
                 return target.gridifyNonDefaultClassResource("30");
             else if ("4".equals(argument(0)))
                 return target.gridifyNonDefaultNameResource("40");
-        }
-        catch (TestGridifyException e) {
+        } catch (TestGridifyException e) {
             throw new RuntimeException("Failed to execute target method.", e);
         }
 

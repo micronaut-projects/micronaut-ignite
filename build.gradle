@@ -10,7 +10,6 @@ buildscript {
     }
 }
 
-
 subprojects { Project subproject ->
     group "io.micronaut.ignite"
 
@@ -31,21 +30,31 @@ subprojects { Project subproject ->
         apply plugin: "io.micronaut.build.publishing"
     }
 
-    dependencies {
-        annotationProcessor "io.micronaut:micronaut-inject-java"
-        if (subproject.name != 'cache-tck') {
-            annotationProcessor "io.micronaut.docs:micronaut-docs-asciidoc-config-props:${micronautDocsVersion}"
-        }
-
-        testAnnotationProcessor "io.micronaut:micronaut-inject-java"
-        testImplementation("org.spockframework:spock-core:${spockVersion}") {
-            exclude module:'groovy-all'
-        }
-        testImplementation "io.micronaut.test:micronaut-test-spock:$micronautTestVersion"
-    }
+//    dependencies {
+//        annotationProcessor "io.micronaut:micronaut-inject-java"
+//        if (subproject.name != 'cache-tck') {
+//            annotationProcessor "io.micronaut.docs:micronaut-docs-asciidoc-config-props:${micronautDocsVersion}"
+//        }
+//
+//        testAnnotationProcessor "io.micronaut:micronaut-inject-java"
+//        testImplementation("org.spockframework:spock-core:${spockVersion}") {
+//            exclude module:'groovy-all'
+//        }
+//        testImplementation "io.micronaut.test:micronaut-test-spock:$micronautTestVersion"
+//    }
     tasks.withType(Test) {
         systemProperty("igniteVersion", igniteVersion)
         useJUnitPlatform()
+    }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs = [
+            '-parameters',
+            '-Amicronaut.processing.incremental=true',
+            '-Amicronaut.processing.annotations=io.micronaut.ignite.*',
+            "-Amicronaut.processing.group=$project.group",
+            "-Amicronaut.processing.module=$project.name",
+        ]
     }
 }
 

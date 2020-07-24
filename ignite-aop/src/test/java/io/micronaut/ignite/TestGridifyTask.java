@@ -13,14 +13,16 @@ import java.util.List;
 
 @ComputeTaskName(TestGridifyTask.TASK_NAME)
 public class TestGridifyTask extends ComputeTaskSplitAdapter<GridifyArgument, Object> {
-    /** */
+    /**
+     *
+     */
     public static final String TASK_NAME = "io.micronaut.ignite.TestGridfyTask";
 
     @Override
     protected Collection<? extends ComputeJob> split(int gridSize, GridifyArgument arg) throws IgniteException {
         assert arg.getMethodParameters().length == 1;
 
-        return Collections.singletonList(new TestGridifyJob((String)arg.getMethodParameters()[0]));
+        return Collections.singletonList(new TestGridifyJob((String) arg.getMethodParameters()[0]));
     }
 
     @Override
