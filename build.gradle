@@ -43,7 +43,6 @@ subprojects { Project subproject ->
     }
     tasks.withType(Test) {
         systemProperty("igniteVersion", igniteVersion)
-        useJUnitPlatform()
     }
 }
 
