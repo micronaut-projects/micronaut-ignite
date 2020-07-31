@@ -33,7 +33,7 @@ import org.apache.ignite.client.IgniteClient;
 import java.util.Optional;
 
 @Factory
-public class IgniteCacheBuilderFactory {
+public class IgniteCacheFactory {
 
     public static final String CACHE_NAME = "value";
     public static final String CACHE_CONFIGURATION = "configurationId";
@@ -44,7 +44,7 @@ public class IgniteCacheBuilderFactory {
     /**
      * @param beanContext The bean context
      */
-    public IgniteCacheBuilderFactory(BeanContext beanContext) {
+    public IgniteCacheFactory(BeanContext beanContext) {
         this.beanContext = beanContext;
     }
 

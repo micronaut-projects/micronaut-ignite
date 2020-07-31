@@ -18,7 +18,7 @@ package io.micronaut.ignite.configuration;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.naming.Named;
 
-public class IgniteAbstractCacheConfiguration implements Named {
+public class IgniteAbstractCacheConfiguration<K,V> implements Named {
 
     private final String name;
 

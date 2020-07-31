@@ -25,11 +25,30 @@ import org.apache.ignite.configuration.CacheConfiguration;
  * Ignite cache configuration.
  */
 @EachProperty(value = IgniteCacheConfiguration.PREFIX, primary = "default")
-public class IgniteCacheConfiguration extends IgniteAbstractCacheConfiguration implements Named {
+public class IgniteCacheConfiguration<K,V> extends IgniteAbstractCacheConfiguration<K,V> {
     public static final String PREFIX = IgniteAbstractConfiguration.PREFIX + "." + "client-caches";
 
+    private Class<K> keyType = (Class<K>) Object.class;
+    private Class<V> ValueType = (Class<V>) Object.class;
+
+    public void setKeyType(Class<K> keyType) {
+        this.keyType = keyType;
+    }
+
+    public void setValueType(Class<V> valueType) {
+        ValueType = valueType;
+    }
+
+    public Class<V> getValueType() {
+        return ValueType;
+    }
+
+    public Class<K> getKeyType() {
+        return keyType;
+    }
+
     @ConfigurationBuilder(excludes = {"Name"})
-    private final CacheConfiguration configuration = new CacheConfiguration();
+    private final CacheConfiguration<K, V> configuration = new CacheConfiguration<K, V>();
 
     /**
      * @param name Name or key for client.
@@ -43,7 +62,7 @@ public class IgniteCacheConfiguration extends IgniteAbstractCacheConfiguration i
      *
      * @return CacheConfiguration.
      */
-    public CacheConfiguration getConfiguration() {
+    public CacheConfiguration<K, V> getConfiguration() {
         return configuration;
     }
 
@@ -51,7 +70,9 @@ public class IgniteCacheConfiguration extends IgniteAbstractCacheConfiguration i
      * @param name get configuration from name
      * @return ignite cache configuration.
      */
-    public CacheConfiguration getConfiguration(String name) {
-        return new CacheConfiguration(configuration).setName(name);
+    public CacheConfiguration<K, V> getConfiguration(String name) {
+        return new CacheConfiguration<K, V>(configuration)
+            .setName(name)
+            .setTypes(keyType, ValueType);
     }
 }

@@ -21,7 +21,9 @@ import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.annotation.AnnotationValue;
+import io.micronaut.data.model.DataType;
 import io.micronaut.data.model.Page;
+import io.micronaut.data.model.query.builder.sql.SqlQueryBuilder;
 import io.micronaut.data.model.runtime.BatchOperation;
 import io.micronaut.data.model.runtime.InsertOperation;
 import io.micronaut.data.model.runtime.PagedQuery;
@@ -29,7 +31,8 @@ import io.micronaut.data.model.runtime.PreparedQuery;
 import io.micronaut.data.model.runtime.UpdateOperation;
 import io.micronaut.data.operations.RepositoryOperations;
 import io.micronaut.ignite.annotation.IgniteCacheRef;
-import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCache;
+import org.apache.ignite.cache.query.SqlFieldsQuery;
 import org.apache.ignite.client.IgniteClient;
 
 import java.io.Serializable;
@@ -39,10 +42,10 @@ import java.util.stream.Stream;
 @EachBean(IgniteClient.class)
 public class IgniteRepositoryOperations implements RepositoryOperations {
     private final BeanContext beanContext;
-    private final IgniteCacheBuilderFactory builderFactory;
-    public IgniteRepositoryOperations(BeanContext beanContext, IgniteCacheBuilderFactory builderFactory) {
+    private final IgniteCacheFactory igniteCacheFactory;
+    public IgniteRepositoryOperations(BeanContext beanContext, IgniteCacheFactory igniteCacheFactory) {
         this.beanContext = beanContext;
-        this.builderFactory = builderFactory;
+        this.igniteCacheFactory = igniteCacheFactory;
     }
 
     @Nullable
@@ -56,9 +59,6 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
     @Override
     public <T, R> R findOne(@NonNull PreparedQuery<T, R> preparedQuery) {
 
-        AnnotationMetadata metadata = preparedQuery.getAnnotationMetadata();
-
-        AnnotationValue<IgniteCacheRef> cacheRefAnnotationValue = metadata.getAnnotation(IgniteCacheRef.class);
 
 //        metadata.stringValue(IgniteKey.class,"value").orElseThrow(() -> new IllegalStateException("repository does not have @IgniteKey"));
 
@@ -67,6 +67,25 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
 //        preparedQuery.getAnnotationMetadata().getAnnotation()
 //        preparedQuery.getAnnotation()
         return null;
+    }
+
+    public <T,R>SqlFieldsQuery prepareStatement(IgniteCache<T,R> cache, @NonNull PreparedQuery<T,R> preparedQuery) {
+        Object[] queryParameters = preparedQuery.getParameterArray();
+        int[] parameterBinding = preparedQuery.getIndexedParameterBinding();
+        DataType[] parameterTypes = preparedQuery.getIndexedParameterTypes();
+        String query = preparedQuery.getQuery();
+
+        SqlFieldsQuery fieldsQuery = new SqlFieldsQuery(query);
+        Object[] args = new Object[parameterBinding.length];
+        for (int i = 0; i < parameterBinding.length; i++) {
+            int parameterIndex = parameterBinding[i];
+            DataType dataType = parameterTypes[i];
+            Object value = queryParameters[parameterIndex];
+            args[i] = value;
+        }
+        fieldsQuery.setArgs(args);
+
+        return fieldsQuery;
     }
 
     @Override

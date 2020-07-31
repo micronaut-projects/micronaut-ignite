@@ -29,5 +29,7 @@ class IgniteCacheConfigurationSpec extends Specification {
         ch.getBackups() == 4
         ch.getGroupName() == "test"
         ch.atomicityMode == CacheAtomicityMode.ATOMIC
+        ch.getKeyType() == Object.class
+        ch.getValueType() == Object.class
     }
 }
