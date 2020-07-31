@@ -22,13 +22,13 @@ import io.micronaut.core.naming.Named;
 import javax.annotation.Nonnull;
 
 /**
- *  Configuration class for an Ignite client.
+ * Configuration class for an Ignite client.
  *
- *  @author Michael Pollind
+ * @author Michael Pollind
  */
 @EachProperty(value = IgniteClientConfiguration.PREFIX, primary = "default")
-public class IgniteClientConfiguration implements Named {
-    public static final String PREFIX = IgniteConfiguration.PREFIX + "." + "clients";
+public class IgniteClientConfiguration extends IgniteAbstractConfiguration implements Named {
+    public static final String PREFIX = IgniteAbstractConfiguration.PREFIX + "." + "clients";
 
     private final String name;
     private String path;

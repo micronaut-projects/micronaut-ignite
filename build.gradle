@@ -37,7 +37,7 @@ subprojects { Project subproject ->
 
         testAnnotationProcessor "io.micronaut:micronaut-inject-java"
         testImplementation("org.spockframework:spock-core:${spockVersion}") {
-            exclude module:'groovy-all'
+            exclude module: 'groovy-all'
         }
         testImplementation "io.micronaut.test:micronaut-test-spock:$micronautTestVersion"
     }

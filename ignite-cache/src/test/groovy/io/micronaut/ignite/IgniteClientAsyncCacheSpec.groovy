@@ -10,7 +10,7 @@ import spock.lang.Shared
 
 @Testcontainers
 @Retry
-@IgnoreIf({System.getenv('GITHUB_WORKFLOW')})
+@IgnoreIf({ System.getenv('GITHUB_WORKFLOW') })
 class IgniteClientAsyncCacheSpec extends AbstractAsyncCacheSpec {
     final static String IGNITE_VERSION = System.getProperty("igniteVersion")
 
@@ -21,11 +21,11 @@ class IgniteClientAsyncCacheSpec extends AbstractAsyncCacheSpec {
     @Override
     ApplicationContext createApplicationContext() {
         return ApplicationContext.run([
-            "ignite.enabled"                                      : true,
-            "ignite.clients.default.path"                          : "classpath:example/standard.cfg",
-            "ignite.caches.counter.client"                        : "default",
-            "ignite.caches.counter2.client"                       : "default",
-            "ignite.caches.test.client"                           : "default"
+            "ignite.enabled"                   : true,
+            "ignite.clients.default.path"      : "classpath:example/standard.cfg",
+            "ignite.caches.counter.cache-type" : "Default",
+            "ignite.caches.counter2.cache-type": "Default",
+            "ignite.caches.test.cache-type"    : "Default"
         ])
     }
 }

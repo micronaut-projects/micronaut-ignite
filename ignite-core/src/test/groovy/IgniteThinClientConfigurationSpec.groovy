@@ -1,4 +1,5 @@
 import io.micronaut.context.ApplicationContext
+import io.micronaut.ignite.configuration.IgniteThinClientConfiguration
 import io.micronaut.inject.qualifiers.Qualifiers
 import org.apache.ignite.client.IgniteClient
 import org.apache.ignite.client.SslMode
@@ -6,7 +7,6 @@ import org.apache.ignite.transactions.TransactionConcurrency
 import org.apache.ignite.transactions.TransactionIsolation
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.spock.Testcontainers
-import io.micronaut.ignite.configuration.IgniteThinClientConfiguration;
 import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
@@ -23,7 +23,7 @@ class IgniteThinClientConfigurationSpec extends Specification {
     void "test ignite thin client instance is created"() {
         given:
         ApplicationContext ctx = ApplicationContext.run([
-            "ignite.enabled"                  : true,
+            "ignite.enabled"                       : true,
             "ignite.thin-clients.default.addresses": ["127.0.0.1:${ignite.getMappedPort(10800)}"],
             "ignite.thin-clients.other.addresses"  : ["127.0.0.1:${ignite.getMappedPort(10800)}"]
         ])
@@ -40,7 +40,7 @@ class IgniteThinClientConfigurationSpec extends Specification {
     void "test ignite thin client configuration"() {
         given:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
-            "ignite.enabled"                                                  : true,
+            "ignite.enabled"                                                       : true,
             "ignite.thin-clients.default.addresses"                                : ["localhost:1080"],
             "ignite.thin-clients.default.ssl-mode"                                 : "REQUIRED",
             "ignite.thin-clients.default.ssl-client-certificate-key-store-password": "password",
@@ -61,9 +61,9 @@ class IgniteThinClientConfigurationSpec extends Specification {
     void "test ignite cache disabled"() {
         when:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
-            "ignite.enabled"                  : false,
+            "ignite.enabled"                       : false,
             "ignite.thin-clients.default.addresses": ["localhost:1080"],
-            "ignite.thin-clients.default.client"    : "test",
+            "ignite.thin-clients.default.client"   : "test",
         ])
 
         then:
@@ -74,7 +74,7 @@ class IgniteThinClientConfigurationSpec extends Specification {
     void "test ignite thin client transaction configuration"() {
         given:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
-            "ignite.enabled"                                                         : true,
+            "ignite.enabled"                                                              : true,
             "ignite.thin-clients.default.addresses"                                       : ["localhost:1080"],
             "ignite.thin-clients.default.transaction-configuration.default-tx-isolation"  : "REPEATABLE_READ",
             "ignite.thin-clients.default.transaction-configuration.default-tx-concurrency": "PESSIMISTIC",

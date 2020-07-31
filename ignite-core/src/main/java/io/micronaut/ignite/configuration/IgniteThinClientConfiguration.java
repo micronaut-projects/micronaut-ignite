@@ -30,8 +30,8 @@ import javax.annotation.Nonnull;
  * @author Michael Pollind
  */
 @EachProperty(value = IgniteThinClientConfiguration.PREFIX, primary = "default")
-public class IgniteThinClientConfiguration implements Named {
-    public static final String PREFIX = IgniteConfiguration.PREFIX + "." + "thin-clients";
+public class IgniteThinClientConfiguration extends IgniteAbstractConfiguration implements Named {
+    public static final String PREFIX = IgniteAbstractConfiguration.PREFIX + "." + "thin-clients";
 
     private final String name;
 

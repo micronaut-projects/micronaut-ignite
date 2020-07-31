@@ -15,7 +15,6 @@
  */
 package io.micronaut.ignite.configuration;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
@@ -25,11 +24,8 @@ import org.apache.ignite.client.ClientCacheConfiguration;
  * Ignite cache configuration.
  */
 @EachProperty(value = IgniteThinCacheConfiguration.PREFIX, primary = "default")
-public class IgniteThinCacheConfiguration {
-    public static final String PREFIX = IgniteConfiguration.PREFIX + "." + "thin-caches";
-
-    private final String name;
-    private String client = "default";
+public class IgniteThinCacheConfiguration extends IgniteAbstractCacheConfiguration {
+    public static final String PREFIX = IgniteAbstractConfiguration.PREFIX + "." + "thin-client-caches";
 
     @ConfigurationBuilder(excludes = {"name", "keyConfiguration", "queryEntities"})
     private final ClientCacheConfiguration configuration = new ClientCacheConfiguration();
@@ -38,36 +34,25 @@ public class IgniteThinCacheConfiguration {
      * @param name Name or key for client.
      */
     public IgniteThinCacheConfiguration(@Parameter String name) {
-        this.name = name;
-        configuration.setName(name);
+        super(name);
     }
 
     /**
-     * @param client name of client to reference when building cache.
-     */
-    public void setClient(String client) {
-        this.client = client;
-    }
-
-    /**
-     * @return name of client to reference when building cache.
-     */
-    public String getClient() {
-        return client;
-    }
-
-    /**
-     * @return ignite cache configuration.
+     * Get Ignite Configuration.
+     *
+     * @return CacheConfiguration.
      */
     public ClientCacheConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
-     * @return name or key for client.
+     * Get Ignite Cache Configuration.
+     *
+     * @param name Name or key for cache.
+     * @return ignite cache configuration.
      */
-    @NonNull
-    public String getName() {
-        return this.name;
+    public ClientCacheConfiguration getConfiguration(String name) {
+        return configuration.setName(name);
     }
 }

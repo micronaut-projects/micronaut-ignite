@@ -15,7 +15,6 @@
  */
 package io.micronaut.ignite.configuration;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
@@ -26,11 +25,8 @@ import org.apache.ignite.configuration.CacheConfiguration;
  * Ignite cache configuration.
  */
 @EachProperty(value = IgniteCacheConfiguration.PREFIX, primary = "default")
-public class IgniteCacheConfiguration implements Named {
-    public static final String PREFIX = IgniteConfiguration.PREFIX + "." + "caches";
-
-    private final String name;
-    private String client = "default";
+public class IgniteCacheConfiguration extends IgniteAbstractCacheConfiguration implements Named {
+    public static final String PREFIX = IgniteAbstractConfiguration.PREFIX + "." + "client-caches";
 
     @ConfigurationBuilder(excludes = {"Name"})
     private final CacheConfiguration configuration = new CacheConfiguration();
@@ -39,36 +35,23 @@ public class IgniteCacheConfiguration implements Named {
      * @param name Name or key for client.
      */
     public IgniteCacheConfiguration(@Parameter String name) {
-        this.name = name;
-        configuration.setName(name);
+        super(name);
     }
 
     /**
-     * @param client name of client to reference when building cache.
-     */
-    public void setClient(String client) {
-        this.client = client;
-    }
-
-    /**
-     * @return  name of client to reference when building cache.
-     */
-    public String getClient() {
-        return client;
-    }
-
-    /**
-     * @return ignite cache configuration.
+     * Get Ignite Cache Configuration.
+     *
+     * @return CacheConfiguration.
      */
     public CacheConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
-     * @return name or key for client.
+     * @param name get configuration from name
+     * @return ignite cache configuration.
      */
-    @NonNull
-    public String getName() {
-        return this.name;
+    public CacheConfiguration getConfiguration(String name) {
+        return new CacheConfiguration(configuration).setName(name);
     }
 }
