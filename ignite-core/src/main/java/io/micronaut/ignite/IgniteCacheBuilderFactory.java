@@ -56,7 +56,9 @@ public class IgniteCacheBuilderFactory {
      */
     public IgniteCache getIgniteCache(AnnotationValue<IgniteCacheRef> annotationValue) {
         Optional<String> configurationId = annotationValue.stringValue(CACHE_CONFIGURATION);
-        Ignite ignite = beanContext.getBean(Ignite.class, Qualifiers.byName(annotationValue.stringValue(CACHE_CLIENT).orElse("default")));
+        String cacheName = annotationValue.stringValue(CACHE_CLIENT).orElse("default");
+        Ignite ignite = beanContext.findBean(Ignite.class, Qualifiers.byName(cacheName))
+            .orElseThrow(() -> new IllegalStateException("Failed to find bean" + cacheName));
         String name = annotationValue.stringValue(CACHE_NAME).orElseThrow(() -> new IllegalStateException("Missing value for cache"));
         if (configurationId.isPresent() && !configurationId.get().isEmpty()) {
             IgniteCacheConfiguration cacheConfiguration = beanContext.getBean(IgniteCacheConfiguration.class, Qualifiers.byName(configurationId.get()));
@@ -87,7 +89,9 @@ public class IgniteCacheBuilderFactory {
      */
     public ClientCache getIgniteClientCache(AnnotationValue<IgniteCacheRef> annotationValue) {
         Optional<String> configurationId = annotationValue.stringValue(CACHE_CONFIGURATION);
-        IgniteClient client = beanContext.getBean(IgniteClient.class, Qualifiers.byName(annotationValue.stringValue(CACHE_CLIENT).orElse("default")));
+        String cacheName = annotationValue.stringValue(CACHE_CLIENT).orElse("default");
+        IgniteClient client = beanContext.findBean(IgniteClient.class, Qualifiers.byName(cacheName))
+            .orElseThrow(() -> new IllegalStateException("Failed to find bean" + cacheName));
         String name = annotationValue.stringValue(CACHE_NAME).orElseThrow(() -> new IllegalStateException("Missing value for cache"));
         if (configurationId.isPresent() && !configurationId.get().isEmpty()) {
             IgniteThinCacheConfiguration thinCacheConfiguration = beanContext.getBean(IgniteThinCacheConfiguration.class, Qualifiers.byName(configurationId.get()));

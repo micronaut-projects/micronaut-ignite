@@ -2,6 +2,7 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.ignite.IgniteSampleCache
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.spock.Testcontainers
+import spock.lang.AutoCleanup
 import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
@@ -12,7 +13,7 @@ class IgniteCacheSpec extends Specification {
 
     final static String IGNITE_VERSION = System.getProperty("igniteVersion")
 
-    @Shared
+    @Shared @AutoCleanup
     GenericContainer ignite = new GenericContainer("apacheignite/ignite:${IGNITE_VERSION}")
         .withExposedPorts(47500, 47100)
 
@@ -26,6 +27,6 @@ class IgniteCacheSpec extends Specification {
         IgniteSampleCache instance = ctx.getBean(IgniteSampleCache.class)
         then:
         instance.cache1 != null
-
+        instance.cache2 != null
     }
 }
