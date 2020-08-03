@@ -19,23 +19,30 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.EachBean;
+import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.data.model.DataType;
 import io.micronaut.data.model.Page;
-import io.micronaut.data.model.query.builder.sql.SqlQueryBuilder;
 import io.micronaut.data.model.runtime.BatchOperation;
 import io.micronaut.data.model.runtime.InsertOperation;
 import io.micronaut.data.model.runtime.PagedQuery;
 import io.micronaut.data.model.runtime.PreparedQuery;
+import io.micronaut.data.model.runtime.RuntimePersistentEntity;
 import io.micronaut.data.model.runtime.UpdateOperation;
 import io.micronaut.data.operations.RepositoryOperations;
+import io.micronaut.data.runtime.mapper.DTOMapper;
+import io.micronaut.data.runtime.mapper.TypeMapper;
 import io.micronaut.ignite.annotation.IgniteCacheRef;
 import org.apache.ignite.IgniteCache;
+import org.apache.ignite.cache.query.FieldsQueryCursor;
 import org.apache.ignite.cache.query.SqlFieldsQuery;
 import org.apache.ignite.client.IgniteClient;
 
 import java.io.Serializable;
+import java.sql.ResultSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -43,33 +50,56 @@ import java.util.stream.Stream;
 public class IgniteRepositoryOperations implements RepositoryOperations {
     private final BeanContext beanContext;
     private final IgniteCacheFactory igniteCacheFactory;
-    public IgniteRepositoryOperations(BeanContext beanContext, IgniteCacheFactory igniteCacheFactory) {
+    private final IgniteClient igniteClient;
+    public IgniteRepositoryOperations(@Parameter IgniteClient igniteClient,
+                                      BeanContext beanContext, IgniteCacheFactory igniteCacheFactory) {
         this.beanContext = beanContext;
         this.igniteCacheFactory = igniteCacheFactory;
+        this.igniteClient = igniteClient;
     }
 
     @Nullable
     @Override
     public <T> T findOne(@NonNull Class<T> type, @NonNull Serializable id) {
-
-        return null;
+        throw new UnsupportedOperationException("The findOne method by ID is not supported. Execute the SQL query directly");
     }
+
 
     @Nullable
     @Override
     public <T, R> R findOne(@NonNull PreparedQuery<T, R> preparedQuery) {
+        IgniteCache<T, R> cache = getCache(preparedQuery);
+        SqlFieldsQuery fieldsQuery = this.prepareStatement(preparedQuery);
+        FieldsQueryCursor<List<?>> cursor = cache.query(fieldsQuery);
+        Iterator<List<?>> iterator = cursor.iterator();
+        while (iterator.hasNext()) {
+            List<?> row = iterator.next();
+            Class<R> resultType = preparedQuery.getResultType();
+            if (preparedQuery.getResultDataType() == DataType.ENTITY) {
 
-
-//        metadata.stringValue(IgniteKey.class,"value").orElseThrow(() -> new IllegalStateException("repository does not have @IgniteKey"));
-
-//        AnnotationValue<IgniteKey> keyAnnotationValue = preparedQuery.findAnnotation(IgniteKey.class).orElseThrow(() -> new IllegalStateException("repository does not have @IgniteKey"));
-
-//        preparedQuery.getAnnotationMetadata().getAnnotation()
-//        preparedQuery.getAnnotation()
+            } else {
+                if (preparedQuery.isDtoProjection()) {
+                    RuntimePersistentEntity<T> persistentEntity = getEntity(preparedQuery.getRootEntity());
+                    TypeMapper<ResultSet, R> introspectedDataMapper = new DTOMapper<>(
+                        persistentEntity,
+                        null,
+                        null
+                    );
+//                    return introspectedDataMapper.map(row, resultType);
+                }
+            }
+        }
         return null;
     }
 
-    public <T,R>SqlFieldsQuery prepareStatement(IgniteCache<T,R> cache, @NonNull PreparedQuery<T,R> preparedQuery) {
+    private <T, R> IgniteCache<T,R> getCache(@NonNull PreparedQuery<T, R> preparedQuery){
+        final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
+        AnnotationValue<IgniteCacheRef> cacheRef = annotationMetadata.findAnnotation(IgniteCacheRef.class).orElseThrow(() -> new IllegalStateException("can't Find @IgniteCacheRef: " + preparedQuery.toString()));
+        return igniteCacheFactory.getIgniteCache(cacheRef);
+    }
+
+
+    public <T,R>SqlFieldsQuery prepareStatement( @NonNull PreparedQuery<T,R> preparedQuery) {
         Object[] queryParameters = preparedQuery.getParameterArray();
         int[] parameterBinding = preparedQuery.getIndexedParameterBinding();
         DataType[] parameterTypes = preparedQuery.getIndexedParameterTypes();
@@ -84,7 +114,6 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
             args[i] = value;
         }
         fieldsQuery.setArgs(args);
-
         return fieldsQuery;
     }
 

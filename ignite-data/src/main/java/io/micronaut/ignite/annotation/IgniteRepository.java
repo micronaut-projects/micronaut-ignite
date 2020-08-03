@@ -28,6 +28,7 @@ public @interface IgniteRepository {
     @AliasFor(annotation = IgniteCacheRef.class, member = "value")
     String value() default "default";
 
+    @AliasFor(annotation = Repository.class, member = "value")
     @AliasFor(annotation = IgniteCacheRef.class, member = "client")
     String client() default "default";
 
