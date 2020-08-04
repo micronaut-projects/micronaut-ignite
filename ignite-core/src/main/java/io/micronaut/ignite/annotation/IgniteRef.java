@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 @Prototype
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
-public @interface IgniteCacheRef {
+public @interface IgniteRef {
 
     /**
      * Name of the cache instance.
@@ -43,10 +43,4 @@ public @interface IgniteCacheRef {
      */
     String client() default "default";
 
-    /**
-     * custom configuration used with ignite cache.
-     *
-     * @return name referred to cache
-     */
-    String configurationId() default "";
 }

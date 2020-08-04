@@ -20,13 +20,16 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.annotation.AnnotationValue;
-import io.micronaut.ignite.annotation.IgniteCacheRef;
+import io.micronaut.ignite.annotation.IgniteRef;
 import io.micronaut.ignite.configuration.IgniteCacheConfiguration;
 import io.micronaut.ignite.configuration.IgniteThinCacheConfiguration;
 import io.micronaut.inject.InjectionPoint;
 import io.micronaut.inject.qualifiers.Qualifiers;
+import io.micronaut.runtime.context.scope.ThreadLocal;
+import io.micronaut.runtime.http.scope.RequestScope;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
+import org.apache.ignite.IgniteDataStreamer;
 import org.apache.ignite.client.ClientCache;
 import org.apache.ignite.client.IgniteClient;
 
@@ -35,9 +38,8 @@ import java.util.Optional;
 @Factory
 public class IgniteCacheFactory {
 
-    public static final String CACHE_NAME = "value";
-    public static final String CACHE_CONFIGURATION = "configurationId";
-    public static final String CACHE_CLIENT = "client";
+    public static final String REF_NAME = "value";
+    public static final String REF_CLIENT = "client";
 
     private final BeanContext beanContext;
 
@@ -49,26 +51,21 @@ public class IgniteCacheFactory {
     }
 
     /**
-     * get instance of {@link IgniteCache} defined by {@link IgniteCacheRef}.
+     * get instance of {@link IgniteCache} defined by {@link IgniteRef}.
      *
      * @param annotationValue annotation value for ignite cache
      * @return An instance of the {@link ClientCache} from {@link Ignite}.
      */
-    public IgniteCache getIgniteCache(AnnotationValue<IgniteCacheRef> annotationValue) {
-        Optional<String> configurationId = annotationValue.stringValue(CACHE_CONFIGURATION);
-        String cacheName = annotationValue.stringValue(CACHE_CLIENT).orElse("default");
+    public IgniteCache getIgniteCache(AnnotationValue<IgniteRef> annotationValue) {
+        String cacheName = annotationValue.stringValue(REF_CLIENT).orElse("default");
         Ignite ignite = beanContext.findBean(Ignite.class, Qualifiers.byName(cacheName))
             .orElseThrow(() -> new IllegalStateException("Failed to find bean" + cacheName));
-        String name = annotationValue.stringValue(CACHE_NAME).orElseThrow(() -> new IllegalStateException("Missing value for cache"));
-        if (configurationId.isPresent() && !configurationId.get().isEmpty()) {
-            IgniteCacheConfiguration cacheConfiguration = beanContext.getBean(IgniteCacheConfiguration.class, Qualifiers.byName(configurationId.get()));
-            return ignite.getOrCreateCache(cacheConfiguration.getConfiguration(name));
-        }
-        return ignite.getOrCreateCache(name);
+        String name = annotationValue.stringValue(REF_NAME).orElseThrow(() -> new IllegalStateException("Missing value for cache"));
+        return ignite.cache(name);
     }
 
     /**
-     * Get {@link IgniteCache} from parameter annotated with {@link IgniteCacheRef}.
+     * Get {@link IgniteCache} from parameter annotated with {@link IgniteRef}.
      *
      * @param injectionPoint injection point for {@link IgniteCache}.
      * @return An instance of the {@link ClientCache} from {@link Ignite}.
@@ -76,32 +73,27 @@ public class IgniteCacheFactory {
     @Prototype
     public IgniteCache getIgniteCache(InjectionPoint<IgniteCache> injectionPoint) {
         AnnotationMetadata metadata = injectionPoint.getAnnotationMetadata();
-        AnnotationValue<IgniteCacheRef> igniteCache = metadata.findAnnotation(IgniteCacheRef.class)
+        AnnotationValue<IgniteRef> igniteCache = metadata.findAnnotation(IgniteRef.class)
             .orElseThrow(() -> new IllegalStateException("Requires @IgniteCache"));
         return getIgniteCache(igniteCache);
     }
 
     /**
-     * Get {@link ClientCache} from parameter annotated with {@link IgniteCacheRef}.
+     * Get {@link ClientCache} from parameter annotated with {@link IgniteRef}.
      *
      * @param annotationValue annotation value
      * @return An instance of the {@link ClientCache} from {@link IgniteClient}.
      */
-    public ClientCache getIgniteClientCache(AnnotationValue<IgniteCacheRef> annotationValue) {
-        Optional<String> configurationId = annotationValue.stringValue(CACHE_CONFIGURATION);
-        String cacheName = annotationValue.stringValue(CACHE_CLIENT).orElse("default");
+    public ClientCache getIgniteClientCache(AnnotationValue<IgniteRef> annotationValue) {
+        String cacheName = annotationValue.stringValue(REF_CLIENT).orElse("default");
         IgniteClient client = beanContext.findBean(IgniteClient.class, Qualifiers.byName(cacheName))
             .orElseThrow(() -> new IllegalStateException("Failed to find bean" + cacheName));
-        String name = annotationValue.stringValue(CACHE_NAME).orElseThrow(() -> new IllegalStateException("Missing value for cache"));
-        if (configurationId.isPresent() && !configurationId.get().isEmpty()) {
-            IgniteThinCacheConfiguration thinCacheConfiguration = beanContext.getBean(IgniteThinCacheConfiguration.class, Qualifiers.byName(configurationId.get()));
-            return client.getOrCreateCache(thinCacheConfiguration.getConfiguration(name));
-        }
-        return client.getOrCreateCache(name);
+        String name = annotationValue.stringValue(REF_NAME).orElseThrow(() -> new IllegalStateException("Missing value for cache"));
+        return client.cache(name);
     }
 
     /**
-     * Get {@link ClientCache} from parameter annotated with {@link IgniteCacheRef}.
+     * Get {@link ClientCache} from parameter annotated with {@link IgniteRef}.
      *
      * @param injectionPoint injection point for {@link ClientCache}.
      * @return An instance of the {@link ClientCache} from {@link IgniteClient}.
@@ -109,8 +101,25 @@ public class IgniteCacheFactory {
     @Prototype
     public ClientCache getIgniteClientCache(InjectionPoint<ClientCache> injectionPoint) {
         AnnotationMetadata metadata = injectionPoint.getAnnotationMetadata();
-        AnnotationValue<IgniteCacheRef> igniteCache = metadata.findAnnotation(IgniteCacheRef.class)
+        AnnotationValue<IgniteRef> igniteCache = metadata.findAnnotation(IgniteRef.class)
             .orElseThrow(() -> new IllegalStateException("Requires @IgniteCache"));
         return getIgniteClientCache(igniteCache);
+    }
+
+    public IgniteDataStreamer getIgniteDataStream(AnnotationValue<IgniteRef> annotationValue) {
+        String cacheName = annotationValue.stringValue(REF_CLIENT).orElse("default");
+        Ignite ignite = beanContext.findBean(Ignite.class, Qualifiers.byName(cacheName))
+            .orElseThrow(() -> new IllegalStateException("Failed to find bean" + cacheName));
+        String name = annotationValue.stringValue(REF_NAME).orElseThrow(() -> new IllegalStateException("Missing value for cache"));
+        return ignite.dataStreamer(name);
+
+    }
+
+    @RequestScope
+    public IgniteDataStreamer getIgniteDataStream(InjectionPoint<IgniteDataStreamer> injectionPoint) {
+        AnnotationMetadata metadata = injectionPoint.getAnnotationMetadata();
+        AnnotationValue<IgniteRef> igniteCache = metadata.findAnnotation(IgniteRef.class)
+            .orElseThrow(() -> new IllegalStateException("Requires @IgniteCache"));
+        return getIgniteDataStream(igniteCache);
     }
 }

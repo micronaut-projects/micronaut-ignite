@@ -22,16 +22,16 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Repository
-@IgniteCacheRef(value = "default")
+@IgniteRef(value = "default")
 public @interface IgniteRepository {
 
-    @AliasFor(annotation = IgniteCacheRef.class, member = "value")
+    @AliasFor(annotation = IgniteRef.class, member = "value")
     String value() default "default";
 
     @AliasFor(annotation = Repository.class, member = "value")
-    @AliasFor(annotation = IgniteCacheRef.class, member = "client")
+    @AliasFor(annotation = IgniteRef.class, member = "client")
     String client() default "default";
 
-    @AliasFor(annotation = IgniteCacheRef.class, member = "configurationId")
+    @AliasFor(annotation = IgniteRef.class, member = "configurationId")
     String configurationId() default "";
 }

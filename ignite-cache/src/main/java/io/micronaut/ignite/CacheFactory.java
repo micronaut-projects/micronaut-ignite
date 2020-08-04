@@ -17,13 +17,12 @@ package io.micronaut.ignite;
 
 import io.micronaut.cache.AsyncCache;
 import io.micronaut.cache.SyncCache;
-import io.micronaut.context.BeanContext;
 import io.micronaut.context.Qualifier;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.convert.ConversionService;
-import io.micronaut.ignite.annotation.IgniteCacheRef;
+import io.micronaut.ignite.annotation.IgniteRef;
 import io.micronaut.ignite.configuration.CacheConfiguration;
 import io.micronaut.ignite.configuration.IgniteThinCacheConfiguration;
 import io.micronaut.inject.qualifiers.Qualifiers;
@@ -44,20 +43,17 @@ import java.util.concurrent.ExecutorService;
  * @author Michael Pollind
  */
 @Factory
-public class IgniteCacheFactory {
+public class CacheFactory {
 
-    private final BeanContext beanContext;
-    private final IgniteCacheBuilderFactory cacheFactory;
+    private final IgniteCacheFactory cacheFactory;
     private Map<Qualifier<?>, CacheConfiguration> configurationMap = new HashMap<>();
 
-    public IgniteCacheFactory(BeanContext beanContext, IgniteCacheBuilderFactory cacheFactory, Collection<CacheConfiguration> cacheConfigurations) {
-        this.beanContext = beanContext;
+    public CacheFactory(IgniteCacheFactory cacheFactory, Collection<CacheConfiguration> cacheConfigurations) {
         this.cacheFactory = cacheFactory;
         for (CacheConfiguration configuration : cacheConfigurations) {
             configurationMap.put(Qualifiers.byName(configuration.getName()), configuration);
         }
     }
-
 
     /**
      * @param cacheConfiguration cache configuration
@@ -70,10 +66,9 @@ public class IgniteCacheFactory {
                                ConversionService<?> service,
                                @Named(TaskExecutors.IO) ExecutorService executorService) {
 
-        AnnotationValue<IgniteCacheRef> refAnnotationValue = AnnotationValue.builder(IgniteCacheRef.class)
-            .member(IgniteCacheBuilderFactory.CACHE_NAME, cacheConfiguration.getName())
-            .member(IgniteCacheBuilderFactory.CACHE_CLIENT, cacheConfiguration.getClient())
-            .member(IgniteCacheBuilderFactory.CACHE_CONFIGURATION, cacheConfiguration.getConfiguration().orElse(null))
+        AnnotationValue<IgniteRef> refAnnotationValue = AnnotationValue.builder(IgniteRef.class)
+            .member(IgniteCacheFactory.REF_NAME, cacheConfiguration.getName())
+            .member(IgniteCacheFactory.REF_CLIENT, cacheConfiguration.getClient())
             .build();
         switch (cacheConfiguration.getCacheType()) {
             case Thin:
@@ -97,10 +92,9 @@ public class IgniteCacheFactory {
                                     ConversionService<?> service,
                                     @Named(TaskExecutors.IO) ExecutorService executorService) {
 
-        AnnotationValue<IgniteCacheRef> refAnnotationValue = AnnotationValue.builder(IgniteCacheRef.class)
-            .member(IgniteCacheBuilderFactory.CACHE_NAME, cacheConfiguration.getName())
-            .member(IgniteCacheBuilderFactory.CACHE_CLIENT, cacheConfiguration.getClient())
-            .member(IgniteCacheBuilderFactory.CACHE_CONFIGURATION, cacheConfiguration.getConfiguration().orElse(null))
+        AnnotationValue<IgniteRef> refAnnotationValue = AnnotationValue.builder(IgniteRef.class)
+            .member(IgniteCacheFactory.REF_NAME, cacheConfiguration.getName())
+            .member(IgniteCacheFactory.REF_CLIENT, cacheConfiguration.getClient())
             .build();
         switch (cacheConfiguration.getCacheType()) {
             case Thin:

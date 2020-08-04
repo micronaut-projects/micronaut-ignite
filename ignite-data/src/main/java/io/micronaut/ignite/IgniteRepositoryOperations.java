@@ -22,40 +22,62 @@ import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.annotation.AnnotationValue;
+import io.micronaut.core.util.ArgumentUtils;
+import io.micronaut.core.util.CollectionUtils;
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.Query;
+import io.micronaut.data.model.Association;
 import io.micronaut.data.model.DataType;
 import io.micronaut.data.model.Page;
+import io.micronaut.data.model.PersistentProperty;
 import io.micronaut.data.model.runtime.BatchOperation;
 import io.micronaut.data.model.runtime.InsertOperation;
 import io.micronaut.data.model.runtime.PagedQuery;
 import io.micronaut.data.model.runtime.PreparedQuery;
 import io.micronaut.data.model.runtime.RuntimePersistentEntity;
+import io.micronaut.data.model.runtime.RuntimePersistentProperty;
 import io.micronaut.data.model.runtime.UpdateOperation;
 import io.micronaut.data.operations.RepositoryOperations;
-import io.micronaut.data.runtime.mapper.DTOMapper;
-import io.micronaut.data.runtime.mapper.TypeMapper;
-import io.micronaut.ignite.annotation.IgniteCacheRef;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.codec.MediaTypeCodec;
+import io.micronaut.ignite.annotation.IgniteRef;
+import io.micronaut.inject.annotation.AnnotationMetadataException;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.FieldsQueryCursor;
 import org.apache.ignite.cache.query.SqlFieldsQuery;
 import org.apache.ignite.client.IgniteClient;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.sql.ResultSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @EachBean(IgniteClient.class)
-public class IgniteRepositoryOperations implements RepositoryOperations {
+public class IgniteRepositoryOperations  implements RepositoryOperations {
     private final BeanContext beanContext;
     private final IgniteCacheFactory igniteCacheFactory;
     private final IgniteClient igniteClient;
+    private final Map<Class, RuntimePersistentEntity> entities = new ConcurrentHashMap<>(10);
+    private final CursorResultReader resultReader = new CursorResultReader();
+    protected final MediaTypeCodec jsonCodec;
+
     public IgniteRepositoryOperations(@Parameter IgniteClient igniteClient,
+                                      List<MediaTypeCodec> codecs,
                                       BeanContext beanContext, IgniteCacheFactory igniteCacheFactory) {
         this.beanContext = beanContext;
         this.igniteCacheFactory = igniteCacheFactory;
         this.igniteClient = igniteClient;
+        this.jsonCodec = resolveJsonCodec(codecs);
+    }
+
+    private MediaTypeCodec resolveJsonCodec(List<MediaTypeCodec> codecs) {
+        return CollectionUtils.isNotEmpty(codecs) ? codecs.stream().filter(c -> c.getMediaTypes().contains(MediaType.APPLICATION_JSON_TYPE)).findFirst().orElse(null) : null;
     }
 
     @Nullable
@@ -64,42 +86,57 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
         throw new UnsupportedOperationException("The findOne method by ID is not supported. Execute the SQL query directly");
     }
 
+    @NonNull
+    @Override
+    public <T> RuntimePersistentEntity<T> getEntity(@NonNull Class<T> type) {
+        ArgumentUtils.requireNonNull("type", type);
+        RuntimePersistentEntity<T> entity = entities.get(type);
+        if (entity == null) {
+            entity = new RuntimePersistentEntity<T>(type) {
+                @Override
+                protected RuntimePersistentEntity<T> getEntity(Class<T> type) {
+                    return IgniteRepositoryOperations.this.getEntity(type);
+                }
+            };
+            entities.put(type, entity);
+        }
+        return entity;
+    }
 
     @Nullable
     @Override
     public <T, R> R findOne(@NonNull PreparedQuery<T, R> preparedQuery) {
-        IgniteCache<T, R> cache = getCache(preparedQuery);
-        SqlFieldsQuery fieldsQuery = this.prepareStatement(preparedQuery);
-        FieldsQueryCursor<List<?>> cursor = cache.query(fieldsQuery);
-        Iterator<List<?>> iterator = cursor.iterator();
-        while (iterator.hasNext()) {
-            List<?> row = iterator.next();
-            Class<R> resultType = preparedQuery.getResultType();
-            if (preparedQuery.getResultDataType() == DataType.ENTITY) {
+        final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
+        IgniteCache<T, R> cache = getCache(annotationMetadata);
 
-            } else {
-                if (preparedQuery.isDtoProjection()) {
-                    RuntimePersistentEntity<T> persistentEntity = getEntity(preparedQuery.getRootEntity());
-                    TypeMapper<ResultSet, R> introspectedDataMapper = new DTOMapper<>(
-                        persistentEntity,
-                        null,
-                        null
-                    );
-//                    return introspectedDataMapper.map(row, resultType);
+        SqlFieldsQuery query = this.prepareStatement(preparedQuery);
+        Class<R> resultType = preparedQuery.getResultType();
+
+        try (FieldsQueryCursor<List<?>> queryCursor = cache.query(query)) {
+            for (List<?> item : queryCursor) {
+                if (preparedQuery.getResultDataType() == DataType.ENTITY) {
+                    throw new IllegalStateException("Entity mappings not supported");
+                } else {
+                    if (preparedQuery.isDtoProjection()) {
+                        RuntimePersistentEntity<T> persistentEntity = getEntity(preparedQuery.getRootEntity());
+                        IgniteDTOMapper<T, R> introspectedDataMapper = new IgniteDTOMapper<T, R>(persistentEntity, queryCursor, jsonCodec);
+                        return introspectedDataMapper.map(item, resultType);
+                    } else {
+                        return (R) item.get(0);
+                    }
                 }
             }
         }
         return null;
     }
 
-    private <T, R> IgniteCache<T,R> getCache(@NonNull PreparedQuery<T, R> preparedQuery){
-        final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
-        AnnotationValue<IgniteCacheRef> cacheRef = annotationMetadata.findAnnotation(IgniteCacheRef.class).orElseThrow(() -> new IllegalStateException("can't Find @IgniteCacheRef: " + preparedQuery.toString()));
+    private <T, R> IgniteCache<T, R> getCache(@NonNull AnnotationMetadata metadata) {
+        AnnotationValue<IgniteRef> cacheRef = metadata.findAnnotation(IgniteRef.class).orElseThrow(() -> new IllegalStateException("can't Find @IgniteCacheRef: " + metadata.toString()));
         return igniteCacheFactory.getIgniteCache(cacheRef);
     }
 
 
-    public <T,R>SqlFieldsQuery prepareStatement( @NonNull PreparedQuery<T,R> preparedQuery) {
+    public <T, R> SqlFieldsQuery prepareStatement(@NonNull PreparedQuery<T, R> preparedQuery) {
         Object[] queryParameters = preparedQuery.getParameterArray();
         int[] parameterBinding = preparedQuery.getIndexedParameterBinding();
         DataType[] parameterTypes = preparedQuery.getIndexedParameterTypes();
@@ -109,7 +146,6 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
         Object[] args = new Object[parameterBinding.length];
         for (int i = 0; i < parameterBinding.length; i++) {
             int parameterIndex = parameterBinding[i];
-            DataType dataType = parameterTypes[i];
             Object value = queryParameters[parameterIndex];
             args[i] = value;
         }
@@ -119,46 +155,100 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
 
     @Override
     public <T, R> boolean exists(@NonNull PreparedQuery<T, R> preparedQuery) {
-        return false;
+
+        final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
+        IgniteCache<T, R> cache = getCache(annotationMetadata);
+        String query = preparedQuery.getQuery();
+        SqlFieldsQuery fieldsQuery = new SqlFieldsQuery(query);
+        try (FieldsQueryCursor<List<?>> cursor = cache.query(fieldsQuery)) {
+            boolean hasNext = cursor.iterator().hasNext();
+            cursor.close();
+            return hasNext;
+        }
     }
+
 
     @NonNull
     @Override
     public <T> Iterable<T> findAll(@NonNull PagedQuery<T> query) {
-        return null;
+        throw new UnsupportedOperationException("The findAll method without an explicit query is not supported. Use findAll(PreparedQuery) instead");
     }
 
     @Override
     public <T> long count(PagedQuery<T> pagedQuery) {
-        return 0;
+        throw new UnsupportedOperationException("The findStream method without an explicit query is not supported. Use findStream(PreparedQuery) instead");
     }
 
     @NonNull
     @Override
     public <T, R> Iterable<R> findAll(@NonNull PreparedQuery<T, R> preparedQuery) {
-        return null;
+        return findStream(preparedQuery).collect(Collectors.toList());
     }
 
     @NonNull
     @Override
     public <T, R> Stream<R> findStream(@NonNull PreparedQuery<T, R> preparedQuery) {
-        return null;
+        final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
+        IgniteCache<T, R> cache = getCache(annotationMetadata);
+
+        Class<T> rootEntity = preparedQuery.getRootEntity();
+        Class<R> resultType = preparedQuery.getResultType();
+        SqlFieldsQuery query = this.prepareStatement(preparedQuery);
+        if (preparedQuery.isDtoProjection()) {
+            try (FieldsQueryCursor<List<?>> cursor = cache.query(query)) {
+                return StreamSupport.stream(cursor.spliterator(), false).map((item) -> {
+                    if (preparedQuery.isDtoProjection()) {
+                        RuntimePersistentEntity<T> persistentEntity = getEntity(preparedQuery.getRootEntity());
+                        IgniteDTOMapper<T, R> introspectedDataMapper = new IgniteDTOMapper<>(persistentEntity, cursor, jsonCodec);
+                        return introspectedDataMapper.map(item, resultType);
+                    } else {
+                        return (R) item.get(0);
+                    }
+                });
+            }
+        }
+        throw new IllegalStateException("Unsupported Entity");
     }
 
     @NonNull
     @Override
     public <T> Stream<T> findStream(@NonNull PagedQuery<T> query) {
-        return null;
+        throw new UnsupportedOperationException("The findStream method without an explicit query is not supported. Use findStream(PreparedQuery) instead");
     }
 
     @Override
     public <R> Page<R> findPage(@NonNull PagedQuery<R> query) {
-        return null;
+        throw new UnsupportedOperationException("The findStream method without an explicit query is not supported. Use findStream(PreparedQuery) instead");
     }
 
     @NonNull
     @Override
     public <T> T persist(@NonNull InsertOperation<T> operation) {
+
+        final Class<?> repositoryType = operation.getRepositoryType();
+        final AnnotationMetadata annotationMetadata = operation.getAnnotationMetadata();
+
+        String insertStatement = annotationMetadata.stringValue(Query.class).orElse(null);
+        if (insertStatement == null) {
+            throw new IllegalStateException("No insert statement present in repository. Ensure it extends GenericRepository and is annotated with @IgniteRepository");
+        }
+        RuntimePersistentEntity<T> persistentEntity = getEntity(operation.getRootEntity());
+        List<String> updateProperties = persistentEntity.getPersistentProperties()
+            .stream().filter(p ->
+                !((p instanceof Association) && ((Association) p).isForeignKey()) &&
+                    p.getAnnotationMetadata().booleanValue(AutoPopulated.class, "updateable").orElse(true)
+            )
+            .map(PersistentProperty::getName)
+            .collect(Collectors.toList());
+
+        SqlFieldsQuery query = new SqlFieldsQuery(insertStatement);
+//        Object[] args =
+        for (int i = 0; i < updateProperties.size(); i++) {
+            RuntimePersistentProperty property = persistentEntity.getPropertyByName(updateProperties.get(i));
+
+
+        }
+
         return null;
     }
 
@@ -177,6 +267,7 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
     @NonNull
     @Override
     public Optional<Number> executeUpdate(@NonNull PreparedQuery<?, Number> preparedQuery) {
+
         return Optional.empty();
     }
 

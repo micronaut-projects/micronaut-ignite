@@ -4,6 +4,7 @@ dependencies {
     annotationProcessor "io.micronaut.docs:micronaut-docs-asciidoc-config-props:$micronautDocsVersion"
 
     api "io.micronaut:micronaut-inject"
+    api "io.micronaut:micronaut-runtime"
     api "org.apache.ignite:ignite-core:$igniteVersion"
     api "org.apache.ignite:ignite-spring:$igniteVersion"
 

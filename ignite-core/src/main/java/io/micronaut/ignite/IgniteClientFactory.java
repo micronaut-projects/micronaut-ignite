@@ -24,10 +24,13 @@ import io.micronaut.ignite.configuration.IgniteAbstractConfiguration;
 import io.micronaut.ignite.configuration.IgniteClientConfiguration;
 import io.micronaut.ignite.configuration.IgniteThinClientConfiguration;
 import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteSpringBean;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.client.IgniteClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import javax.inject.Singleton;
 import java.net.URL;
@@ -69,6 +72,7 @@ public class IgniteClientFactory implements AutoCloseable {
             LOG.error("Failed to instantiate Ignite: " + e.getMessage(), e);
             throw e;
         }
+
     }
 
     /**
