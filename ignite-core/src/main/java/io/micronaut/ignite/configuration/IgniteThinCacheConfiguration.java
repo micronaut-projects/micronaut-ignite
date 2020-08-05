@@ -15,26 +15,30 @@
  */
 package io.micronaut.ignite.configuration;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
+import io.micronaut.core.naming.Named;
 import org.apache.ignite.client.ClientCacheConfiguration;
 
 /**
  * Ignite cache configuration.
  */
 @EachProperty(value = IgniteThinCacheConfiguration.PREFIX, primary = "default")
-public class IgniteThinCacheConfiguration extends IgniteAbstractCacheConfiguration {
-    public static final String PREFIX = IgniteAbstractConfiguration.PREFIX + "." + "thin-client-caches";
+public class IgniteThinCacheConfiguration implements Named {
+    public static final String PREFIX = IgniteThinClientConfiguration.PREFIX + "." + "caches";
 
     @ConfigurationBuilder(excludes = {"name", "keyConfiguration", "queryEntities"})
     private final ClientCacheConfiguration configuration = new ClientCacheConfiguration();
+    private final String name;
+
 
     /**
      * @param name Name or key for client.
      */
     public IgniteThinCacheConfiguration(@Parameter String name) {
-        super(name);
+        this.name = name;
     }
 
     /**
@@ -54,5 +58,11 @@ public class IgniteThinCacheConfiguration extends IgniteAbstractCacheConfigurati
      */
     public ClientCacheConfiguration getConfiguration(String name) {
         return configuration.setName(name);
+    }
+
+    @NonNull
+    @Override
+    public String getName() {
+        return name;
     }
 }

@@ -21,7 +21,6 @@ import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.annotation.AnnotationMetadata;
-import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.util.ArgumentUtils;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -40,16 +39,12 @@ import io.micronaut.data.model.runtime.UpdateOperation;
 import io.micronaut.data.operations.RepositoryOperations;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.codec.MediaTypeCodec;
-import io.micronaut.ignite.annotation.IgniteRef;
-import io.micronaut.inject.annotation.AnnotationMetadataException;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.FieldsQueryCursor;
 import org.apache.ignite.cache.query.SqlFieldsQuery;
 import org.apache.ignite.client.IgniteClient;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,7 +56,7 @@ import java.util.stream.StreamSupport;
 @EachBean(IgniteClient.class)
 public class IgniteRepositoryOperations  implements RepositoryOperations {
     private final BeanContext beanContext;
-    private final IgniteCacheFactory igniteCacheFactory;
+    private final IgniteFactory igniteFactory;
     private final IgniteClient igniteClient;
     private final Map<Class, RuntimePersistentEntity> entities = new ConcurrentHashMap<>(10);
     private final CursorResultReader resultReader = new CursorResultReader();
@@ -69,9 +64,9 @@ public class IgniteRepositoryOperations  implements RepositoryOperations {
 
     public IgniteRepositoryOperations(@Parameter IgniteClient igniteClient,
                                       List<MediaTypeCodec> codecs,
-                                      BeanContext beanContext, IgniteCacheFactory igniteCacheFactory) {
+                                      BeanContext beanContext, IgniteFactory igniteFactory) {
         this.beanContext = beanContext;
-        this.igniteCacheFactory = igniteCacheFactory;
+        this.igniteFactory = igniteFactory;
         this.igniteClient = igniteClient;
         this.jsonCodec = resolveJsonCodec(codecs);
     }
@@ -107,7 +102,7 @@ public class IgniteRepositoryOperations  implements RepositoryOperations {
     @Override
     public <T, R> R findOne(@NonNull PreparedQuery<T, R> preparedQuery) {
         final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
-        IgniteCache<T, R> cache = getCache(annotationMetadata);
+        IgniteCache<T, R> cache = igniteFactory.resolveIgniteCache(annotationMetadata);
 
         SqlFieldsQuery query = this.prepareStatement(preparedQuery);
         Class<R> resultType = preparedQuery.getResultType();
@@ -130,10 +125,10 @@ public class IgniteRepositoryOperations  implements RepositoryOperations {
         return null;
     }
 
-    private <T, R> IgniteCache<T, R> getCache(@NonNull AnnotationMetadata metadata) {
-        AnnotationValue<IgniteRef> cacheRef = metadata.findAnnotation(IgniteRef.class).orElseThrow(() -> new IllegalStateException("can't Find @IgniteCacheRef: " + metadata.toString()));
-        return igniteCacheFactory.getIgniteCache(cacheRef);
-    }
+//    private <T, R> IgniteCache<T, R> getCache(@NonNull AnnotationMetadata metadata) {
+//        AnnotationValue<IgniteRef> cacheRef = metadata.findAnnotation(IgniteRef.class).orElseThrow(() -> new IllegalStateException("can't Find @IgniteCacheRef: " + metadata.toString()));
+//        return igniteCacheFactory.getIgniteCache(cacheRef);
+//    }
 
 
     public <T, R> SqlFieldsQuery prepareStatement(@NonNull PreparedQuery<T, R> preparedQuery) {
@@ -157,7 +152,7 @@ public class IgniteRepositoryOperations  implements RepositoryOperations {
     public <T, R> boolean exists(@NonNull PreparedQuery<T, R> preparedQuery) {
 
         final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
-        IgniteCache<T, R> cache = getCache(annotationMetadata);
+        IgniteCache<T, R> cache = igniteFactory.resolveIgniteCache(annotationMetadata);
         String query = preparedQuery.getQuery();
         SqlFieldsQuery fieldsQuery = new SqlFieldsQuery(query);
         try (FieldsQueryCursor<List<?>> cursor = cache.query(fieldsQuery)) {
@@ -189,7 +184,7 @@ public class IgniteRepositoryOperations  implements RepositoryOperations {
     @Override
     public <T, R> Stream<R> findStream(@NonNull PreparedQuery<T, R> preparedQuery) {
         final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
-        IgniteCache<T, R> cache = getCache(annotationMetadata);
+        IgniteCache<T, R> cache = igniteFactory.resolveIgniteCache(annotationMetadata);
 
         Class<T> rootEntity = preparedQuery.getRootEntity();
         Class<R> resultType = preparedQuery.getResultType();

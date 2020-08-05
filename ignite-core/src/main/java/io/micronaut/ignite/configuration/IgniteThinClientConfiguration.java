@@ -16,6 +16,7 @@
 package io.micronaut.ignite.configuration;
 
 import io.micronaut.context.annotation.ConfigurationBuilder;
+import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.naming.Named;
@@ -29,9 +30,9 @@ import javax.annotation.Nonnull;
  *
  * @author Michael Pollind
  */
-@EachProperty(value = IgniteThinClientConfiguration.PREFIX, primary = "default")
-public class IgniteThinClientConfiguration extends IgniteAbstractConfiguration implements Named {
-    public static final String PREFIX = IgniteAbstractConfiguration.PREFIX + "." + "thin-clients";
+@EachProperty(value = IgniteThinClientConfiguration.PREFIX + ".clients", primary = "default")
+public class IgniteThinClientConfiguration implements Named {
+    public static final String PREFIX = "ignite-thin";
 
     private final String name;
 

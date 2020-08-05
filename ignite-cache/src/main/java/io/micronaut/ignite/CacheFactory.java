@@ -17,23 +17,15 @@ package io.micronaut.ignite;
 
 import io.micronaut.cache.AsyncCache;
 import io.micronaut.cache.SyncCache;
-import io.micronaut.context.Qualifier;
-import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.core.annotation.AnnotationValue;
+import io.micronaut.context.annotation.Prototype;
+import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.convert.ConversionService;
-import io.micronaut.ignite.annotation.IgniteRef;
-import io.micronaut.ignite.configuration.CacheConfiguration;
-import io.micronaut.ignite.configuration.IgniteThinCacheConfiguration;
-import io.micronaut.inject.qualifiers.Qualifiers;
+import io.micronaut.inject.InjectionPoint;
 import io.micronaut.scheduling.TaskExecutors;
-import org.apache.ignite.IgniteCache;
 import org.apache.ignite.client.ClientCache;
 
 import javax.inject.Named;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 
@@ -44,66 +36,41 @@ import java.util.concurrent.ExecutorService;
  */
 @Factory
 public class CacheFactory {
+    @Prototype
+    public IgniteSyncCache igniteSyncCache(InjectionPoint<?> injectionPoint,
+                                           IgniteFactory igniteFactory,
+                                           ConversionService<?> service,
+                                           @Named(TaskExecutors.IO) ExecutorService executorService) {
 
-    private final IgniteCacheFactory cacheFactory;
-    private Map<Qualifier<?>, CacheConfiguration> configurationMap = new HashMap<>();
-
-    public CacheFactory(IgniteCacheFactory cacheFactory, Collection<CacheConfiguration> cacheConfigurations) {
-        this.cacheFactory = cacheFactory;
-        for (CacheConfiguration configuration : cacheConfigurations) {
-            configurationMap.put(Qualifiers.byName(configuration.getName()), configuration);
-        }
+        AnnotationMetadata annotationMetadata = injectionPoint.getAnnotationMetadata();
+        return new IgniteSyncCache(service, igniteFactory.resolveIgniteCache(annotationMetadata), executorService);
     }
 
-    /**
-     * @param cacheConfiguration cache configuration
-     * @param service            the conversion service
-     * @param executorService    the executor
-     * @return sync cache
-     */
-    @EachBean(CacheConfiguration.class)
-    public SyncCache syncCache(CacheConfiguration cacheConfiguration,
-                               ConversionService<?> service,
-                               @Named(TaskExecutors.IO) ExecutorService executorService) {
+    @Prototype
+    public IgniteAsyncCache igniteAsyncCache(InjectionPoint<?> injectionPoint,
+                                             IgniteFactory igniteFactory,
+                                             ConversionService<?> service,
+                                             @Named(TaskExecutors.IO) ExecutorService executorService) {
 
-        AnnotationValue<IgniteRef> refAnnotationValue = AnnotationValue.builder(IgniteRef.class)
-            .member(IgniteCacheFactory.REF_NAME, cacheConfiguration.getName())
-            .member(IgniteCacheFactory.REF_CLIENT, cacheConfiguration.getClient())
-            .build();
-        switch (cacheConfiguration.getCacheType()) {
-            case Thin:
-                ClientCache clientCache = cacheFactory.getIgniteClientCache(refAnnotationValue);
-                return new IgniteThinSyncCache(service, executorService, clientCache);
-            case Default:
-            default:
-                IgniteCache igniteCache = cacheFactory.getIgniteCache(refAnnotationValue);
-                return new IgniteSyncCache(service, igniteCache, executorService);
-        }
+        AnnotationMetadata annotationMetadata = injectionPoint.getAnnotationMetadata();
+        return new IgniteAsyncCache(service, igniteFactory.resolveIgniteCache(annotationMetadata), executorService);
     }
 
-    /**
-     * @param cacheConfiguration cache configuration
-     * @param service            the conversion service
-     * @param executorService    the executor
-     * @return sync cache
-     */
-    @EachBean(IgniteThinCacheConfiguration.class)
-    public AsyncCache syncCacheThin(CacheConfiguration cacheConfiguration,
-                                    ConversionService<?> service,
-                                    @Named(TaskExecutors.IO) ExecutorService executorService) {
+    @Prototype
+    public IgniteThinSyncCache igniteThinSyncCache(InjectionPoint<?> injectionPoint,
+                                                   IgniteThinClientFactory igniteThinClientFactory,
+                                                   ConversionService<?> service,
+                                                   @Named(TaskExecutors.IO) ExecutorService executorService) {
+        AnnotationMetadata annotationMetadata = injectionPoint.getAnnotationMetadata();
+        return new IgniteThinSyncCache(service, executorService, igniteThinClientFactory.resolveClientCache(annotationMetadata));
+    }
 
-        AnnotationValue<IgniteRef> refAnnotationValue = AnnotationValue.builder(IgniteRef.class)
-            .member(IgniteCacheFactory.REF_NAME, cacheConfiguration.getName())
-            .member(IgniteCacheFactory.REF_CLIENT, cacheConfiguration.getClient())
-            .build();
-        switch (cacheConfiguration.getCacheType()) {
-            case Thin:
-                ClientCache clientCache = cacheFactory.getIgniteClientCache(refAnnotationValue);
-                return new IgniteThinSyncCache(service, executorService, clientCache).async();
-            case Default:
-            default:
-                IgniteCache igniteCache = cacheFactory.getIgniteCache(refAnnotationValue);
-                return new IgniteAsyncCache(service, igniteCache, executorService);
-        }
+    @Prototype
+    public AsyncCache<ClientCache> igniteThinAsyncCache(InjectionPoint<?> injectionPoint,
+                                                        IgniteThinClientFactory igniteThinClientFactory,
+                                                        ConversionService<?> service,
+                                                        @Named(TaskExecutors.IO) ExecutorService executorService) {
+        AnnotationMetadata annotationMetadata = injectionPoint.getAnnotationMetadata();
+        return new IgniteThinSyncCache(service, executorService, igniteThinClientFactory.resolveClientCache(annotationMetadata)).async();
     }
 }

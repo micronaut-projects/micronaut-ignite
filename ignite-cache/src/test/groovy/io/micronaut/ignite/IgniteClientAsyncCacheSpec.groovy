@@ -22,7 +22,7 @@ class IgniteClientAsyncCacheSpec extends AbstractAsyncCacheSpec {
     ApplicationContext createApplicationContext() {
         return ApplicationContext.run([
             "ignite.enabled"                   : true,
-            "ignite.clients.default.path"      : "classpath:example/standard.cfg",
+            "ignite.clients.default.path"      : "classpath:standard.cfg",
             "ignite.caches.counter.cache-type" : "Default",
             "ignite.caches.counter2.cache-type": "Default",
             "ignite.caches.test.cache-type"    : "Default"
