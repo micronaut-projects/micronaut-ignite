@@ -21,7 +21,7 @@ class IgniteCacheSpec extends Specification {
         given:
         ApplicationContext ctx = ApplicationContext.run([
             "ignite.enabled"             : true,
-            "ignite.path": "standard.cfg",
+            "ignite.clients.default.path": "classpath:standard.cfg",
         ])
         when:
         IgniteSampleCache instance = ctx.getBean(IgniteSampleCache.class)

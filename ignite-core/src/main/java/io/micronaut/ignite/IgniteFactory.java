@@ -1,3 +1,18 @@
+/*
+ * Copyright 2017-2020 original authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.micronaut.ignite;
 
 import io.micronaut.context.BeanContext;
@@ -18,7 +33,6 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteDataStreamer;
 import org.apache.ignite.Ignition;
-import org.apache.ignite.client.ClientCache;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +41,9 @@ import javax.inject.Singleton;
 import java.net.URL;
 import java.util.Optional;
 
+/**
+ * Factory for the default implementation of {@link Ignite}.
+ */
 @Factory
 @Requires(property = IgniteClientConfiguration.PREFIX + ".enabled", value = "true", defaultValue = "false")
 public class IgniteFactory implements AutoCloseable {
@@ -35,11 +52,23 @@ public class IgniteFactory implements AutoCloseable {
     private final ResourceResolver resourceResolver;
     private final BeanContext beanContext;
 
+    /**
+     * Default constructor.
+     *
+     * @param resourceResolver The resource resolver
+     * @param beanContext      The bean context
+     */
     public IgniteFactory(ResourceResolver resourceResolver, BeanContext beanContext) {
         this.resourceResolver = resourceResolver;
         this.beanContext = beanContext;
     }
 
+    /**
+     * Create {@link Ignite} instance from {@link IgniteClientConfiguration}.
+     *
+     * @param configuration ignite configuration
+     * @return create ignite instance
+     */
     @Singleton
     @EachBean(IgniteClientConfiguration.class)
     @Bean(preDestroy = "close")
@@ -57,6 +86,12 @@ public class IgniteFactory implements AutoCloseable {
     }
 
 
+    /**
+     * Create {@link Ignite} instance from {@link IgniteConfiguration}.
+     *
+     * @param configuration ignite configuration
+     * @return create ignite instance
+     */
     @Singleton
     @EachBean(IgniteConfiguration.class)
     @Bean(preDestroy = "close")
@@ -70,19 +105,29 @@ public class IgniteFactory implements AutoCloseable {
     }
 
     /**
-     * Get {@link IgniteCache} from parameter annotated with {@link IgniteRef}.
+     * Create {@link IgniteCache} from the given injection point.
      *
-     * @param injectionPoint injection point for {@link IgniteCache}.
-     * @return An instance of the {@link ClientCache} from {@link Ignite}.
+     * @param injectionPoint The injection point
+     * @param <K> the key
+     * @param <V> the value
+     * @return ignite cache
      */
     @Prototype
     @Bean
-    protected IgniteCache igniteCache(InjectionPoint<?> injectionPoint) {
+    protected <K, V> IgniteCache<K, V> igniteCache(InjectionPoint<?> injectionPoint) {
         AnnotationMetadata metadata = injectionPoint.getAnnotationMetadata();
         return resolveIgniteCache(metadata);
     }
 
-    public IgniteCache resolveIgniteCache(AnnotationMetadata metadata) {
+    /**
+     * Create {@link IgniteCache} from metadata.
+     *
+     * @param metadata annotation metadata
+     * @param <K>      key
+     * @param <V>      value
+     * @return The cache
+     */
+    public <K, V> IgniteCache<K, V> resolveIgniteCache(AnnotationMetadata metadata) {
         AnnotationValue<IgniteRef> igniteCache = metadata.findAnnotation(IgniteRef.class)
             .orElseThrow(() -> new IllegalStateException("Requires @IgniteCache"));
         String client = igniteCache.stringValue("client").orElse("default");
@@ -92,14 +137,30 @@ public class IgniteFactory implements AutoCloseable {
         return ignite.getOrCreateCache(name);
     }
 
+    /**
+     * Create {@link IgniteDataStreamer} from the given injection point.
+     *
+     * @param injectionPoint The injection point
+     * @param <K>            key
+     * @param <V>            value
+     * @return The data streamer
+     */
     @RequestScope
     @Bean
-    public IgniteDataStreamer igniteDataStreamer(InjectionPoint<?> injectionPoint) {
+    public <K, V> IgniteDataStreamer<K, V> igniteDataStreamer(InjectionPoint<?> injectionPoint) {
         AnnotationMetadata metadata = injectionPoint.getAnnotationMetadata();
         return resolveDataStream(metadata);
     }
 
-    public IgniteDataStreamer resolveDataStream(AnnotationMetadata metadata) {
+    /**
+     * resolve {@link IgniteDataStreamer}.
+     *
+     * @param metadata annotation metadata
+     * @param <K> the key
+     * @param <V> the value
+     * @return The data streamer
+     */
+    public <K, V> IgniteDataStreamer<K, V> resolveDataStream(AnnotationMetadata metadata) {
         AnnotationValue<IgniteRef> igniteCache = metadata.findAnnotation(IgniteRef.class)
             .orElseThrow(() -> new IllegalStateException("Requires @IgniteCache"));
         String client = igniteCache.stringValue("client").orElse("default");

@@ -36,11 +36,19 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
+/**
+ * Interceptor implementation for the {@link IgniteTransaction} annotation.
+ */
 @Singleton
 public class IgniteTransactionInterceptor implements MethodInterceptor<Object,Object> {
     private static final Logger LOG = LoggerFactory.getLogger(IgniteTransactionInterceptor.class);
     private BeanContext beanContext;
 
+    /**
+     * Default constructor.
+     *
+     * @param beanContext the bean context
+     */
     public IgniteTransactionInterceptor(BeanContext beanContext) {
         this.beanContext = beanContext;
     }
