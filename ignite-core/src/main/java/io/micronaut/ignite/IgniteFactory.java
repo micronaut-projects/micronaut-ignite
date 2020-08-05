@@ -87,9 +87,9 @@ public class IgniteFactory implements AutoCloseable {
             .orElseThrow(() -> new IllegalStateException("Requires @IgniteCache"));
         String client = igniteCache.stringValue("client").orElse("default");
         String name = igniteCache.stringValue("value").orElseThrow(() -> new IllegalStateException("Missing value for cache"));
-        Ignite ignite = beanContext.findBean(Ignite.class, Qualifiers.byName(client))
-            .orElseThrow(() -> new IllegalStateException("Failed to find bean" + client));
-        return ignite.cache(name);
+        Ignite ignite = beanContext.getBean(Ignite.class, Qualifiers.byName(client));
+
+        return ignite.getOrCreateCache(name);
     }
 
     @RequestScope
@@ -104,11 +104,9 @@ public class IgniteFactory implements AutoCloseable {
             .orElseThrow(() -> new IllegalStateException("Requires @IgniteCache"));
         String client = igniteCache.stringValue("client").orElse("default");
         String name = igniteCache.stringValue("value").orElseThrow(() -> new IllegalStateException("Missing value for cache"));
-        Ignite ignite = beanContext.findBean(Ignite.class, Qualifiers.byName(client))
-            .orElseThrow(() -> new IllegalStateException("Failed to find bean" + client));
+        Ignite ignite = beanContext.getBean(Ignite.class, Qualifiers.byName(client));
         return ignite.dataStreamer(name);
     }
-
 
     @Override
     public void close() throws Exception {
