@@ -19,4 +19,5 @@ dependencies {
     }
     testImplementation "io.micronaut.test:micronaut-test-spock:$micronautTestVersion"
     testImplementation "org.testcontainers:spock:1.14.3"
+    testImplementation "io.micronaut.data:micronaut-data-tck"
 }

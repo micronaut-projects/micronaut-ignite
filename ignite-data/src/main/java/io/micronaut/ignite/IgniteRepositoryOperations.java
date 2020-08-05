@@ -53,13 +53,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/**
+ * Implementation of the {@link RepositoryOperations} interface for Ignite.
+ */
 @EachBean(IgniteClient.class)
-public class IgniteRepositoryOperations  implements RepositoryOperations {
+public class IgniteRepositoryOperations implements RepositoryOperations {
     private final BeanContext beanContext;
     private final IgniteFactory igniteFactory;
     private final IgniteClient igniteClient;
     private final Map<Class, RuntimePersistentEntity> entities = new ConcurrentHashMap<>(10);
-    private final CursorResultReader resultReader = new CursorResultReader();
     protected final MediaTypeCodec jsonCodec;
 
     public IgniteRepositoryOperations(@Parameter IgniteClient igniteClient,
@@ -125,12 +127,6 @@ public class IgniteRepositoryOperations  implements RepositoryOperations {
         return null;
     }
 
-//    private <T, R> IgniteCache<T, R> getCache(@NonNull AnnotationMetadata metadata) {
-//        AnnotationValue<IgniteRef> cacheRef = metadata.findAnnotation(IgniteRef.class).orElseThrow(() -> new IllegalStateException("can't Find @IgniteCacheRef: " + metadata.toString()));
-//        return igniteCacheFactory.getIgniteCache(cacheRef);
-//    }
-
-
     public <T, R> SqlFieldsQuery prepareStatement(@NonNull PreparedQuery<T, R> preparedQuery) {
         Object[] queryParameters = preparedQuery.getParameterArray();
         int[] parameterBinding = preparedQuery.getIndexedParameterBinding();
@@ -166,6 +162,7 @@ public class IgniteRepositoryOperations  implements RepositoryOperations {
     @NonNull
     @Override
     public <T> Iterable<T> findAll(@NonNull PagedQuery<T> query) {
+
         throw new UnsupportedOperationException("The findAll method without an explicit query is not supported. Use findAll(PreparedQuery) instead");
     }
 

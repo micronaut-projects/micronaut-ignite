@@ -23,8 +23,10 @@ class IgniteCacheSpec extends Specification {
             "ignite.enabled"             : true,
             "ignite.clients.default.path": "classpath:standard.cfg",
         ])
+
         when:
         IgniteSampleCache instance = ctx.getBean(IgniteSampleCache.class)
+
         then:
         instance.cache1 != null
         instance.cache2 != null
