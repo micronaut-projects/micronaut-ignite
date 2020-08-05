@@ -4,7 +4,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.cache.DynamicCacheManager;
 import io.micronaut.cache.SyncCache;
 import io.micronaut.context.annotation.Primary;
-import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.scheduling.TaskExecutors;
 import org.apache.ignite.Ignite;
@@ -15,7 +14,6 @@ import javax.inject.Singleton;
 import java.util.concurrent.ExecutorService;
 
 @Singleton
-@Requires(beans = {Ignite.class})
 public class IgniteCacheManager implements DynamicCacheManager<IgniteCache> {
     private final Ignite ignite;
     private final ConversionService<?> service;
@@ -32,6 +30,6 @@ public class IgniteCacheManager implements DynamicCacheManager<IgniteCache> {
     @NonNull
     @Override
     public SyncCache<IgniteCache> getCache(String name) {
-        return new IgniteSyncCache(service, ignite.cache(name), executorService);
+        return new IgniteSyncCache(service, ignite.getOrCreateCache(name), executorService);
     }
 }

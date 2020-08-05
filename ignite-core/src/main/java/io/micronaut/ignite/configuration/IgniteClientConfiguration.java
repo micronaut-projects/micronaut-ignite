@@ -1,14 +1,14 @@
 package io.micronaut.ignite.configuration;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.naming.Named;
 
 /**
  * Ignite cache configuration.
  */
-@ConfigurationProperties(value = IgniteClientConfiguration.PREFIX)
+@EachProperty(value = IgniteClientConfiguration.PREFIX + ".clients", primary = "default")
 public class IgniteClientConfiguration implements Named {
     public static final String PREFIX = "ignite";
 

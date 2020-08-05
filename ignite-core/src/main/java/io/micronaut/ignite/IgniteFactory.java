@@ -42,6 +42,7 @@ public class IgniteFactory implements AutoCloseable {
 
     @Singleton
     @EachBean(IgniteClientConfiguration.class)
+    @Bean(preDestroy = "close")
     public Ignite ignite(IgniteClientConfiguration configuration) {
         try {
             Optional<URL> template = resourceResolver.getResource(configuration.getPath());
@@ -55,8 +56,10 @@ public class IgniteFactory implements AutoCloseable {
         }
     }
 
+
     @Singleton
     @EachBean(IgniteConfiguration.class)
+    @Bean(preDestroy = "close")
     public Ignite ignite(IgniteConfiguration configuration) {
         try {
             return Ignition.start(configuration);
@@ -65,7 +68,6 @@ public class IgniteFactory implements AutoCloseable {
             throw e;
         }
     }
-
 
     /**
      * Get {@link IgniteCache} from parameter annotated with {@link IgniteRef}.
