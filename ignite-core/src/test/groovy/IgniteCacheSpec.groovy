@@ -17,7 +17,7 @@ class IgniteCacheSpec extends Specification {
     GenericContainer ignite = new GenericContainer("apacheignite/ignite:${IGNITE_VERSION}")
         .withExposedPorts(47500, 47100)
 
-    void "test ignite inject cache"() {
+    def "test ignite inject cache"() {
         given:
         ApplicationContext ctx = ApplicationContext.run([
             "ignite.enabled"             : true,
@@ -28,5 +28,9 @@ class IgniteCacheSpec extends Specification {
         then:
         instance.cache1 != null
         instance.cache2 != null
+
+        cleanup:
+        ctx.close()
     }
+
 }
