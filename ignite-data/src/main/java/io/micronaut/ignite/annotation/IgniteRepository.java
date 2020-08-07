@@ -18,6 +18,7 @@ package io.micronaut.ignite.annotation;
 import io.micronaut.context.annotation.AliasFor;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.annotation.RepositoryConfiguration;
+import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.model.query.builder.sql.SqlQueryBuilder;
 import io.micronaut.ignite.IgniteRepositoryOperations;
 
@@ -39,6 +40,11 @@ import java.lang.annotation.Target;
 @Repository
 @IgniteRef(value = "default")
 public @interface IgniteRepository {
+    /**
+     * @return The dialect to use.
+     */
+    @AliasFor(annotation = Repository.class, member = "dialect")
+    Dialect dialect() default Dialect.H2;
 
     @AliasFor(annotation = IgniteRef.class, member = "value")
     String value();

@@ -39,6 +39,7 @@ import io.micronaut.data.model.runtime.UpdateOperation;
 import io.micronaut.data.operations.RepositoryOperations;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.codec.MediaTypeCodec;
+import io.micronaut.ignite.config.IgniteDataConfiguration;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.FieldsQueryCursor;
 import org.apache.ignite.cache.query.SqlFieldsQuery;
@@ -56,20 +57,19 @@ import java.util.stream.StreamSupport;
 /**
  * Implementation of the {@link RepositoryOperations} interface for Ignite.
  */
-@EachBean(IgniteClient.class)
+@EachBean(IgniteDataConfiguration.class)
 public class IgniteRepositoryOperations implements RepositoryOperations {
     private final BeanContext beanContext;
     private final IgniteFactory igniteFactory;
-    private final IgniteClient igniteClient;
     private final Map<Class, RuntimePersistentEntity> entities = new ConcurrentHashMap<>(10);
     protected final MediaTypeCodec jsonCodec;
 
-    public IgniteRepositoryOperations(@Parameter IgniteClient igniteClient,
+    public IgniteRepositoryOperations(IgniteDataConfiguration configuration,
                                       List<MediaTypeCodec> codecs,
                                       BeanContext beanContext, IgniteFactory igniteFactory) {
+
         this.beanContext = beanContext;
         this.igniteFactory = igniteFactory;
-        this.igniteClient = igniteClient;
         this.jsonCodec = resolveJsonCodec(codecs);
     }
 
