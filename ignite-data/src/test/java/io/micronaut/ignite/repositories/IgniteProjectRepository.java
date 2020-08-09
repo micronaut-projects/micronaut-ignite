@@ -15,9 +15,13 @@
  */
 package io.micronaut.ignite.repositories;
 
+import io.micronaut.data.tck.jdbc.entities.ProjectId;
 import io.micronaut.data.tck.repositories.ProjectRepository;
 import io.micronaut.ignite.annotation.IgniteRepository;
 
 @IgniteRepository(value = "default")
 public interface IgniteProjectRepository extends ProjectRepository {
+
+    @Override
+    void update(ProjectId projectId, String name);
 }

@@ -24,6 +24,5 @@ import io.micronaut.ignite.annotation.IgniteRepository;
 
 @IgniteRepository(value = "default")
 public interface IgniteCompanyRepository extends CompanyRepository {
-
 }
 

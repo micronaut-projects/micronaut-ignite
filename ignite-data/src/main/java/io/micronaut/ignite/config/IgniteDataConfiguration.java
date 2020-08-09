@@ -21,7 +21,6 @@ import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.naming.Named;
 import io.micronaut.data.runtime.config.SchemaGenerate;
 import io.micronaut.ignite.configuration.IgniteClientConfiguration;
-import jdk.internal.joptsimple.internal.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,27 +31,84 @@ public class IgniteDataConfiguration implements Named {
 
     private final String name;
     private SchemaGenerate schemaGenerate = SchemaGenerate.NONE;
-    private boolean batchGenerate = false;
     private String client = "default";
     private List<String> packages = new ArrayList<>(3);
     private String cache;
+    private boolean batchGenerate = false;
 
+    /**
+     * The configuration
+     * @param name The configuration name
+     */
     public IgniteDataConfiguration(@Parameter String name) {
         this.name = name;
     }
 
+    public void setBatchGenerate(boolean batchGenerate) {
+        this.batchGenerate = batchGenerate;
+    }
+
+    public boolean isBatchGenerate() {
+        return batchGenerate;
+    }
+
+    /**
+     * @param client
+     */
     public void setClient(String client) {
         this.client = client;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getClient() {
         return client;
     }
 
+    /**
+     *
+     * @param schemaGenerate
+     */
+    public void setSchemaGenerate(SchemaGenerate schemaGenerate) {
+        this.schemaGenerate = schemaGenerate;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public SchemaGenerate getSchemaGenerate() {
+        return schemaGenerate;
+    }
+
+    /**
+     *
+     * @param packages
+     */
+    public void setPackages(List<String> packages) {
+        this.packages = packages;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<String> getPackages() {
+        return packages;
+    }
+
+    /**
+     * @param cache the cache name to use
+     */
     public void setCache(String cache) {
         this.cache = cache;
     }
 
+    /**
+     * @return the cache name
+     */
     public String getCache() {
         return cache;
     }

@@ -16,16 +16,22 @@
 package io.micronaut.ignite;
 
 import io.micronaut.context.BeanContext;
+import io.micronaut.context.BeanRegistration;
+import io.micronaut.context.Qualifier;
 import io.micronaut.context.annotation.Bean;
+import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.io.ResourceResolver;
 import io.micronaut.ignite.annotation.IgniteRef;
 import io.micronaut.ignite.configuration.IgniteClientConfiguration;
+import io.micronaut.ignite.event.IgniteStartEvent;
+import io.micronaut.inject.BeanDefinition;
 import io.micronaut.inject.InjectionPoint;
 import io.micronaut.inject.qualifiers.Qualifiers;
 import io.micronaut.runtime.http.scope.RequestScope;
@@ -51,6 +57,7 @@ public class IgniteFactory implements AutoCloseable {
 
     private final ResourceResolver resourceResolver;
     private final BeanContext beanContext;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * Default constructor.
@@ -58,9 +65,19 @@ public class IgniteFactory implements AutoCloseable {
      * @param resourceResolver The resource resolver
      * @param beanContext      The bean context
      */
-    public IgniteFactory(ResourceResolver resourceResolver, BeanContext beanContext) {
+    public IgniteFactory(ResourceResolver resourceResolver, BeanContext beanContext, ApplicationEventPublisher eventPublisher) {
         this.resourceResolver = resourceResolver;
         this.beanContext = beanContext;
+        this.eventPublisher = eventPublisher;
+    }
+
+    private <T> Qualifier<T> getContext(T item) {
+        Optional<BeanRegistration<T>> registration = beanContext.findBeanRegistration(item);
+        if (!registration.isPresent()) {
+            return null;
+        }
+        BeanDefinition<T> definition = registration.get().getBeanDefinition();
+        return definition.getDeclaredQualifier();
     }
 
     /**
@@ -78,7 +95,9 @@ public class IgniteFactory implements AutoCloseable {
             if (!template.isPresent()) {
                 throw new RuntimeException("failed to find configuration: " + configuration.getPath());
             }
-            return Ignition.start(template.get());
+            Ignite ignite = Ignition.start(template.get());
+            eventPublisher.publishEvent(new IgniteStartEvent(getContext(configuration), ignite));
+            return ignite;
         } catch (Exception e) {
             LOG.error("Failed to instantiate Ignite: " + e.getMessage(), e);
             throw e;
@@ -97,7 +116,9 @@ public class IgniteFactory implements AutoCloseable {
     @Bean(preDestroy = "close")
     public Ignite ignite(IgniteConfiguration configuration) {
         try {
-            return Ignition.start(configuration);
+            Ignite ignite = Ignition.start(configuration);
+            eventPublisher.publishEvent(new IgniteStartEvent(getContext(configuration), ignite));
+            return ignite;
         } catch (Exception e) {
             LOG.error("Failed to instantiate Ignite Client: " + e.getMessage(), e);
             throw e;
@@ -108,8 +129,8 @@ public class IgniteFactory implements AutoCloseable {
      * Create {@link IgniteCache} from the given injection point.
      *
      * @param injectionPoint The injection point
-     * @param <K> the key
-     * @param <V> the value
+     * @param <K>            the key
+     * @param <V>            the value
      * @return ignite cache
      */
     @Prototype
@@ -155,8 +176,8 @@ public class IgniteFactory implements AutoCloseable {
      * resolve {@link IgniteDataStreamer}.
      *
      * @param metadata annotation metadata
-     * @param <K> the key
-     * @param <V> the value
+     * @param <K>      the key
+     * @param <V>      the value
      * @return The data streamer
      */
     public <K, V> IgniteDataStreamer<K, V> resolveDataStream(AnnotationMetadata metadata) {

@@ -19,7 +19,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.EachBean;
-import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.util.ArgumentUtils;
 import io.micronaut.core.util.CollectionUtils;
@@ -40,10 +39,11 @@ import io.micronaut.data.operations.RepositoryOperations;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.codec.MediaTypeCodec;
 import io.micronaut.ignite.config.IgniteDataConfiguration;
+import io.micronaut.inject.qualifiers.Qualifiers;
+import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.FieldsQueryCursor;
 import org.apache.ignite.cache.query.SqlFieldsQuery;
-import org.apache.ignite.client.IgniteClient;
 
 import java.io.Serializable;
 import java.util.List;
@@ -60,17 +60,22 @@ import java.util.stream.StreamSupport;
 @EachBean(IgniteDataConfiguration.class)
 public class IgniteRepositoryOperations implements RepositoryOperations {
     private final BeanContext beanContext;
-    private final IgniteFactory igniteFactory;
     private final Map<Class, RuntimePersistentEntity> entities = new ConcurrentHashMap<>(10);
     protected final MediaTypeCodec jsonCodec;
+    private final Ignite ignite;
+    private final String cacheName;
 
     public IgniteRepositoryOperations(IgniteDataConfiguration configuration,
                                       List<MediaTypeCodec> codecs,
-                                      BeanContext beanContext, IgniteFactory igniteFactory) {
-
+                                      BeanContext beanContext) {
+        ignite = beanContext.getBean(Ignite.class, Qualifiers.byName(configuration.getClient()));
+        this.cacheName = configuration.getCache();
         this.beanContext = beanContext;
-        this.igniteFactory = igniteFactory;
         this.jsonCodec = resolveJsonCodec(codecs);
+    }
+
+    private <K,V> IgniteCache<K,V> getCache() {
+        return ignite.cache(cacheName);
     }
 
     private MediaTypeCodec resolveJsonCodec(List<MediaTypeCodec> codecs) {
@@ -104,7 +109,7 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
     @Override
     public <T, R> R findOne(@NonNull PreparedQuery<T, R> preparedQuery) {
         final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
-        IgniteCache<T, R> cache = igniteFactory.resolveIgniteCache(annotationMetadata);
+        IgniteCache<T, R> cache = getCache();
 
         SqlFieldsQuery query = this.prepareStatement(preparedQuery);
         Class<R> resultType = preparedQuery.getResultType();
@@ -146,9 +151,8 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
 
     @Override
     public <T, R> boolean exists(@NonNull PreparedQuery<T, R> preparedQuery) {
-
         final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
-        IgniteCache<T, R> cache = igniteFactory.resolveIgniteCache(annotationMetadata);
+        IgniteCache<T, R> cache = getCache();
         String query = preparedQuery.getQuery();
         SqlFieldsQuery fieldsQuery = new SqlFieldsQuery(query);
         try (FieldsQueryCursor<List<?>> cursor = cache.query(fieldsQuery)) {
@@ -181,7 +185,7 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
     @Override
     public <T, R> Stream<R> findStream(@NonNull PreparedQuery<T, R> preparedQuery) {
         final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
-        IgniteCache<T, R> cache = igniteFactory.resolveIgniteCache(annotationMetadata);
+        IgniteCache<T, R> cache = getCache();
 
         Class<T> rootEntity = preparedQuery.getRootEntity();
         Class<R> resultType = preparedQuery.getResultType();

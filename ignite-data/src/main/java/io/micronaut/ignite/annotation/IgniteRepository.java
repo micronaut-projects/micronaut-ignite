@@ -38,7 +38,6 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Repository
-@IgniteRef(value = "default")
 public @interface IgniteRepository {
     /**
      * @return The dialect to use.
@@ -46,12 +45,12 @@ public @interface IgniteRepository {
     @AliasFor(annotation = Repository.class, member = "dialect")
     Dialect dialect() default Dialect.H2;
 
-    @AliasFor(annotation = IgniteRef.class, member = "value")
-    String value();
-
+//    @AliasFor(annotation = IgniteRef.class, member = "value")
     @AliasFor(annotation = Repository.class, member = "value")
-    @AliasFor(annotation = IgniteRef.class, member = "client")
-    String client() default "default";
+    String value();
+//
+//    @AliasFor(annotation = IgniteRef.class, member = "client")
+//    String client() default "default";
 
     @AliasFor(annotation = IgniteRef.class, member = "configurationId")
     String configurationId() default "";

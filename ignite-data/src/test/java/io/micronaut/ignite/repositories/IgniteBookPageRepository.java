@@ -15,10 +15,6 @@
  */
 package io.micronaut.ignite.repositories;
 
-import io.micronaut.data.repository.GenericRepository;
-import io.micronaut.data.tck.entities.Book;
-import io.micronaut.data.tck.entities.BookPage;
-import io.micronaut.data.tck.entities.Page;
 import io.micronaut.data.tck.repositories.BookPageRepository;
 import io.micronaut.ignite.annotation.IgniteRepository;
 

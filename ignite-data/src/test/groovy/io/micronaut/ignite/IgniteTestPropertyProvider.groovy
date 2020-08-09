@@ -6,9 +6,10 @@ trait IgniteTestPropertyProvider implements TestPropertyProvider{
     @Override
     Map<String, String> getProperties() {
         [
-            "datasources.default.name": "mydb",
-            "datasources.default.schema-generate": "CREATE_DROP",
-            "datasources.default.dialect": "H2",
+            "ignite.enabled"             : true,
+            "ignite.clients.default.path": "classpath:ignite_data.cfg",
+            "ignite.datasources.default.cache": "mydb",
+            "ignite.datasources.default.schema-generate": "CREATE_DROP"
         ] as Map<String, String>
     }
 }

@@ -20,5 +20,4 @@ import io.micronaut.ignite.annotation.IgniteRepository;
 
 @IgniteRepository(value = "default")
 public interface IgniteUserRoleRepository extends UserRoleRepository {
-
 }
