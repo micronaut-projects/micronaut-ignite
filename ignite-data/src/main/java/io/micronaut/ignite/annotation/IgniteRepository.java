@@ -16,9 +16,10 @@
 package io.micronaut.ignite.annotation;
 
 import io.micronaut.context.annotation.AliasFor;
+import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.annotation.RepositoryConfiguration;
-import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.annotation.sql.SqlMembers;
 import io.micronaut.data.model.query.builder.sql.SqlQueryBuilder;
 import io.micronaut.ignite.IgniteRepositoryOperations;
 
@@ -34,24 +35,15 @@ import java.lang.annotation.Target;
     implicitQueries = false,
     namedParameters = false
 )
+
 @Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Repository
 public @interface IgniteRepository {
-    /**
-     * @return The dialect to use.
-     */
-    @AliasFor(annotation = Repository.class, member = "dialect")
-    Dialect dialect() default Dialect.H2;
-
-//    @AliasFor(annotation = IgniteRef.class, member = "value")
     @AliasFor(annotation = Repository.class, member = "value")
     String value();
-//
-//    @AliasFor(annotation = IgniteRef.class, member = "client")
-//    String client() default "default";
 
-    @AliasFor(annotation = IgniteRef.class, member = "configurationId")
-    String configurationId() default "";
+    @AliasFor(annotation = MappedEntity.class, member = SqlMembers.SCHEMA)
+    String schema();
 }

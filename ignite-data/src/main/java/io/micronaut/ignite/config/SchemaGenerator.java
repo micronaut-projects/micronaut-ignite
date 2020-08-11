@@ -16,40 +16,38 @@
 package io.micronaut.ignite.config;
 
 import io.micronaut.context.BeanContext;
-import io.micronaut.context.BeanLocator;
-import io.micronaut.context.BeanRegistration;
 import io.micronaut.context.Qualifier;
 import io.micronaut.context.event.ApplicationEventListener;
+import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.beans.BeanIntrospection;
 import io.micronaut.core.beans.BeanIntrospector;
 import io.micronaut.core.util.ArrayUtils;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.Repository;
+import io.micronaut.data.annotation.sql.SqlMembers;
 import io.micronaut.data.model.PersistentEntity;
-import io.micronaut.data.model.query.builder.sql.Dialect;
-import io.micronaut.data.model.query.builder.sql.SqlQueryBuilder;
 import io.micronaut.data.runtime.config.DataSettings;
 import io.micronaut.data.runtime.config.SchemaGenerate;
+import io.micronaut.ignite.IgniteSqlQueryBuilder;
 import io.micronaut.ignite.event.IgniteStartEvent;
-import io.micronaut.inject.BeanDefinition;
 import io.micronaut.inject.qualifiers.Qualifiers;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.SqlFieldsQuery;
 
 import javax.inject.Singleton;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Singleton
 public class SchemaGenerator implements ApplicationEventListener<IgniteStartEvent> {
-    private final List<IgniteDataConfiguration> configurations;
+    private final IgniteDataConfiguration configuration;
     private final BeanContext beanContext;
 
-    public SchemaGenerator(List<IgniteDataConfiguration> configurations, BeanContext beanContext) {
-        this.configurations = configurations;
+    public SchemaGenerator(IgniteDataConfiguration configuration, BeanContext beanContext) {
+        this.configuration = configuration;
         this.beanContext = beanContext;
     }
 
@@ -60,102 +58,124 @@ public class SchemaGenerator implements ApplicationEventListener<IgniteStartEven
         Ignite ignite = event.getInstance();
         Qualifier qualifier = event.getQualifier().orElse(Qualifiers.byName("default"));
 
-        for (IgniteDataConfiguration configuration : configurations) {
-            if (!qualifier.contains(Qualifiers.byName(configuration.getClient())))
-                continue;
+        SchemaGenerate schemaGenerate = configuration.getSchemaGenerate();
+        if (schemaGenerate != null && schemaGenerate != SchemaGenerate.NONE) {
+            List<String> packages = configuration.getPackages();
 
-            SchemaGenerate schemaGenerate = configuration.getSchemaGenerate();
-            if (schemaGenerate != null && schemaGenerate != SchemaGenerate.NONE) {
-                String name = configuration.getName();
-                String client = configuration.getClient();
-                List<String> packages = configuration.getPackages();
+            Collection<BeanIntrospection<Object>> introspections;
+            if (CollectionUtils.isNotEmpty(packages)) {
+                introspections = BeanIntrospector.SHARED.findIntrospections(MappedEntity.class, packages.toArray(new String[0]));
+            } else {
+                introspections = BeanIntrospector.SHARED.findIntrospections(MappedEntity.class);
+            }
+            PersistentEntity[] entities = introspections.stream()
+                // filter out inner / internal / abstract(MappedSuperClass) classes
+                .filter(i -> !i.getBeanType().getName().contains("$"))
+                .filter(i -> !java.lang.reflect.Modifier.isAbstract(i.getBeanType().getModifiers()))
+                .map(PersistentEntity::of).toArray(PersistentEntity[]::new);
+            IgniteSqlQueryBuilder builder = new IgniteSqlQueryBuilder();
+            if (ArrayUtils.isNotEmpty(entities)) {
+                switch (schemaGenerate) {
+                    case CREATE_DROP:
+                        for (PersistentEntity entity : entities) {
+                            AnnotationMetadata metadata = entity.getAnnotationMetadata();
+                            Optional<String> schema = metadata.stringValue(MappedEntity.class, SqlMembers.SCHEMA);
+                            String repository = metadata.stringValue(Repository.class).orElse("default");
+                            if (!qualifier.contains(Qualifiers.byName(repository)) || !schema.isPresent())
+                                continue;
+                            IgniteCache cache = ignite.cache(schema.get());
+                            try {
 
-                Collection<BeanIntrospection<Object>> introspections;
-                if (CollectionUtils.isNotEmpty(packages)) {
-                    introspections = BeanIntrospector.SHARED.findIntrospections(MappedEntity.class, packages.toArray(new String[0]));
-                } else {
-                    introspections = BeanIntrospector.SHARED.findIntrospections(MappedEntity.class);
-                }
-                PersistentEntity[] entities = introspections.stream()
-                    // filter out inner / internal / abstract(MappedSuperClass) classes
-                    .filter(i -> !i.getBeanType().getName().contains("$"))
-                    .filter(i -> !java.lang.reflect.Modifier.isAbstract(i.getBeanType().getModifiers()))
-                    .map(PersistentEntity::of).toArray(PersistentEntity[]::new);
-                if (ArrayUtils.isNotEmpty(entities)) {
-                    SqlQueryBuilder builder = new SqlQueryBuilder(Dialect.H2);
-                    IgniteCache cache = ignite.cache(configuration.getCache());
-                    if (configuration.isBatchGenerate()) {
-                        switch (schemaGenerate) {
-                            case CREATE_DROP: {
-                                try {
-                                    String sql = builder.buildBatchDropTableStatement(entities);
+                                String[] statements = builder.buildDropTableStatements(entity);
+                                for (String sql : statements) {
                                     if (DataSettings.QUERY_LOG.isDebugEnabled()) {
                                         DataSettings.QUERY_LOG.debug("Dropping Table: \n{}", sql);
                                     }
                                     SqlFieldsQuery query = new SqlFieldsQuery(sql);
                                     cache.query(query);
-                                } catch (Exception e) {
-                                    if (DataSettings.QUERY_LOG.isTraceEnabled()) {
-                                        DataSettings.QUERY_LOG.trace("Drop Failed: " + e.getMessage());
-                                    }
+                                }
+                            } catch (Exception e) {
+                                if (DataSettings.QUERY_LOG.isTraceEnabled()) {
+                                    DataSettings.QUERY_LOG.trace("Drop Failed: " + e.getMessage());
                                 }
                             }
-                            case CREATE: {
-                                String sql = builder.buildBatchCreateTableStatement(entities);
-                                if (DataSettings.QUERY_LOG.isDebugEnabled()) {
-                                    DataSettings.QUERY_LOG.debug("Dropping Table: \n{}", sql);
-                                }
-                                SqlFieldsQuery query = new SqlFieldsQuery(sql);
-                                cache.query(query);
-                            }
-                            break;
-                            default:
-                                // do nothing
                         }
-                    } else {
-                        switch (schemaGenerate) {
-                            case CREATE_DROP:
-                                for (PersistentEntity entity : entities) {
-                                    try {
-                                        String[] statements = builder.buildDropTableStatements(entity);
-                                        for (String sql : statements) {
-                                            if (DataSettings.QUERY_LOG.isDebugEnabled()) {
-                                                DataSettings.QUERY_LOG.debug("Dropping Table: \n{}", sql);
-                                            }
-                                            SqlFieldsQuery query = new SqlFieldsQuery(sql);
-                                            cache.query(query);
-                                        }
-                                    } catch (Exception e) {
-                                        if (DataSettings.QUERY_LOG.isTraceEnabled()) {
-                                            DataSettings.QUERY_LOG.trace("Drop Failed: " + e.getMessage());
-                                        }
-                                    }
-                                }
-                            case CREATE:
-                                for (PersistentEntity entity : entities) {
-                                    String[] statements = builder.buildCreateTableStatements(entity);
-                                    for (String sql : statements) {
-                                        if (DataSettings.QUERY_LOG.isDebugEnabled()) {
-                                            DataSettings.QUERY_LOG.debug("Executing CREATE statement: \n{}", sql);
-                                        }
+                    case CREATE:
+                        for (PersistentEntity entity : entities) {
+                            AnnotationMetadata metadata = entity.getAnnotationMetadata();
+                            Optional<String> schema = metadata.stringValue(MappedEntity.class, SqlMembers.SCHEMA);
+                            String repository = metadata.stringValue(Repository.class).orElse("default");
+                            if (!qualifier.contains(Qualifiers.byName(repository)) || !schema.isPresent())
+                                continue;
+                            IgniteCache cache = ignite.cache(schema.get());
 
-                                        try {
-                                            SqlFieldsQuery query = new SqlFieldsQuery(sql);
-                                            cache.query(query);
-                                        } catch (Exception e) {
-                                            if (DataSettings.QUERY_LOG.isWarnEnabled()) {
-                                                DataSettings.QUERY_LOG.warn("CREATE Statement Failed: " + e.getMessage());
-                                            }
-                                        }
+                            String[] statements = builder.buildCreateTableStatements(entity);
+                            for (String sql : statements) {
+                                if (DataSettings.QUERY_LOG.isDebugEnabled()) {
+                                    DataSettings.QUERY_LOG.debug("Executing CREATE statement: \n{}", sql);
+                                }
+
+                                try {
+                                    SqlFieldsQuery query = new SqlFieldsQuery(sql);
+                                    cache.query(query);
+                                } catch (Exception e) {
+                                    if (DataSettings.QUERY_LOG.isWarnEnabled()) {
+                                        DataSettings.QUERY_LOG.warn("CREATE Statement Failed: " + e.getMessage());
                                     }
                                 }
-                                break;
-                            default:
-                                // do nothing
+                            }
                         }
-                    }
+                        break;
+                    default:
+                        // do nothing
                 }
+
+
+//                switch (schemaGenerate) {
+//                    case CREATE_DROP: {
+//                        try {
+//                            String sql = builder.buildBatchDropTableStatement(entities);
+//                            if (DataSettings.QUERY_LOG.isDebugEnabled()) {
+//                                DataSettings.QUERY_LOG.debug("Dropping Table: \n{}", sql);
+//                            }
+//                            SqlFieldsQuery query = new SqlFieldsQuery(sql);
+//                            cache.query(query);
+//                        } catch (Exception e) {
+//                            if (DataSettings.QUERY_LOG.isTraceEnabled()) {
+//                                DataSettings.QUERY_LOG.trace("Drop Failed: " + e.getMessage());
+//                            }
+//                        }
+//                    }
+//                    case CREATE: {
+//                        String sql = builder.buildBatchCreateTableStatement(entities);
+//                        if (DataSettings.QUERY_LOG.isDebugEnabled()) {
+//                            DataSettings.QUERY_LOG.debug("Dropping Table: \n{}", sql);
+//                        }
+//                        SqlFieldsQuery query = new SqlFieldsQuery(sql);
+//                        cache.query(query);
+//                    }
+//                    break;
+//                    default:
+//                        // do nothing
+//                }
             }
         }
+
+
+//        if (schemaGenerate != null && schemaGenerate != SchemaGenerate.NONE) {
+//            String name = configuration.getName();
+//            String client = configuration.getClient();
+//
+//            if (ArrayUtils.isNotEmpty(entities)) {
+//                IgniteSqlQueryBuilder builder = new IgniteSqlQueryBuilder();
+//                IgniteCache cache = ignite.cache(configuration.getCache());
+//                if (configuration.isBatchGenerate()) {
+//
+//                } else {
+//
+//                }
+//            }
+//        }
+
     }
 }

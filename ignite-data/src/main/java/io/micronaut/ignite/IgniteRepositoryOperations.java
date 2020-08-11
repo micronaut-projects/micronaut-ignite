@@ -23,7 +23,9 @@ import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.util.ArgumentUtils;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.Query;
+import io.micronaut.data.annotation.sql.SqlMembers;
 import io.micronaut.data.model.Association;
 import io.micronaut.data.model.DataType;
 import io.micronaut.data.model.Page;
@@ -38,8 +40,6 @@ import io.micronaut.data.model.runtime.UpdateOperation;
 import io.micronaut.data.operations.RepositoryOperations;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.codec.MediaTypeCodec;
-import io.micronaut.ignite.config.IgniteDataConfiguration;
-import io.micronaut.inject.qualifiers.Qualifiers;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.FieldsQueryCursor;
@@ -57,26 +57,21 @@ import java.util.stream.StreamSupport;
 /**
  * Implementation of the {@link RepositoryOperations} interface for Ignite.
  */
-@EachBean(IgniteDataConfiguration.class)
+@EachBean(Ignite.class)
 public class IgniteRepositoryOperations implements RepositoryOperations {
     private final BeanContext beanContext;
     private final Map<Class, RuntimePersistentEntity> entities = new ConcurrentHashMap<>(10);
     protected final MediaTypeCodec jsonCodec;
     private final Ignite ignite;
-    private final String cacheName;
 
-    public IgniteRepositoryOperations(IgniteDataConfiguration configuration,
+    public IgniteRepositoryOperations(Ignite ignite,
                                       List<MediaTypeCodec> codecs,
                                       BeanContext beanContext) {
-        ignite = beanContext.getBean(Ignite.class, Qualifiers.byName(configuration.getClient()));
-        this.cacheName = configuration.getCache();
+        this.ignite = ignite;
         this.beanContext = beanContext;
         this.jsonCodec = resolveJsonCodec(codecs);
     }
 
-    private <K,V> IgniteCache<K,V> getCache() {
-        return ignite.cache(cacheName);
-    }
 
     private MediaTypeCodec resolveJsonCodec(List<MediaTypeCodec> codecs) {
         return CollectionUtils.isNotEmpty(codecs) ? codecs.stream().filter(c -> c.getMediaTypes().contains(MediaType.APPLICATION_JSON_TYPE)).findFirst().orElse(null) : null;
@@ -109,7 +104,7 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
     @Override
     public <T, R> R findOne(@NonNull PreparedQuery<T, R> preparedQuery) {
         final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
-        IgniteCache<T, R> cache = getCache();
+        IgniteCache<T, R> cache =  null;
 
         SqlFieldsQuery query = this.prepareStatement(preparedQuery);
         Class<R> resultType = preparedQuery.getResultType();
@@ -132,11 +127,23 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
         return null;
     }
 
+    public <K,V> IgniteCache<K,V> getCacheInstance(AnnotationMetadata metadata){
+        Optional<String> schema = metadata.stringValue(MappedEntity.class, SqlMembers.SCHEMA);
+        if(!schema.isPresent())
+            throw new IllegalStateException("Mapped Schema not found");
+        return ignite.cache(schema.get());
+    }
+
     public <T, R> SqlFieldsQuery prepareStatement(@NonNull PreparedQuery<T, R> preparedQuery) {
         Object[] queryParameters = preparedQuery.getParameterArray();
+        AnnotationMetadata metadata = preparedQuery.getAnnotationMetadata();
         int[] parameterBinding = preparedQuery.getIndexedParameterBinding();
         DataType[] parameterTypes = preparedQuery.getIndexedParameterTypes();
         String query = preparedQuery.getQuery();
+
+        preparedQuery.getAnnotationMetadata().stringValue(MappedEntity.class, SqlMembers.SCHEMA).orElse("default");
+
+
 
         SqlFieldsQuery fieldsQuery = new SqlFieldsQuery(query);
         Object[] args = new Object[parameterBinding.length];
@@ -152,7 +159,7 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
     @Override
     public <T, R> boolean exists(@NonNull PreparedQuery<T, R> preparedQuery) {
         final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
-        IgniteCache<T, R> cache = getCache();
+        IgniteCache<T, R> cache = null;
         String query = preparedQuery.getQuery();
         SqlFieldsQuery fieldsQuery = new SqlFieldsQuery(query);
         try (FieldsQueryCursor<List<?>> cursor = cache.query(fieldsQuery)) {
@@ -185,7 +192,7 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
     @Override
     public <T, R> Stream<R> findStream(@NonNull PreparedQuery<T, R> preparedQuery) {
         final AnnotationMetadata annotationMetadata = preparedQuery.getAnnotationMetadata();
-        IgniteCache<T, R> cache = getCache();
+        IgniteCache<T, R> cache = null;
 
         Class<T> rootEntity = preparedQuery.getRootEntity();
         Class<R> resultType = preparedQuery.getResultType();

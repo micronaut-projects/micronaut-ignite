@@ -16,6 +16,8 @@
 package io.micronaut.ignite.config;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.context.annotation.Configuration;
+import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.naming.Named;
@@ -24,51 +26,23 @@ import io.micronaut.ignite.configuration.IgniteClientConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@EachProperty(value = IgniteDataConfiguration.PREFIX, primary = "default")
-public class IgniteDataConfiguration implements Named {
-    public static final String PREFIX = IgniteClientConfiguration.PREFIX + ".datasources";
+@ConfigurationProperties(IgniteDataConfiguration.PREFIX)
+public class IgniteDataConfiguration {
+    public static final String PREFIX = IgniteClientConfiguration.PREFIX + ".datasource";
 
-    private final String name;
     private SchemaGenerate schemaGenerate = SchemaGenerate.NONE;
-    private String client = "default";
     private List<String> packages = new ArrayList<>(3);
-    private String cache;
-    private boolean batchGenerate = false;
 
     /**
      * The configuration
-     * @param name The configuration name
      */
-    public IgniteDataConfiguration(@Parameter String name) {
-        this.name = name;
-    }
+    public IgniteDataConfiguration() {
 
-    public void setBatchGenerate(boolean batchGenerate) {
-        this.batchGenerate = batchGenerate;
-    }
-
-    public boolean isBatchGenerate() {
-        return batchGenerate;
     }
 
     /**
-     * @param client
-     */
-    public void setClient(String client) {
-        this.client = client;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getClient() {
-        return client;
-    }
-
-    /**
-     *
      * @param schemaGenerate
      */
     public void setSchemaGenerate(SchemaGenerate schemaGenerate) {
@@ -76,7 +50,6 @@ public class IgniteDataConfiguration implements Named {
     }
 
     /**
-     *
      * @return
      */
     public SchemaGenerate getSchemaGenerate() {
@@ -84,7 +57,6 @@ public class IgniteDataConfiguration implements Named {
     }
 
     /**
-     *
      * @param packages
      */
     public void setPackages(List<String> packages) {
@@ -92,30 +64,9 @@ public class IgniteDataConfiguration implements Named {
     }
 
     /**
-     *
      * @return
      */
     public List<String> getPackages() {
         return packages;
-    }
-
-    /**
-     * @param cache the cache name to use
-     */
-    public void setCache(String cache) {
-        this.cache = cache;
-    }
-
-    /**
-     * @return the cache name
-     */
-    public String getCache() {
-        return cache;
-    }
-
-    @NonNull
-    @Override
-    public String getName() {
-        return this.name;
     }
 }
