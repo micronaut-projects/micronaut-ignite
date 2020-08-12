@@ -20,8 +20,8 @@ import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.annotation.RepositoryConfiguration;
 import io.micronaut.data.annotation.sql.SqlMembers;
-import io.micronaut.data.model.query.builder.sql.SqlQueryBuilder;
 import io.micronaut.ignite.IgniteRepositoryOperations;
+import io.micronaut.ignite.IgniteSqlQueryBuilder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -30,19 +30,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @RepositoryConfiguration(
-    queryBuilder = SqlQueryBuilder.class,
+    queryBuilder = IgniteSqlQueryBuilder.class,
     operations = IgniteRepositoryOperations.class,
     implicitQueries = false,
     namedParameters = false
 )
-
 @Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Repository
 public @interface IgniteRepository {
     @AliasFor(annotation = Repository.class, member = "value")
-    String value();
+    String value() default "default";
 
     @AliasFor(annotation = MappedEntity.class, member = SqlMembers.SCHEMA)
     String schema();

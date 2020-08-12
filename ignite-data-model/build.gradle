@@ -1,0 +1,8 @@
+dependencies {
+    annotationProcessor "io.micronaut:micronaut-inject-java"
+    api "com.github.spotbugs:spotbugs-annotations:4.0.6"
+    api "io.micronaut:micronaut-inject"
+    api "io.micronaut:micronaut-validation"
+    api "io.micronaut:micronaut-aop"
+    api "io.micronaut.data:micronaut-data-model"
+}

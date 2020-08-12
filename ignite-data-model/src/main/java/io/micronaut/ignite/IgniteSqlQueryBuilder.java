@@ -4,6 +4,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Experimental;
+import io.micronaut.core.annotation.Internal;
 import io.micronaut.core.util.ArgumentUtils;
 import io.micronaut.core.util.ArrayUtils;
 import io.micronaut.core.util.CollectionUtils;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Internal
 public class IgniteSqlQueryBuilder extends AbstractSqlLikeQueryBuilder implements QueryBuilder {
 
     /**
@@ -358,14 +360,14 @@ public class IgniteSqlQueryBuilder extends AbstractSqlLikeQueryBuilder implement
                         }
                     }
                     if (CollectionUtils.isNotEmpty(associatedProperties)) {
-                        queryBuffer.append(COMMA);
+                        queryBuffer.append(AbstractSqlLikeQueryBuilder.COMMA);
 
                         String aliasName = getAliasName(joinPath);
                         String joinPathAlias = getPathOnlyAliasName(joinPath);
                         String columnNames = associatedProperties.stream()
                             .map(p -> {
                                 String columnName = getColumnName(p);
-                                return aliasName + DOT + quote(columnName) + AS_CLAUSE + joinPathAlias + columnName;
+                                return aliasName + AbstractSqlLikeQueryBuilder.DOT + quote(columnName) + AbstractSqlLikeQueryBuilder.AS_CLAUSE + joinPathAlias + columnName;
                             })
                             .collect(Collectors.joining(","));
                         queryBuffer.append(columnNames);
@@ -408,19 +410,19 @@ public class IgniteSqlQueryBuilder extends AbstractSqlLikeQueryBuilder implement
                                     if (escape) {
                                         columnName = quote(columnName);
                                     }
-                                    return alias + DOT + columnName;
+                                    return alias + AbstractSqlLikeQueryBuilder.DOT + columnName;
                                 }
                             ).collect(Collectors.joining(","));
                         }
                     }
                     return p.getAnnotationMetadata().stringValue(DataTransformer.class, "read")
-                        .map(str -> str + AS_CLAUSE + p.getPersistedName())
+                        .map(str -> str + AbstractSqlLikeQueryBuilder.AS_CLAUSE + p.getPersistedName())
                         .orElseGet(() -> {
                             String columnName = getColumnName(p);
                             if (escape) {
                                 columnName = quote(columnName);
                             }
-                            return alias + DOT + columnName;
+                            return alias + AbstractSqlLikeQueryBuilder.DOT + columnName;
                         });
                 })
                 .collect(Collectors.joining(","));
@@ -556,7 +558,7 @@ public class IgniteSqlQueryBuilder extends AbstractSqlLikeQueryBuilder implement
 //            assignedOrSequence = true;
 //            }
             if (hasProperties) {
-                builder.append(COMMA);
+                builder.append(AbstractSqlLikeQueryBuilder.COMMA);
             }
             if (identity instanceof Embedded) {
                 List<String> columnNames = new ArrayList<>(persistentProperties.size());
@@ -605,10 +607,10 @@ public class IgniteSqlQueryBuilder extends AbstractSqlLikeQueryBuilder implement
 
         }
 
-        builder.append(CLOSE_BRACKET);
+        builder.append(AbstractSqlLikeQueryBuilder.CLOSE_BRACKET);
         builder.append(" VALUES (");
-        builder.append(String.join(String.valueOf(COMMA), values));
-        builder.append(CLOSE_BRACKET);
+        builder.append(String.join(String.valueOf(AbstractSqlLikeQueryBuilder.COMMA), values));
+        builder.append(AbstractSqlLikeQueryBuilder.CLOSE_BRACKET);
         return QueryResult.of(
             builder.toString(),
             parameters,
@@ -659,7 +661,7 @@ public class IgniteSqlQueryBuilder extends AbstractSqlLikeQueryBuilder implement
         whereClause
             .append(IN_EXPRESSION_START)
             .append(placeholder.getKey())
-            .append(CLOSE_BRACKET);
+            .append(AbstractSqlLikeQueryBuilder.CLOSE_BRACKET);
     }
 
     @Override
@@ -675,15 +677,15 @@ public class IgniteSqlQueryBuilder extends AbstractSqlLikeQueryBuilder implement
                                             String tableColumnName) {
         return new StringBuilder().append(joinType)
             .append(tableName)
-            .append(SPACE)
+            .append(AbstractSqlLikeQueryBuilder.SPACE)
             .append(tableAlias)
             .append(" ON ")
             .append(onTableName)
-            .append(DOT)
+            .append(AbstractSqlLikeQueryBuilder.DOT)
             .append(onTableColumn)
             .append('=')
             .append(tableAlias)
-            .append(DOT)
+            .append(AbstractSqlLikeQueryBuilder.DOT)
             .append(tableColumnName);
     }
 
@@ -705,10 +707,10 @@ public class IgniteSqlQueryBuilder extends AbstractSqlLikeQueryBuilder implement
 
     @Override
     protected void appendProjectionRowCount(StringBuilder queryString, String logicalName) {
-        queryString.append(FUNCTION_COUNT)
-            .append(OPEN_BRACKET)
+        queryString.append(AbstractSqlLikeQueryBuilder.FUNCTION_COUNT)
+            .append(AbstractSqlLikeQueryBuilder.OPEN_BRACKET)
             .append('*')
-            .append(CLOSE_BRACKET);
+            .append(AbstractSqlLikeQueryBuilder.CLOSE_BRACKET);
     }
 
     @Override
@@ -761,7 +763,7 @@ public class IgniteSqlQueryBuilder extends AbstractSqlLikeQueryBuilder implement
             Association association = associationPath[i];
             String associationName = association.getName();
             pathSoFar.append(associationName);
-            String existingAlias = appliedJoinPaths.get(alias + DOT + associationName);
+            String existingAlias = appliedJoinPaths.get(alias + AbstractSqlLikeQueryBuilder.DOT + associationName);
             if (existingAlias != null) {
                 joinAliases[i] = existingAlias;
                 alias = existingAlias;
@@ -835,7 +837,7 @@ public class IgniteSqlQueryBuilder extends AbstractSqlLikeQueryBuilder implement
                         if (target.indexOf(joinStr) == -1) {
                             target.append(joinStr);
                         }
-                        target.append(SPACE);
+                        target.append(AbstractSqlLikeQueryBuilder.SPACE);
                         join = joinStringBuilder(joinType,
                             associatedTableName,
                             joinAliases[i],
@@ -870,7 +872,7 @@ public class IgniteSqlQueryBuilder extends AbstractSqlLikeQueryBuilder implement
                 }
                 alias = joinAliases[i];
             }
-            pathSoFar.append(DOT);
+            pathSoFar.append(AbstractSqlLikeQueryBuilder.DOT);
         }
         return joinAliases;
     }

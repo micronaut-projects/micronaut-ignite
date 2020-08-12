@@ -1,12 +1,19 @@
 dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-inject-groovy"
-    annotationProcessor "io.micronaut.data:micronaut-data-processor"
     annotationProcessor "io.micronaut.docs:micronaut-docs-asciidoc-config-props:$micronautDocsVersion"
 
+    annotationProcessor project(":ignite-data-processor")
+    annotationProcessor "io.micronaut.data:micronaut-data-processor"
+
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
+    testAnnotationProcessor project(":ignite-data-processor")
     testAnnotationProcessor "io.micronaut.data:micronaut-data-processor"
 
+
+//    api project(":ignite-model")
+    api project(":ignite-data-model")
+    api "io.micronaut.data:micronaut-data-processor"
     api "io.micronaut:micronaut-inject"
     implementation project(":ignite-core")
     api "io.micronaut.data:micronaut-data-runtime"
