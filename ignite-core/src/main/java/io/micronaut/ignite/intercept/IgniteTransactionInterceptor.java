@@ -106,7 +106,13 @@ public class IgniteTransactionInterceptor implements MethodInterceptor<Object,Ob
                         .orElseThrow(() -> new IllegalStateException("Unconvertible Reactive type: " + result));
                 }
             }
-            Object res = context.proceed();
+            Object res;
+            try {
+                res = context.proceed();
+            } catch (Exception e) {
+                tx.rollback();
+                throw e;
+            }
             tx.commit();
             return res;
         }

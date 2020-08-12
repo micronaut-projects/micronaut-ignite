@@ -35,7 +35,6 @@ import io.micronaut.data.intercept.annotation.DataMethod;
 import io.micronaut.data.model.Association;
 import io.micronaut.data.model.DataType;
 import io.micronaut.data.model.Page;
-import io.micronaut.data.model.PersistentProperty;
 import io.micronaut.data.model.runtime.BatchOperation;
 import io.micronaut.data.model.runtime.EntityOperation;
 import io.micronaut.data.model.runtime.InsertOperation;
@@ -57,7 +56,7 @@ import org.apache.ignite.cache.query.SqlFieldsQuery;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -245,34 +244,12 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
     @NonNull
     @Override
     public <T> T persist(@NonNull InsertOperation<T> operation) {
-        final AnnotationMetadata metadata = operation.getAnnotationMetadata();
+        AnnotationMetadata metadata = operation.getAnnotationMetadata();
+        StoredInsert<T> insert = resolveInsert(operation);
         final Class<?> repositoryType = operation.getRepositoryType();
-        final AnnotationMetadata annotationMetadata = operation.getAnnotationMetadata();
-
-        final IgniteCache cache = resolveCache(metadata);
-
-        String insertStatement = annotationMetadata.stringValue(Query.class).orElse(null);
-        if (insertStatement == null) {
-            throw new IllegalStateException("No insert statement present in repository. Ensure it extends GenericRepository and is annotated with @IgniteRepository");
-        }
-        RuntimePersistentEntity<T> persistentEntity = getEntity(operation.getRootEntity());
-        List<String> updateProperties = persistentEntity.getPersistentProperties()
-            .stream().filter(p ->
-                !((p instanceof Association) && ((Association) p).isForeignKey()) &&
-                    p.getAnnotationMetadata().booleanValue(AutoPopulated.class, "updateable").orElse(true)
-            )
-            .map(PersistentProperty::getName)
-            .collect(Collectors.toList());
-
-        SqlFieldsQuery query = new SqlFieldsQuery(insertStatement);
-//        Object[] args =
-        for (int i = 0; i < updateProperties.size(); i++) {
-            RuntimePersistentProperty property = persistentEntity.getPropertyByName(updateProperties.get(i));
-
-
-        }
-
-        return null;
+        T entity = operation.getEntity();
+        IgniteCache cache = resolveCache(metadata);
+        return persistOne(cache, metadata, repositoryType, insert, entity, new HashSet(5));
     }
 
     private <T> T persistOne(
@@ -349,7 +326,6 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
                 DataType type = prop.getDataType();
                 BeanProperty<T, Object> beanProperty = (BeanProperty<T, Object>) prop.getProperty();
                 Object value = beanProperty.get(entity);
-                int index = i + 1;
 
                 if (prop instanceof Association) {
                     Association association = (Association) prop;
@@ -367,34 +343,33 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
                             value = identityProperty.get(value);
                         }
                         if (DataSettings.QUERY_LOG.isTraceEnabled()) {
-                            DataSettings.QUERY_LOG.trace("Binding value {} to parameter at position: {}", value, index);
+                            DataSettings.QUERY_LOG.trace("Binding value {} to parameter at position: {}", value, i);
                         }
-                        bindings[index] = value;
+                        bindings[i] = value;
                     }
 
                 } else {
                     if (beanProperty.hasStereotype(AutoPopulated.class)) {
-                        if (beanProperty.hasStereotype(AutoPopulated.class)) {
-                            if (beanProperty.hasAnnotation(DateCreated.class)) {
-                                now = now != null ? now : dateTimeProvider.getNow();
-                                if (DataSettings.QUERY_LOG.isTraceEnabled()) {
-                                    DataSettings.QUERY_LOG.trace("Binding value {} to parameter at position: {}", now, index);
-                                }
-                                bindings[index] = now;
-                                beanProperty.convertAndSet(entity, now);
-                            } else if (beanProperty.hasAnnotation(DateUpdated.class)) {
-                                now = now != null ? now : dateTimeProvider.getNow();
-                                if (DataSettings.QUERY_LOG.isTraceEnabled()) {
-                                    DataSettings.QUERY_LOG.trace("Binding value {} to parameter at position: {}", now, index);
-                                }
-                                bindings[index] = now;
-                                beanProperty.convertAndSet(entity, now);
-                            } else if (UUID.class.isAssignableFrom(beanProperty.getType())) {
-                                UUID uuid = UUID.randomUUID();
-                                if (DataSettings.QUERY_LOG.isTraceEnabled()) {
-                                    DataSettings.QUERY_LOG.trace("Binding value {} to parameter at position: {}", uuid, index);
-                                }
-                                bindings[index] = uuid.toString();
+                        if (beanProperty.hasAnnotation(DateCreated.class)) {
+                            now = now != null ? now : dateTimeProvider.getNow();
+                            if (DataSettings.QUERY_LOG.isTraceEnabled()) {
+                                DataSettings.QUERY_LOG.trace("Binding value {} to parameter at position: {}", now, i);
+                            }
+                            bindings[i] = now;
+                            beanProperty.convertAndSet(entity, now);
+                        } else if (beanProperty.hasAnnotation(DateUpdated.class)) {
+                            now = now != null ? now : dateTimeProvider.getNow();
+                            if (DataSettings.QUERY_LOG.isTraceEnabled()) {
+                                DataSettings.QUERY_LOG.trace("Binding value {} to parameter at position: {}", now, i);
+                            }
+                            bindings[i] = now;
+                            beanProperty.convertAndSet(entity, now);
+                        } else if (UUID.class.isAssignableFrom(beanProperty.getType())) {
+                            UUID uuid = UUID.randomUUID();
+                            if (DataSettings.QUERY_LOG.isTraceEnabled()) {
+                                DataSettings.QUERY_LOG.trace("Binding value {} to parameter at position: {}", uuid, i);
+                            }
+                            bindings[i] = uuid;
 //                                if (dialect.requiresStringUUID(type)) {
 //                                    preparedStatementWriter.setString(
 //                                        stmt,
@@ -409,18 +384,19 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
 //                                        uuid
 //                                    );
 //                                }
-                                beanProperty.set(entity, uuid);
-                            } else {
-                                throw new DataAccessException("Unsupported auto-populated annotation type: " + beanProperty.getAnnotationTypeByStereotype(AutoPopulated.class).orElse(null));
-                            }
+                            beanProperty.set(entity, uuid);
                         } else {
-                            if (DataSettings.QUERY_LOG.isTraceEnabled()) {
-                                DataSettings.QUERY_LOG.trace("Binding value {} to parameter at position: {}", value, index);
-                            }
-                            if (type == DataType.JSON && jsonCodec != null) {
-                                value = new String(jsonCodec.encode(value), StandardCharsets.UTF_8);
-                            }
-                            bindings[index] = value;
+                            throw new DataAccessException("Unsupported auto-populated annotation type: " + beanProperty.getAnnotationTypeByStereotype(AutoPopulated.class).orElse(null));
+                        }
+
+                    } else {
+                        if (DataSettings.QUERY_LOG.isTraceEnabled()) {
+                            DataSettings.QUERY_LOG.trace("Binding value {} to parameter at position: {}", value, i);
+                        }
+                        if (type == DataType.JSON && jsonCodec != null) {
+                            value = new String(jsonCodec.encode(value), StandardCharsets.UTF_8);
+                        }
+                        bindings[i] = value;
 //                            if (value != null && dialect.requiresStringUUID(type)) {
 //                                preparedStatementWriter.setString(
 //                                    stmt,
@@ -435,7 +411,6 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
 //                                    value
 //                                );
 //                            }
-                        }
                     }
 
                 }
@@ -457,48 +432,44 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
     @NonNull
     @Override
     public <T> Iterable<T> persistAll(@NonNull BatchOperation<T> operation) {
-        if (operation != null) {
-            final AnnotationMetadata metadata = operation.getAnnotationMetadata();
-            final IgniteCache cache = resolveCache(metadata);
-            StoredInsert<T> insert = resolveInsert(operation);
-            List<T> results = new ArrayList<>();
-            for (T entity : operation) {
-                results.add(persist(new InsertOperation<T>() {
-                    @NonNull
-                    @Override
-                    public T getEntity() {
-                        return entity;
-                    }
+        //TODO: setup batch.
+        //final AnnotationMetadata metadata = operation.getAnnotationMetadata();
+        //StoredInsert<T> insert = resolveInsert(operation);
+        List<T> results = new ArrayList<>();
+        for (T entity : operation) {
+            results.add(persist(new InsertOperation<T>() {
+                @NonNull
+                @Override
+                public T getEntity() {
+                    return entity;
+                }
 
-                    @NonNull
-                    @Override
-                    public Class<T> getRootEntity() {
-                        return operation.getRootEntity();
-                    }
+                @NonNull
+                @Override
+                public Class<T> getRootEntity() {
+                    return operation.getRootEntity();
+                }
 
-                    @NonNull
-                    @Override
-                    public Class<?> getRepositoryType() {
-                        return operation.getRepositoryType();
-                    }
+                @NonNull
+                @Override
+                public Class<?> getRepositoryType() {
+                    return operation.getRepositoryType();
+                }
 
-                    @NonNull
-                    @Override
-                    public String getName() {
-                        return operation.getName();
-                    }
+                @NonNull
+                @Override
+                public String getName() {
+                    return operation.getName();
+                }
 
-                    @NonNull
-                    @Override
-                    public AnnotationMetadata getAnnotationMetadata() {
-                        return operation.getAnnotationMetadata();
-                    }
-                }));
-            }
-            return results;
-        } else {
-            return Collections.emptyList();
+                @NonNull
+                @Override
+                public AnnotationMetadata getAnnotationMetadata() {
+                    return operation.getAnnotationMetadata();
+                }
+            }));
         }
+        return results;
     }
 
     @NonNull

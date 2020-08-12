@@ -188,8 +188,11 @@ public class IgniteFactory implements AutoCloseable {
         return ignite.dataStreamer(name);
     }
 
+    /**
+     * Stop all instances of Ignite.
+     */
     @Override
-    public void close() throws Exception {
+    public void close() {
         Ignition.stopAll(true);
     }
 }
