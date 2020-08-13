@@ -1,6 +1,6 @@
 To take advantage of Micronaut Cache, this can be enabled by including the following dependency:
 
-dependency:cache-ignite[groupId="io.micronaut.ignite"]
+dependency:ignite-cache[groupId="io.micronaut.ignite"]
 
-Note: Information usage in regards to micronaut cache can be found in the https://micronaut-projects.github.io/micronaut-cache/snapshot/guide/#introduction[micronaut cache documentation].
-
+The primary bean from the Ignite instance is used for the cache configuration. The cacheName will reference the associated cache instance from ignite.
+More information about usage can be found https://micronaut-projects.github.io/micronaut-cache/snapshot/api/io/micronaut/cache/annotation/CachePut.html[Micronaut Cache].
