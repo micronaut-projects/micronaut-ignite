@@ -1,6 +1,5 @@
 import io.micronaut.context.ApplicationContext
-import io.micronaut.inject.qualifiers.Qualifiers
-import org.apache.ignite.Ignite
+import io.micronaut.ignite.IgniteSampleCache
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.spock.Testcontainers
 import spock.lang.AutoCleanup
@@ -10,39 +9,27 @@ import spock.lang.Specification
 
 @Testcontainers
 @Retry
-class IgniteConfigurationSpec extends Specification {
+class IgniteCacheSpec extends Specification {
+
     final static String IGNITE_VERSION = System.getProperty("igniteVersion")
 
     @Shared @AutoCleanup
     GenericContainer ignite = new GenericContainer("apacheignite/ignite:${IGNITE_VERSION}")
-        .withExposedPorts(10800)
+        .withExposedPorts(47500, 47100)
 
-    def "test ignite configuration"() {
+    def "test ignite inject cache"() {
         given:
         ApplicationContext ctx = ApplicationContext.run([
-            "ignite.enabled"    : true
-        ])
-        when:
-        Ignite inst = ctx.getBean(Ignite.class,Qualifiers.byName("one"))
-
-        then:
-        inst != null
-
-        cleanup:
-        ctx.close()
-    }
-
-    def "test ignite from xml config"() {
-        given:
-        ApplicationContext ctx = ApplicationContext.run([
-            "ignite.enabled"    : true,
+            "ignite.enabled"             : true,
             "ignite.clients.default.path": "classpath:standard.cfg",
         ])
+
         when:
-        Ignite inst = ctx.getBean(Ignite.class)
+        IgniteSampleCache instance = ctx.getBean(IgniteSampleCache.class)
 
         then:
-        inst != null
+        instance.cache1 != null
+        instance.cache2 != null
 
         cleanup:
         ctx.close()

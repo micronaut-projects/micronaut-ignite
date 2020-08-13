@@ -15,20 +15,17 @@
  */
 package io.micronaut.ignite.configuration;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.naming.Named;
 
-import javax.annotation.Nonnull;
-
 /**
- *  Configuration class for an Ignite client.
- *
- *  @author Michael Pollind
+ * Ignite cache configuration.
  */
-@EachProperty(value = IgniteClientConfiguration.PREFIX, primary = "default")
+@EachProperty(value = IgniteClientConfiguration.PREFIX + ".clients", primary = "default")
 public class IgniteClientConfiguration implements Named {
-    public static final String PREFIX = IgniteConfiguration.PREFIX + "." + "clients";
+    public static final String PREFIX = "ignite";
 
     private final String name;
     private String path;
@@ -61,9 +58,9 @@ public class IgniteClientConfiguration implements Named {
     /**
      * @return name or key for client
      */
-    @Nonnull
+    @NonNull
     @Override
     public String getName() {
-        return name;
+        return this.name;
     }
 }
