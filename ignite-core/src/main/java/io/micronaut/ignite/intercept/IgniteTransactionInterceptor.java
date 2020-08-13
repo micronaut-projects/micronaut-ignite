@@ -40,7 +40,7 @@ import java.util.concurrent.CompletionStage;
  * Interceptor implementation for the {@link IgniteTransaction} annotation.
  */
 @Singleton
-public class IgniteTransactionInterceptor implements MethodInterceptor<Object,Object> {
+public class IgniteTransactionInterceptor implements MethodInterceptor<Object, Object> {
     private static final Logger LOG = LoggerFactory.getLogger(IgniteTransactionInterceptor.class);
     private BeanContext beanContext;
 

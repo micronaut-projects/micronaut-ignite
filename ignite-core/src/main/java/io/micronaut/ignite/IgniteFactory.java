@@ -63,6 +63,7 @@ public class IgniteFactory implements AutoCloseable {
      *
      * @param resourceResolver The resource resolver
      * @param beanContext      The bean context
+     * @param eventPublisher The even publisher
      */
     public IgniteFactory(ResourceResolver resourceResolver, BeanContext beanContext, ApplicationEventPublisher eventPublisher) {
         this.resourceResolver = resourceResolver;

@@ -22,6 +22,9 @@ import org.apache.ignite.Ignite;
 import javax.annotation.concurrent.Immutable;
 import java.util.Optional;
 
+/**
+ * Ignite start event.
+ */
 @Immutable
 public class IgniteStartEvent extends ApplicationEvent {
     private final Ignite instance;
@@ -31,6 +34,7 @@ public class IgniteStartEvent extends ApplicationEvent {
      * Constructs a prototypical Event.
      *
      * @param instance The object on which the Event initially occurred.
+     * @param qualifier The Ignite Qualifier.
      * @throws IllegalArgumentException if source is null.
      */
     public IgniteStartEvent(Qualifier qualifier, Ignite instance) {
@@ -40,16 +44,16 @@ public class IgniteStartEvent extends ApplicationEvent {
     }
 
     /**
-     *
-     * @return
+     * Ignite Instance.
+     * @return The Ignite instance.
      */
     public Ignite getInstance() {
         return instance;
     }
 
     /**
-     *
-     * @return
+     * Ignite Qualifier.
+     * @return Qualifier for ignite instance.
      */
     public Optional<Qualifier> getQualifier() {
         return qualifier;
