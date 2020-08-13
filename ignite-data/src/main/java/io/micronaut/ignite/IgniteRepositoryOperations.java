@@ -20,9 +20,14 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.core.annotation.AnnotationMetadata;
+import io.micronaut.core.beans.BeanIntrospection;
 import io.micronaut.core.beans.BeanProperty;
 import io.micronaut.core.beans.BeanWrapper;
+import io.micronaut.core.convert.ArgumentConversionContext;
+import io.micronaut.core.convert.ConversionContext;
+import io.micronaut.core.convert.ConversionError;
 import io.micronaut.core.convert.ConversionService;
+import io.micronaut.core.convert.exceptions.ConversionErrorException;
 import io.micronaut.core.type.Argument;
 import io.micronaut.core.util.ArgumentUtils;
 import io.micronaut.core.util.ArrayUtils;
@@ -46,6 +51,7 @@ import io.micronaut.data.model.PersistentProperty;
 import io.micronaut.data.model.Sort;
 import io.micronaut.data.model.query.QueryModel;
 import io.micronaut.data.model.query.QueryParameter;
+import io.micronaut.data.model.query.builder.QueryBuilder;
 import io.micronaut.data.model.query.builder.QueryResult;
 import io.micronaut.data.model.runtime.BatchOperation;
 import io.micronaut.data.model.runtime.EntityOperation;
@@ -58,6 +64,7 @@ import io.micronaut.data.model.runtime.UpdateOperation;
 import io.micronaut.data.operations.RepositoryOperations;
 import io.micronaut.data.runtime.config.DataSettings;
 import io.micronaut.data.runtime.date.DateTimeProvider;
+import io.micronaut.data.runtime.mapper.BeanIntrospectionMapper;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.codec.MediaTypeCodec;
 import org.apache.ignite.Ignite;
@@ -69,9 +76,11 @@ import org.slf4j.Logger;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +94,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static io.micronaut.data.runtime.config.DataSettings.QUERY_LOG;
 
 /**
  * Implementation of the {@link RepositoryOperations} interface for Ignite.
@@ -311,6 +322,75 @@ public class IgniteRepositoryOperations implements RepositoryOperations {
         fieldsQuery.setArgs(bindings);
         return fieldsQuery;
     }
+
+//    public <R> R mapResult(FieldsQueryCursor<List<?>> cursor, List<?> targets, RuntimePersistentEntity<R> entity) {
+//        BeanIntrospection<R> introspection = entity.getIntrospection();
+//        Argument<?>[] arguments = introspection.getConstructorArguments();
+//        R instance;
+//
+//        Map<String,Integer> mappings = new HashMap<>();
+//        for(int x = 0; x < cursor.getColumnsCount(); x++) {
+//            mappings.put(cursor.getFieldName(x), x);
+//        }
+//
+//
+//        if (ArrayUtils.isEmpty(arguments)) {
+//            instance = introspection.instantiate();
+//        } else {
+//            Object[] args = new Object[arguments.length];
+//            for (int i = 0; i < arguments.length; i++) {
+//                Argument<?> argument = arguments[i];
+//                Object o = read(object, argument);
+//                if (o == null) {
+//                    args[i] = o;
+//                } else {
+//                    if (argument.getType().isInstance(o)) {
+//                        args[i] = o;
+//                    } else {
+//                        ArgumentConversionContext<?> acc = ConversionContext.of(argument);
+//                        args[i] = conversionService.convert(o, acc).orElseThrow(() -> {
+//                                Optional<ConversionError> lastError = acc.getLastError();
+//                                return lastError.<RuntimeException>map(conversionError -> new ConversionErrorException(argument, conversionError))
+//                                    .orElseGet(() ->
+//                                        new IllegalArgumentException("Cannot convert object type " + o.getClass() + " to required type: " + argument.getType())
+//                                    );
+//                            }
+//
+//                        );
+//                    }
+//                }
+//            }
+//            instance = introspection.instantiate(args);
+//        }
+//
+//        Collection<BeanProperty<R, Object>> properties = introspection.getBeanProperties();
+//        for (BeanProperty<R, Object> property : properties) {
+//            if(property.isReadOnly()) {
+//                continue;
+//            }
+//
+//        }
+//
+//        for (int x = 0; x < targets.size(); x++) {
+//            String field = cursor.getFieldName(x);
+//            RuntimePersistentProperty columnName = entity.getPropertyByName(field);
+//
+//
+//            if (property == null) {
+//                throw new DataAccessException("DTO projection defines a property [" + field + "] that doesn't exist on root entity: " + entity.getName());
+//            } else {
+//                String propertyName = property.getPersistedName();
+//                DataType dataType = property.getDataType();
+//                if (ArrayUtils.isEmpty(arguments)) {
+//
+//                } else {
+//
+//                }
+//
+//            }
+//        }
+//        return instance;
+//    }
 
 
     @Nullable
