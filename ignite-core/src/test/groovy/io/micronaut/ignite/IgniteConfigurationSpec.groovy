@@ -1,3 +1,5 @@
+package io.micronaut.ignite
+
 import io.micronaut.context.ApplicationContext
 import io.micronaut.inject.qualifiers.Qualifiers
 import org.apache.ignite.Ignite

@@ -154,7 +154,7 @@ public class IgniteFactory implements AutoCloseable {
         String client = igniteCache.stringValue("client").orElse("default");
         String name = igniteCache.stringValue("value").orElseThrow(() -> new IllegalStateException("Missing value for cache"));
         Ignite ignite = beanContext.getBean(Ignite.class, Qualifiers.byName(client));
-        return ignite.cache(name);
+        return ignite.getOrCreateCache(name);
     }
 
     /**
