@@ -63,10 +63,17 @@ class IgniteConfigurationSpec extends Specification {
         when:
         DefaultIgniteConfiguration configuration = ctx.getBean(DefaultIgniteConfiguration.class)
         CommunicationSpi communicationSpi = configuration.getCommunicationSpi();
+        List<DefaultIgniteConfiguration.DefaultCacheConfiguration<?, ?>> cacheConfigurationList =  configuration.getCacheConfigurations();
+
 
 
         then:
         configuration != null
+        cacheConfigurationList != null;
+        communicationSpi != null
+        communicationSpi.getLocalPort() == 5555
+        cacheConfigurationList.size() == 1
+        cacheConfigurationList.first().name == "accounts"
 
         cleanup:
         ctx.close()
