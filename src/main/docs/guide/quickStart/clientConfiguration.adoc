@@ -40,4 +40,4 @@ A config file is needed to setup ignite and this configured through a spring bea
 
 The full list of configurable options via micronaut properties is below:
 
-include::{includedir}configurationProperties/io.micronaut.ignite.configuration.IgniteClientConfiguration.adoc[]
+include::{includedir}configurationProperties/io.micronaut.ignite.configuration.DefaultIgniteConfiguration.adoc[]

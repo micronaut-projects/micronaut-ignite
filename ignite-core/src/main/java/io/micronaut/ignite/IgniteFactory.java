@@ -28,7 +28,7 @@ import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.io.ResourceResolver;
 import io.micronaut.ignite.annotation.IgniteRef;
-import io.micronaut.ignite.configuration.IgniteClientConfiguration;
+import io.micronaut.ignite.configuration.DefaultIgniteConfiguration;
 import io.micronaut.ignite.event.IgniteStartEvent;
 import io.micronaut.inject.BeanDefinition;
 import io.micronaut.inject.InjectionPoint;
@@ -50,7 +50,7 @@ import java.util.Optional;
  * Factory for the default implementation of {@link Ignite}.
  */
 @Factory
-@Requires(property = IgniteClientConfiguration.PREFIX + ".enabled", value = "true", defaultValue = "false")
+@Requires(property = DefaultIgniteConfiguration.PREFIX + ".enabled", value = "true", defaultValue = "false")
 public class IgniteFactory implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(IgniteFactory.class);
 
@@ -81,15 +81,15 @@ public class IgniteFactory implements AutoCloseable {
     }
 
     /**
-     * Create {@link Ignite} instance from {@link IgniteClientConfiguration}.
+     * Create {@link Ignite} instance from {@link DefaultIgniteConfiguration}.
      *
      * @param configuration ignite configuration
      * @return create ignite instance
      */
     @Singleton
-    @EachBean(IgniteClientConfiguration.class)
+    @EachBean(DefaultIgniteConfiguration.class)
     @Bean(preDestroy = "close")
-    public Ignite ignite(IgniteClientConfiguration configuration) {
+    public Ignite ignite(DefaultIgniteConfiguration configuration) {
         try {
             Optional<URL> template = resourceResolver.getResource(configuration.getPath());
             if (!template.isPresent()) {

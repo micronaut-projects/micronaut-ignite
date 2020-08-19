@@ -84,7 +84,7 @@ public class IgniteSyncCache implements SyncCache<IgniteCache> {
     public void put(@NonNull Object key, @NonNull Object value) {
         ArgumentUtils.requireNonNull("key", key);
         ArgumentUtils.requireNonNull("value", value);
-        nativeCache.putIfAbsent(key, value);
+        nativeCache.put(key, value);
     }
 
     @Override

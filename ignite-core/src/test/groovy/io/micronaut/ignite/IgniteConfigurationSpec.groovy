@@ -1,8 +1,10 @@
 package io.micronaut.ignite
 
 import io.micronaut.context.ApplicationContext
+import io.micronaut.ignite.configuration.DefaultIgniteConfiguration
 import io.micronaut.inject.qualifiers.Qualifiers
 import org.apache.ignite.Ignite
+import org.apache.ignite.spi.communication.CommunicationSpi
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.spock.Testcontainers
 import spock.lang.AutoCleanup
@@ -45,6 +47,26 @@ class IgniteConfigurationSpec extends Specification {
 
         then:
         inst != null
+
+        cleanup:
+        ctx.close()
+    }
+
+    def "test ignite communication-spi"() {
+        given:
+        ApplicationContext ctx = ApplicationContext.run([
+            "ignite.enabled"    : true,
+            "ignite.clients.default.path": "classpath:standard.cfg",
+            "ignite.clients.default.communication-spi.local-port": "5555",
+            "ignite.clients.default.cache-configurations[0].name": "accounts",
+        ])
+        when:
+        DefaultIgniteConfiguration configuration = ctx.getBean(DefaultIgniteConfiguration.class)
+        CommunicationSpi communicationSpi = configuration.getCommunicationSpi();
+
+
+        then:
+        configuration != null
 
         cleanup:
         ctx.close()
