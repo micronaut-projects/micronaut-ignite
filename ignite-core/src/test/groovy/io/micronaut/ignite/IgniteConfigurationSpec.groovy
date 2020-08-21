@@ -1,9 +1,11 @@
 package io.micronaut.ignite
 
 import io.micronaut.context.ApplicationContext
+import io.micronaut.ignite.configuration.DefaultCacheConfiguration
 import io.micronaut.ignite.configuration.DefaultIgniteConfiguration
 import io.micronaut.inject.qualifiers.Qualifiers
 import org.apache.ignite.Ignite
+import org.apache.ignite.configuration.CacheConfiguration
 import org.apache.ignite.spi.communication.CommunicationSpi
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.spock.Testcontainers
@@ -56,24 +58,26 @@ class IgniteConfigurationSpec extends Specification {
         given:
         ApplicationContext ctx = ApplicationContext.run([
             "ignite.enabled"    : true,
-            "ignite.clients.default.path": "classpath:standard.cfg",
-            "ignite.clients.default.communication-spi.local-port": "5555",
-            "ignite.clients.default.cache-configurations[0].name": "accounts",
+            "ignite.communication-spi.local-port": "5555",
+            "ignite.cache-configurations.accounts.name": "accounts",
+            "ignite.cache-configurations.accounts.query-entities[0].table-name": "ACCOUNTS",
+            "ignite.cache-configurations.accounts.query-entities[0].key-type": "String",
+            "ignite.cache-configurations.accounts.query-entities[1].table-name": "Books",
+            "ignite.cache-configurations.accounts.query-entities[1].key-type": "String"
         ])
         when:
         DefaultIgniteConfiguration configuration = ctx.getBean(DefaultIgniteConfiguration.class)
+        Collection<DefaultCacheConfiguration> cacheConfiguration = ctx.getBeansOfType(DefaultCacheConfiguration.class)
         CommunicationSpi communicationSpi = configuration.getCommunicationSpi();
-        List<DefaultIgniteConfiguration.DefaultCacheConfiguration<?, ?>> cacheConfigurationList =  configuration.getCacheConfigurations();
-
 
 
         then:
         configuration != null
-        cacheConfigurationList != null;
+        cacheConfiguration != null;
         communicationSpi != null
         communicationSpi.getLocalPort() == 5555
-        cacheConfigurationList.size() == 1
-        cacheConfigurationList.first().name == "accounts"
+        cacheConfiguration.size() == 1
+        cacheConfiguration.first().name == "accounts"
 
         cleanup:
         ctx.close()

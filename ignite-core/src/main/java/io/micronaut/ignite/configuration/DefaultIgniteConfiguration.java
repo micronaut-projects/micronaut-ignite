@@ -21,35 +21,25 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.naming.Named;
+import org.apache.ignite.cache.QueryEntity;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
-import org.apache.ignite.spi.communication.CommunicationSpi;
 import org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * Ignite cache configuration.
  */
-@EachProperty(value = DefaultIgniteConfiguration.PREFIX + ".clients", primary = "default")
-public class DefaultIgniteConfiguration implements Named {
+@ConfigurationProperties(value = DefaultIgniteConfiguration.PREFIX)
+public class DefaultIgniteConfiguration {
     public static final String PREFIX = "ignite";
 
-    private final String name;
     @ConfigurationBuilder(excludes = "cacheConfiguration")
     private IgniteConfiguration igniteConfiguration = new IgniteConfiguration();
     @ConfigurationBuilder(value = "communicationSpi")
     private TcpCommunicationSpi communicationSpi = new TcpCommunicationSpi();
-    private List<DefaultCacheConfiguration<?,?>> cacheConfigurations;
-
-    public void setCacheConfigurations(List<DefaultCacheConfiguration<?, ?>> cacheConfigurations) {
-        this.cacheConfigurations = cacheConfigurations;
-    }
-
-    public List<DefaultCacheConfiguration<?, ?>> getCacheConfigurations() {
-        return cacheConfigurations;
-    }
 
     public TcpCommunicationSpi getCommunicationSpi() {
         return communicationSpi;
@@ -70,15 +60,6 @@ public class DefaultIgniteConfiguration implements Named {
     private String path;
 
     /**
-     * @param name Name or key of the client.
-     */
-    public DefaultIgniteConfiguration(@Parameter String name) {
-        this.name = name;
-        IgniteConfiguration configuration;
-
-    }
-
-    /**
      * path to load in bean configuration.
      *
      * @param path bean config to load.
@@ -96,23 +77,9 @@ public class DefaultIgniteConfiguration implements Named {
         return path;
     }
 
-    /**
-     * @return name or key for client
-     */
-    @NonNull
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
     public IgniteConfiguration getConfiguration(){
         return new IgniteConfiguration(this.getIgniteConfiguration())
-            .setCommunicationSpi(this.communicationSpi)
-            .setCacheConfiguration(this.getCacheConfigurations().toArray(new DefaultCacheConfiguration[cacheConfigurations.size()]));
+            .setCommunicationSpi(this.communicationSpi);
     }
 
-
-    @EachProperty(value = "cacheConfiguration", list = true)
-    public static class DefaultCacheConfiguration<K,V> extends CacheConfiguration<K,V> {
-    }
 }
