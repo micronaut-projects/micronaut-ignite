@@ -22,35 +22,35 @@ import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.util.StringUtils;
-import io.micronaut.ignite.configuration.DefaultIgniteConfiguration;
+import io.micronaut.ignite.configuration.DefaultIgniteThinClientConfiguration;
 import io.micronaut.scheduling.TaskExecutors;
 import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCache;
+import org.apache.ignite.client.ClientCache;
+import org.apache.ignite.client.IgniteClient;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.concurrent.ExecutorService;
 
 @Singleton
-@Requires(beans = Ignite.class)
-@Primary
-@Requires(property = DefaultIgniteConfiguration.PREFIX + "." + "cache.enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
-public class IgniteCacheManager implements DynamicCacheManager<IgniteCache> {
-    private final Ignite ignite;
+@Requires(beans = IgniteClient.class)
+@Requires(property = DefaultIgniteThinClientConfiguration.PREFIX + "." + "cache.enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
+public class IgniteThinCacheManager implements DynamicCacheManager<ClientCache> {
+    private final IgniteClient client;
     private final ConversionService<?> service;
     private final ExecutorService executorService;
 
-    public IgniteCacheManager(@Primary Ignite ignite,
-                              ConversionService<?> service,
-                              @Named(TaskExecutors.IO) ExecutorService executorService) {
-        this.ignite = ignite;
+    public IgniteThinCacheManager(@Primary IgniteClient client,
+                                  ConversionService<?> service,
+                                  @Named(TaskExecutors.IO) ExecutorService executorService) {
+        this.client = client;
         this.service = service;
         this.executorService = executorService;
     }
 
     @NonNull
     @Override
-    public SyncCache<IgniteCache> getCache(String name) {
-        return new IgniteSyncCache(service, ignite.getOrCreateCache(name), executorService);
+    public SyncCache<ClientCache> getCache(String name) {
+        return new IgniteThinSyncCache(service, executorService, client.getOrCreateCache(name));
     }
 }

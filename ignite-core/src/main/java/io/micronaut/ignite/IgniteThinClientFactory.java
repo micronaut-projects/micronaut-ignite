@@ -19,54 +19,46 @@ import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
-import io.micronaut.ignite.configuration.DefaultCacheConfiguration;
-import io.micronaut.ignite.configuration.DefaultIgniteConfiguration;
-import org.apache.ignite.Ignite;
+import io.micronaut.ignite.configuration.DefaultIgniteThinClientConfiguration;
 import org.apache.ignite.Ignition;
-import org.apache.ignite.configuration.CacheConfiguration;
-import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.client.IgniteClient;
+import org.apache.ignite.configuration.ClientConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.Collection;
 
 /**
- * Factory for the implementation of {@link Ignite}.
+ * Factory for the implementation of {@link IgniteClient}.
  */
 @Factory
-public class IgniteFactory implements AutoCloseable {
-    private static final Logger LOG = LoggerFactory.getLogger(IgniteFactory.class);
+public class IgniteThinClientFactory implements AutoCloseable {
+    private static final Logger LOG = LoggerFactory.getLogger(IgniteThinClientFactory.class);
 
     /**
-     * The Ignite Configuration.
-     *
-     * @param configuration the configuration
-     * @param cacheConfigurations cache configurations
-     * @return Ignite Configuration
+     * Ignite {@link ClientConfiguration}.
+     * @param clientConfiguration client configuration
+     * @return client configuration
      */
     @Bean
     @Named("default")
     @Primary
-    public IgniteConfiguration igniteConfiguration(DefaultIgniteConfiguration configuration, Collection<DefaultCacheConfiguration> cacheConfigurations) {
-        IgniteConfiguration igniteConfiguration = configuration.getConfiguration();
-        igniteConfiguration.setCacheConfiguration(cacheConfigurations.stream().map(k -> k.getConfiguration()).toArray(CacheConfiguration[]::new));
-        return igniteConfiguration;
+    public ClientConfiguration igniteClientConfiguration(DefaultIgniteThinClientConfiguration clientConfiguration) {
+        return clientConfiguration.getConfiguration();
     }
 
     /**
-     * Create {@link Ignite} instance from {@link IgniteConfiguration}.
      *
-     * @param configuration ignite configuration
-     * @return create ignite instance
+     * @param configuration client configuration
+     * @return Ignite Thin client
      */
+    @EachBean(ClientConfiguration.class)
     @Singleton
-    @EachBean(IgniteConfiguration.class)
     @Bean(preDestroy = "close")
-    public Ignite ignite(IgniteConfiguration configuration) {
+    public IgniteClient igniteThinClient(ClientConfiguration configuration) {
         try {
-            return Ignition.start(configuration);
+            return Ignition.startClient(configuration);
         } catch (Exception e) {
             LOG.error("Failed to instantiate Ignite Client: " + e.getMessage(), e);
             throw e;

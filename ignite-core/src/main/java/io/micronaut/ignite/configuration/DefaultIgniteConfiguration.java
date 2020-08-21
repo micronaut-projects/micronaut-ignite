@@ -15,71 +15,41 @@
  */
 package io.micronaut.ignite.configuration;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.context.annotation.EachProperty;
-import io.micronaut.context.annotation.Parameter;
-import io.micronaut.core.naming.Named;
-import org.apache.ignite.cache.QueryEntity;
-import org.apache.ignite.configuration.CacheConfiguration;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.util.StringUtils;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Ignite cache configuration.
  */
 @ConfigurationProperties(value = DefaultIgniteConfiguration.PREFIX)
+@Requires(property = DefaultIgniteThinClientConfiguration.PREFIX + "." + "enabled", value = StringUtils.FALSE, defaultValue = StringUtils.FALSE)
+@Requires(property = DefaultIgniteConfiguration.PREFIX + "." + "enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 public class DefaultIgniteConfiguration {
     public static final String PREFIX = "ignite";
-
     @ConfigurationBuilder(excludes = "cacheConfiguration")
-    private IgniteConfiguration igniteConfiguration = new IgniteConfiguration();
-    @ConfigurationBuilder(value = "communicationSpi")
-    private TcpCommunicationSpi communicationSpi = new TcpCommunicationSpi();
+    private final IgniteConfiguration configuration = new IgniteConfiguration()
+        .setCommunicationSpi(new TcpCommunicationSpi());
 
+    @ConfigurationBuilder(value = "communicationSpi")
+    private final TcpCommunicationSpi communicationSpi = (TcpCommunicationSpi) configuration.getCommunicationSpi();
+
+    /**
+     * The communication SPI.
+     * @return communication SPI
+     */
     public TcpCommunicationSpi getCommunicationSpi() {
         return communicationSpi;
     }
 
-    public void setCommunicationSpi(TcpCommunicationSpi communicationSpi) {
-        this.communicationSpi = communicationSpi;
-    }
-
-    public IgniteConfiguration getIgniteConfiguration() {
-        return igniteConfiguration;
-    }
-
-    public void setIgniteConfiguration(IgniteConfiguration igniteConfiguration) {
-        this.igniteConfiguration = igniteConfiguration;
-    }
-
-    private String path;
-
     /**
-     * path to load in bean configuration.
-     *
-     * @param path bean config to load.
+     * The configuration.
+     * @return Ignite configuration.
      */
-    public void setPath(String path) {
-        this.path = path;
+    public IgniteConfiguration getConfiguration() {
+        return configuration;
     }
-
-    /**
-     * path to load in bean configuration.
-     *
-     * @return bean config to load.
-     */
-    public String getPath() {
-        return path;
-    }
-
-    public IgniteConfiguration getConfiguration(){
-        return new IgniteConfiguration(this.getIgniteConfiguration())
-            .setCommunicationSpi(this.communicationSpi);
-    }
-
 }

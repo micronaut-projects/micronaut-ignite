@@ -18,7 +18,7 @@ import javax.inject.Inject;
 
 @MicronautTest
 @Property( name  = "ignite.enabled", value= "true")
-@Property( name  = "ignite.clients.default.path", value= "classpath:standard.cfg")
+@Property( name  = "ignite.communication-spi.local-port", value= "10800")
 @Testcontainers
 @Retry
 class IgniteRefSpec extends Specification {

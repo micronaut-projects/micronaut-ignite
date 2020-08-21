@@ -10,8 +10,9 @@ import spock.lang.Shared
 
 @Testcontainers
 @Retry
-@IgnoreIf({ System.getenv('GITHUB_WORKFLOW') })
-class IgniteClientAsyncCacheSpec extends AbstractAsyncCacheSpec {
+@IgnoreIf({System.getenv('GITHUB_WORKFLOW')})
+class IgniteThinClientAsyncCacheSpec extends AbstractAsyncCacheSpec {
+
     final static String IGNITE_VERSION = System.getProperty("igniteVersion")
 
     @Shared
@@ -21,10 +22,9 @@ class IgniteClientAsyncCacheSpec extends AbstractAsyncCacheSpec {
     @Override
     ApplicationContext createApplicationContext() {
         return ApplicationContext.run([
-            "ignite.enabled"                   : true,
-            "ignite.cache.enabled"                   : true,
-            "ignite.client-mode"                   : true,
-            "ignite.communication-spi.local-port": "${ignite.getMappedPort(10800)}",
+            "ignite-thin.enabled"                      : true,
+            "ignite-thin.cache.enabled"                      : true,
+            "ignite-thin.addresses": ["127.0.0.1:${ignite.getMappedPort(10800)}"]
         ])
     }
 }
