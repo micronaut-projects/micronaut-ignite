@@ -15,7 +15,6 @@
  */
 package io.micronaut.ignite.configuration;
 
-import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.naming.Named;
@@ -30,30 +29,18 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the cache value
  */
 @EachProperty(value = DefaultIgniteConfiguration.PREFIX + "." + DefaultCacheConfiguration.PREFIX)
-public class DefaultCacheConfiguration<K, V> implements Named {
+public class DefaultCacheConfiguration<K, V> extends CacheConfiguration<K, V> implements Named {
     public static final String PREFIX = "cacheConfigurations";
     private final String name;
 
-    @ConfigurationBuilder
-    private final CacheConfiguration<K, V> configuration = new CacheConfiguration<K, V>();
-
     /**
      * Construct a new instance.
-     *
-     * @param name the configut to use.
+     * @param name the name to use.
      */
     public DefaultCacheConfiguration(@Parameter String name) {
         super();
         this.name = name;
-        this.configuration.setName(name);
-    }
-
-    /**
-     * The cache configuration.
-     * @return the CacheConfiguration
-     */
-    public CacheConfiguration<K, V> getConfiguration() {
-        return configuration;
+        super.setName(name);
     }
 
     @NotNull

@@ -50,9 +50,8 @@ public class IgniteFactory implements AutoCloseable {
     @Named("default")
     @Primary
     public IgniteConfiguration igniteConfiguration(DefaultIgniteConfiguration configuration, Collection<DefaultCacheConfiguration> cacheConfigurations) {
-        IgniteConfiguration igniteConfiguration = configuration.getConfiguration();
-        igniteConfiguration.setCacheConfiguration(cacheConfigurations.stream().map(k -> k.getConfiguration()).toArray(CacheConfiguration[]::new));
-        return igniteConfiguration;
+        configuration.setCacheConfiguration(cacheConfigurations.toArray(new CacheConfiguration[0]));
+        return configuration;
     }
 
     /**

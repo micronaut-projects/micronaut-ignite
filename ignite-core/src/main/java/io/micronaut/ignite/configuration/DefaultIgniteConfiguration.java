@@ -19,37 +19,42 @@ import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;
+import io.micronaut.core.util.Toggleable;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi;
 
 /**
  * Ignite cache configuration.
  */
-@ConfigurationProperties(value = DefaultIgniteConfiguration.PREFIX)
+@ConfigurationProperties(value = DefaultIgniteConfiguration.PREFIX, excludes = {"cacheConfiguration"})
 @Requires(property = DefaultIgniteThinClientConfiguration.PREFIX + "." + "enabled", value = StringUtils.FALSE, defaultValue = StringUtils.FALSE)
 @Requires(property = DefaultIgniteConfiguration.PREFIX + "." + "enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
-public class DefaultIgniteConfiguration {
+public class DefaultIgniteConfiguration extends IgniteConfiguration implements Toggleable {
     public static final String PREFIX = "ignite";
-    @ConfigurationBuilder(excludes = "cacheConfiguration")
-    private final IgniteConfiguration configuration = new IgniteConfiguration()
-        .setCommunicationSpi(new TcpCommunicationSpi());
+
+    private boolean isEnabled;
 
     @ConfigurationBuilder(value = "communicationSpi")
-    private final TcpCommunicationSpi communicationSpi = (TcpCommunicationSpi) configuration.getCommunicationSpi();
+    final TcpCommunicationSpi communicationSpi = new TcpCommunicationSpi();
 
     /**
-     * The communication SPI.
-     * @return communication SPI
+     * Default Ignite configuration.
      */
-    public TcpCommunicationSpi getCommunicationSpi() {
-        return communicationSpi;
+    DefaultIgniteConfiguration() {
+        super.setCommunicationSpi(communicationSpi);
     }
 
     /**
-     * The configuration.
-     * @return Ignite configuration.
+     * Sets whether the DefaultIgniteConfiguration is enabled.
+     *
+     * @param enabled True if it is.
      */
-    public IgniteConfiguration getConfiguration() {
-        return configuration;
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
     }
 }
