@@ -17,15 +17,21 @@ package io.micronaut.ignite.configuration;
 
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.core.util.Toggleable;
+import io.micronaut.ignite.annotation.IgnitePrimary;
+import org.apache.ignite.configuration.AtomicConfiguration;
+import org.apache.ignite.configuration.FileSystemConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi;
+import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 
 /**
  * Ignite cache configuration.
  */
+@IgnitePrimary
 @ConfigurationProperties(value = DefaultIgniteConfiguration.PREFIX, excludes = {"cacheConfiguration"})
 @Requires(property = DefaultIgniteThinClientConfiguration.PREFIX + "." + "enabled", value = StringUtils.FALSE, defaultValue = StringUtils.FALSE)
 @Requires(property = DefaultIgniteConfiguration.PREFIX + "." + "enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
@@ -34,14 +40,22 @@ public class DefaultIgniteConfiguration extends IgniteConfiguration implements T
 
     private boolean isEnabled;
 
-    @ConfigurationBuilder(value = "communicationSpi")
+    @ConfigurationBuilder(value = "communication-spi")
     final TcpCommunicationSpi communicationSpi = new TcpCommunicationSpi();
+
+    @ConfigurationBuilder(value = "discovery-spi")
+    final TcpDiscoverySpi discoverySpi = new TcpDiscoverySpi();
+
+    @ConfigurationBuilder(value = "atomic-configuration")
+    final AtomicConfiguration atomicConfiguration = new AtomicConfiguration();
 
     /**
      * Default Ignite configuration.
      */
     DefaultIgniteConfiguration() {
         super.setCommunicationSpi(communicationSpi);
+        super.setDiscoverySpi(discoverySpi);
+        super.setAtomicConfiguration(atomicConfiguration);
     }
 
     /**
@@ -56,5 +70,10 @@ public class DefaultIgniteConfiguration extends IgniteConfiguration implements T
     @Override
     public boolean isEnabled() {
         return isEnabled;
+    }
+
+    @EachProperty(value = "fileSystemConsistency", list = true)
+    static class DefaultFileSystemConfiguration extends FileSystemConfiguration {
+
     }
 }

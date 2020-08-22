@@ -19,6 +19,8 @@ import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.ignite.annotation.IgnitePrimary;
 import io.micronaut.ignite.configuration.DefaultIgniteThinClientConfiguration;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.client.IgniteClient;
@@ -44,7 +46,8 @@ public class IgniteThinClientFactory implements AutoCloseable {
     @Bean
     @Named("default")
     @Primary
-    public ClientConfiguration igniteClientConfiguration(DefaultIgniteThinClientConfiguration clientConfiguration) {
+    @Requires(beans = DefaultIgniteThinClientConfiguration.class)
+    public ClientConfiguration igniteClientConfiguration(@IgnitePrimary DefaultIgniteThinClientConfiguration clientConfiguration) {
         return clientConfiguration.getConfiguration();
     }
 

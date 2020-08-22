@@ -76,4 +76,21 @@ class IgniteConfigurationSpec extends Specification {
         ctx.close()
     }
 
+    def "test ignite data-storage configuration"() {
+        given:
+        ApplicationContext ctx = ApplicationContext.run([
+            "ignite.enabled"    : true,
+            "ignite.communication-spi.local-port": "5555",
+            "ignite.data-storage-configuration.data-region-configurations.one.persistence-enabled": "true"
+        ])
+        when:
+        IgniteConfiguration configuration = ctx.getBean(IgniteConfiguration.class)
+        then:
+        configuration != null
+
+        cleanup:
+        ctx.close()
+
+    }
+
 }

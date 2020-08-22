@@ -18,6 +18,7 @@ package io.micronaut.ignite.configuration;
 import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.naming.Named;
+import io.micronaut.ignite.annotation.IgnitePrimary;
 import org.apache.ignite.cache.QueryEntity;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -28,9 +29,10 @@ import org.jetbrains.annotations.NotNull;
  * @param <K> the cache key
  * @param <V> the cache value
  */
-@EachProperty(value = DefaultIgniteConfiguration.PREFIX + "." + DefaultCacheConfiguration.PREFIX)
+@IgnitePrimary
+@EachProperty(value = DefaultCacheConfiguration.PREFIX)
 public class DefaultCacheConfiguration<K, V> extends CacheConfiguration<K, V> implements Named {
-    public static final String PREFIX = "cacheConfigurations";
+    public static final String PREFIX = DefaultIgniteConfiguration.PREFIX + "." + "cache-configurations";
     private final String name;
 
     /**

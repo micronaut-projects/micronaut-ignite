@@ -19,18 +19,36 @@ import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.ignite.annotation.ConsistencyId;
+import io.micronaut.ignite.annotation.IgniteLifecycle;
+import io.micronaut.ignite.annotation.IgnitePrimary;
 import io.micronaut.ignite.configuration.DefaultCacheConfiguration;
+import io.micronaut.ignite.configuration.DefaultExecutorConfiguration;
 import io.micronaut.ignite.configuration.DefaultIgniteConfiguration;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.configuration.BinaryConfiguration;
 import org.apache.ignite.configuration.CacheConfiguration;
+import org.apache.ignite.configuration.ExecutorConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.configuration.PlatformConfiguration;
+import org.apache.ignite.failure.FailureHandler;
+import org.apache.ignite.lifecycle.LifecycleBean;
+import org.apache.ignite.plugin.PluginProvider;
+import org.apache.ignite.spi.collision.CollisionSpi;
+import org.apache.ignite.spi.encryption.keystore.KeystoreEncryptionSpi;
+import org.apache.ignite.spi.failover.FailoverSpi;
+import org.apache.ignite.spi.indexing.IndexingSpi;
+import org.apache.ignite.spi.loadbalancing.LoadBalancingSpi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Factory for the implementation of {@link Ignite}.
@@ -49,8 +67,34 @@ public class IgniteFactory implements AutoCloseable {
     @Bean
     @Named("default")
     @Primary
-    public IgniteConfiguration igniteConfiguration(DefaultIgniteConfiguration configuration, Collection<DefaultCacheConfiguration> cacheConfigurations) {
-        configuration.setCacheConfiguration(cacheConfigurations.toArray(new CacheConfiguration[0]));
+    @Requires(beans = DefaultIgniteConfiguration.class)
+    public IgniteConfiguration igniteConfiguration(DefaultIgniteConfiguration configuration,
+                                                   @IgnitePrimary Collection<CacheConfiguration> cacheConfigurations,
+                                                   @IgnitePrimary Collection<PluginProvider> providers,
+                                                   @IgnitePrimary Collection<ExecutorConfiguration> executorConfigurations,
+                                                   @IgnitePrimary Collection<LoadBalancingSpi> loadBalancingSpis,
+                                                   @IgnitePrimary Collection<FailoverSpi> failoverSpis,
+                                                   @IgnitePrimary Optional<FailureHandler> failureHandler,
+                                                   @IgnitePrimary Optional<KeystoreEncryptionSpi> encryptionSpi,
+                                                   @IgnitePrimary Optional<PlatformConfiguration> platformConfigurations,
+                                                   @IgnitePrimary Optional<CollisionSpi> collisionSpi,
+                                                   @IgnitePrimary Optional<IndexingSpi> indexingSpi,
+                                                   @IgnitePrimary Optional<BinaryConfiguration> binaryConfiguration,
+                                                   @IgnitePrimary @ConsistencyId Optional<Serializable> consistencyId,
+                                                   @IgnitePrimary @IgniteLifecycle Collection<LifecycleBean> lifecycleBeans) {
+        configuration.setCacheConfiguration(cacheConfigurations.toArray(new CacheConfiguration[0]))
+            .setPluginProviders(providers.toArray(new PluginProvider[0]))
+            .setExecutorConfiguration(executorConfigurations.toArray(new ExecutorConfiguration[0]))
+            .setPlatformConfiguration(platformConfigurations.orElse(null))
+            .setFailoverSpi(failoverSpis.toArray(new FailoverSpi[0]))
+            .setLoadBalancingSpi(loadBalancingSpis.toArray(new LoadBalancingSpi[0]))
+            .setConsistentId(consistencyId.orElse(null))
+            .setLifecycleBeans(lifecycleBeans.toArray(new LifecycleBean[0]))
+            .setIndexingSpi(indexingSpi.orElse(null))
+            .setEncryptionSpi(encryptionSpi.orElse(null))
+            .setCollisionSpi(collisionSpi.orElse(null))
+            .setFailureHandler(failureHandler.orElse(null))
+            .setBinaryConfiguration(binaryConfiguration.orElse(null));
         return configuration;
     }
 
