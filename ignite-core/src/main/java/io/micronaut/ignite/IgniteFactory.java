@@ -20,16 +20,17 @@ import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.ignite.annotation.ConsistencyId;
 import io.micronaut.ignite.annotation.IgniteLifecycle;
 import io.micronaut.ignite.annotation.IgnitePrimary;
-import io.micronaut.ignite.configuration.DefaultCacheConfiguration;
-import io.micronaut.ignite.configuration.DefaultExecutorConfiguration;
 import io.micronaut.ignite.configuration.DefaultIgniteConfiguration;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.cache.CacheKeyConfiguration;
 import org.apache.ignite.configuration.BinaryConfiguration;
 import org.apache.ignite.configuration.CacheConfiguration;
+import org.apache.ignite.configuration.DataStorageConfiguration;
 import org.apache.ignite.configuration.ExecutorConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.configuration.PlatformConfiguration;
@@ -60,28 +61,30 @@ public class IgniteFactory implements AutoCloseable {
     /**
      * The Ignite Configuration.
      *
-     * @param configuration the configuration
+     * @param configuration       the configuration
      * @param cacheConfigurations cache configurations
      * @return Ignite Configuration
      */
     @Bean
     @Named("default")
     @Primary
-    @Requires(beans = DefaultIgniteConfiguration.class)
-    public IgniteConfiguration igniteConfiguration(DefaultIgniteConfiguration configuration,
+    @Requires(beans = {DefaultIgniteConfiguration.class})
+    public IgniteConfiguration igniteConfiguration(@IgnitePrimary DefaultIgniteConfiguration configuration,
                                                    @IgnitePrimary Collection<CacheConfiguration> cacheConfigurations,
                                                    @IgnitePrimary Collection<PluginProvider> providers,
                                                    @IgnitePrimary Collection<ExecutorConfiguration> executorConfigurations,
                                                    @IgnitePrimary Collection<LoadBalancingSpi> loadBalancingSpis,
                                                    @IgnitePrimary Collection<FailoverSpi> failoverSpis,
+                                                   @IgnitePrimary Collection<CacheKeyConfiguration> cacheKeyConfigurations,
                                                    @IgnitePrimary Optional<FailureHandler> failureHandler,
                                                    @IgnitePrimary Optional<KeystoreEncryptionSpi> encryptionSpi,
                                                    @IgnitePrimary Optional<PlatformConfiguration> platformConfigurations,
                                                    @IgnitePrimary Optional<CollisionSpi> collisionSpi,
                                                    @IgnitePrimary Optional<IndexingSpi> indexingSpi,
+                                                   @IgnitePrimary Optional<DataStorageConfiguration> dataStorageConfiguration,
                                                    @IgnitePrimary Optional<BinaryConfiguration> binaryConfiguration,
-                                                   @IgnitePrimary @ConsistencyId Optional<Serializable> consistencyId,
-                                                   @IgnitePrimary @IgniteLifecycle Collection<LifecycleBean> lifecycleBeans) {
+                                                   @ConsistencyId Optional<Serializable> consistencyId,
+                                                   @IgniteLifecycle Collection<LifecycleBean> lifecycleBeans) {
         configuration.setCacheConfiguration(cacheConfigurations.toArray(new CacheConfiguration[0]))
             .setPluginProviders(providers.toArray(new PluginProvider[0]))
             .setExecutorConfiguration(executorConfigurations.toArray(new ExecutorConfiguration[0]))
@@ -94,6 +97,8 @@ public class IgniteFactory implements AutoCloseable {
             .setEncryptionSpi(encryptionSpi.orElse(null))
             .setCollisionSpi(collisionSpi.orElse(null))
             .setFailureHandler(failureHandler.orElse(null))
+            .setDataStorageConfiguration(dataStorageConfiguration.orElse(null))
+            .setCacheKeyConfiguration(cacheKeyConfigurations.toArray(new CacheKeyConfiguration[0]))
             .setBinaryConfiguration(binaryConfiguration.orElse(null));
         return configuration;
     }

@@ -19,7 +19,6 @@ import io.micronaut.context.annotation.EachProperty;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.core.naming.Named;
 import io.micronaut.ignite.annotation.IgnitePrimary;
-import org.apache.ignite.cache.QueryEntity;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,10 +50,4 @@ public class DefaultCacheConfiguration<K, V> extends CacheConfiguration<K, V> im
         return name;
     }
 
-    /**
-     * The Query Entities.
-     */
-    @EachProperty(value = "queryEntities", list = true)
-    public static class DefaultQueryEntities extends QueryEntity {
-    }
 }
