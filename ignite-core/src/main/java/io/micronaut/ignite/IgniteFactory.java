@@ -20,7 +20,6 @@ import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.util.StringUtils;
 import io.micronaut.ignite.annotation.ConsistencyId;
 import io.micronaut.ignite.annotation.IgniteLifecycle;
 import io.micronaut.ignite.annotation.IgnitePrimary;
@@ -38,7 +37,7 @@ import org.apache.ignite.failure.FailureHandler;
 import org.apache.ignite.lifecycle.LifecycleBean;
 import org.apache.ignite.plugin.PluginProvider;
 import org.apache.ignite.spi.collision.CollisionSpi;
-import org.apache.ignite.spi.encryption.keystore.KeystoreEncryptionSpi;
+import org.apache.ignite.spi.encryption.EncryptionSpi;
 import org.apache.ignite.spi.failover.FailoverSpi;
 import org.apache.ignite.spi.indexing.IndexingSpi;
 import org.apache.ignite.spi.loadbalancing.LoadBalancingSpi;
@@ -77,7 +76,7 @@ public class IgniteFactory implements AutoCloseable {
                                                    @IgnitePrimary Collection<FailoverSpi> failoverSpis,
                                                    @IgnitePrimary Collection<CacheKeyConfiguration> cacheKeyConfigurations,
                                                    @IgnitePrimary Optional<FailureHandler> failureHandler,
-                                                   @IgnitePrimary Optional<KeystoreEncryptionSpi> encryptionSpi,
+                                                   @IgnitePrimary Optional<EncryptionSpi> encryptionSpi,
                                                    @IgnitePrimary Optional<PlatformConfiguration> platformConfigurations,
                                                    @IgnitePrimary Optional<CollisionSpi> collisionSpi,
                                                    @IgnitePrimary Optional<IndexingSpi> indexingSpi,
