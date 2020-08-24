@@ -10,6 +10,9 @@ import org.apache.ignite.configuration.CacheConfiguration
 import org.apache.ignite.configuration.IgniteConfiguration
 import org.apache.ignite.spi.communication.CommunicationSpi
 import org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi
+import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi
+import org.apache.ignite.spi.discovery.tcp.ipfinder.TcpDiscoveryIpFinder
+import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.spock.Testcontainers
 import spock.lang.AutoCleanup
@@ -31,12 +34,21 @@ class IgniteConfigurationSpec extends Specification {
         ApplicationContext ctx = ApplicationContext.run([
             "ignite.enabled"    : true,
             "ignite.communication-spi.local-port": "${ignite.getMappedPort(10800)}",
+            "ignite.discovery-spi.ip-finder-type": "STATIC",
+            "ignite.discovery-spi.static-ip-finder.addresses[0]": "127.0.0.1:47500",
+            "ignite.discovery-spi.static-ip-finder.addresses[0]": "127.0.0.1:47501",
         ])
         when:
         Ignite inst = ctx.getBean(Ignite.class)
+        IgniteConfiguration cfg = ctx.getBean(IgniteConfiguration.class);
 
         then:
         inst != null
+        cfg.clientMode
+
+        TcpDiscoveryIpFinder ipFinder = ((TcpDiscoverySpi)cfg.discoverySpi).ipFinder;
+        ipFinder instanceof TcpDiscoveryVmIpFinder
+        ipFinder.registeredAddresses.contains("127.0.0.1:45700") || ipFinder.registeredAddresses.contains("127.0.0.1:45701")
 
         cleanup:
         ctx.close()
