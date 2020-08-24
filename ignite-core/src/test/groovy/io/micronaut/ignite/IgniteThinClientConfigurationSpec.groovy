@@ -24,8 +24,8 @@ class IgniteThinClientConfigurationSpec extends Specification {
     void "test ignite thin client instance is created"() {
         given:
         ApplicationContext ctx = ApplicationContext.run([
-            "ignite-thin.enabled"                  : true,
-            "ignite-thin.addresses": ["127.0.0.1:${ignite.getMappedPort(10800)}"],
+            "ignite-thin-client.enabled"                  : true,
+            "ignite-thin-client.addresses": ["127.0.0.1:${ignite.getMappedPort(10800)}"],
         ])
 
         when:
@@ -38,12 +38,13 @@ class IgniteThinClientConfigurationSpec extends Specification {
     void "test ignite thin client configuration"() {
         given:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
-            "ignite-thin.enabled"                                                  : true,
-            "ignite-thin.addresses"                                : ["localhost:1080"],
-            "ignite-thin.ssl-mode"                                 : "REQUIRED",
-            "ignite-thin.ssl-client-certificate-key-store-password": "password",
-            "ignite-thin.timeout"                                  : 5000,
-            "ignite-thin.send-buffer-size"                         : 200
+            "ignite-thin-client.enabled"                                                  : true,
+            "ignite-thin-client.addresses"                                : ["localhost:1080"],
+            "ignite-thin-client.ssl-mode"                                 : "REQUIRED",
+            "ignite-thin-client.ssl-client-certificate-key-store-password": "password",
+            "ignite-thin-client.timeout"                                  : 5000,
+            "ignite-thin-client.send-buffer-size"                         : 200,
+            "ignite-thin-client.partition-awareness-enabled"              : true
         ])
         when:
         ClientConfiguration configuration = ctx.getBean(ClientConfiguration.class)
@@ -54,17 +55,18 @@ class IgniteThinClientConfigurationSpec extends Specification {
         configuration.sslClientCertificateKeyStorePassword == "password"
         configuration.timeout == 5000
         configuration.sendBufferSize == 200
+        configuration.partitionAwarenessEnabled == true
     }
 
 
     void "test ignite thin client transaction configuration"() {
         given:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
-            "ignite-thin.enabled"                                                         : true,
-            "ignite-thin.addresses"                                       : ["localhost:1080"],
-            "ignite-thin.transaction-configuration.default-tx-isolation"  : "REPEATABLE_READ",
-            "ignite-thin.transaction-configuration.default-tx-concurrency": "PESSIMISTIC",
-            "ignite-thin.transaction-configuration.default-tx-timeout"    : 5000,
+            "ignite-thin-client.enabled"                                                         : true,
+            "ignite-thin-client.addresses"                                       : ["localhost:1080"],
+            "ignite-thin-client.transaction-configuration.default-tx-isolation"  : "REPEATABLE_READ",
+            "ignite-thin-client.transaction-configuration.default-tx-concurrency": "PESSIMISTIC",
+            "ignite-thin-client.transaction-configuration.default-tx-timeout"    : 5000,
         ])
         when:
         ClientConfiguration clientConfiguration = ctx.getBean(ClientConfiguration.class)

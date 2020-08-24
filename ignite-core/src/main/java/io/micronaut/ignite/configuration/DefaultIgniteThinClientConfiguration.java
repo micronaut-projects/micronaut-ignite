@@ -32,7 +32,7 @@ import org.apache.ignite.configuration.ClientTransactionConfiguration;
 @Requires(property = DefaultIgniteThinClientConfiguration.PREFIX + "." + "enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 @Requires(property = DefaultIgniteConfiguration.PREFIX + "." + "enabled", value = StringUtils.FALSE, defaultValue = StringUtils.FALSE)
 public class DefaultIgniteThinClientConfiguration implements Toggleable {
-    public static final String PREFIX = "ignite-thin";
+    public static final String PREFIX = "ignite-thin-client";
 
     @ConfigurationBuilder(excludes = {"transactionConfiguration", "binaryConfiguration", "sslContextFactory"})
     private final ClientConfiguration configuration = new ClientConfiguration();
