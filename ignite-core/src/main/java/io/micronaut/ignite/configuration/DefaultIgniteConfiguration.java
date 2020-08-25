@@ -37,8 +37,8 @@ import java.util.Optional;
 /**
  * Ignite cache configuration.
  */
-@Primary
 @Named("default")
+@Primary
 @ConfigurationProperties(value = DefaultIgniteConfiguration.PREFIX, excludes = {"cacheConfiguration",
     "fileSystemConfiguration", "hadoopConfiguration"})
 @Requires(property = DefaultIgniteThinClientConfiguration.PREFIX + "." + "enabled", value = StringUtils.FALSE, defaultValue = StringUtils.FALSE)
@@ -46,9 +46,6 @@ import java.util.Optional;
 public class DefaultIgniteConfiguration extends IgniteConfiguration implements Toggleable {
     public static final String PREFIX = "ignite";
     public static final String PREFIX_DISCOVERY = "ignite.discovery-spi";
-
-    private boolean isEnabled;
-
 
     @ConfigurationBuilder(value = "communication-spi")
     final TcpCommunicationSpi communicationSpi = new TcpCommunicationSpi();
@@ -59,8 +56,13 @@ public class DefaultIgniteConfiguration extends IgniteConfiguration implements T
     @ConfigurationBuilder(value = "atomic-configuration")
     final AtomicConfiguration atomicConfiguration = new AtomicConfiguration();
 
+    private boolean isEnabled;
+
     /**
      * Default Ignite configuration.
+     *
+     * @param ipFinder ip finder
+     * @param cacheConfigurations list of cacheConfigurations
      */
     @Inject
     DefaultIgniteConfiguration(@IgnitePrimary Optional<TcpDiscoveryIpFinder> ipFinder,

@@ -33,7 +33,6 @@ import java.util.concurrent.ExecutorService;
 
 @Singleton
 @Requires(beans = Ignite.class)
-@Primary
 @Requires(property = DefaultIgniteConfiguration.PREFIX + "." + "cache.enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 public class IgniteCacheManager implements DynamicCacheManager<IgniteCache> {
     private final Ignite ignite;

@@ -18,37 +18,13 @@ package io.micronaut.ignite;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Primary;
-import io.micronaut.context.annotation.Requires;
-import io.micronaut.ignite.annotation.ConsistencyId;
-import io.micronaut.ignite.annotation.IgniteLifecycle;
-import io.micronaut.ignite.annotation.IgnitePrimary;
-import io.micronaut.ignite.configuration.DefaultIgniteConfiguration;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
-import org.apache.ignite.cache.CacheKeyConfiguration;
-import org.apache.ignite.configuration.BinaryConfiguration;
-import org.apache.ignite.configuration.CacheConfiguration;
-import org.apache.ignite.configuration.DataStorageConfiguration;
-import org.apache.ignite.configuration.ExecutorConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
-import org.apache.ignite.configuration.PlatformConfiguration;
-import org.apache.ignite.failure.FailureHandler;
-import org.apache.ignite.lifecycle.LifecycleBean;
-import org.apache.ignite.plugin.PluginProvider;
-import org.apache.ignite.spi.collision.CollisionSpi;
-import org.apache.ignite.spi.encryption.EncryptionSpi;
-import org.apache.ignite.spi.failover.FailoverSpi;
-import org.apache.ignite.spi.indexing.IndexingSpi;
-import org.apache.ignite.spi.loadbalancing.LoadBalancingSpi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Factory for the implementation of {@link Ignite}.

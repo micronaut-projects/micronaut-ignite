@@ -24,7 +24,6 @@ import io.micronaut.core.convert.ConversionService;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.ignite.configuration.DefaultIgniteThinClientConfiguration;
 import io.micronaut.scheduling.TaskExecutors;
-import org.apache.ignite.Ignite;
 import org.apache.ignite.client.ClientCache;
 import org.apache.ignite.client.IgniteClient;
 
