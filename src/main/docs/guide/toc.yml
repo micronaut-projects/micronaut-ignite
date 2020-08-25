@@ -1,8 +1,9 @@
 introduction:
   title: Introduction
   releaseHistory: Release History
-quickStart:
-  title: Ignite Quick Start
-  clientConfiguration: Ignite Client Configuration
+quickStart: Ignite Quick Start
+config:
+  title: Configuration Ignite
+  igniteCacheConfiguration: Ignite Cache Configuration
 igniteCache:
   title: Micronaut Cache

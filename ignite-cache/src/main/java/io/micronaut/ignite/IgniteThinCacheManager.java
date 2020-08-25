@@ -33,7 +33,7 @@ import java.util.concurrent.ExecutorService;
 
 @Singleton
 @Requires(beans = IgniteClient.class)
-@Requires(property = DefaultIgniteThinClientConfiguration.PREFIX + "." + "cache.enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
+@Requires(property = DefaultIgniteThinClientConfiguration.PREFIX + "." + "enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 public class IgniteThinCacheManager implements DynamicCacheManager<ClientCache> {
     private final IgniteClient client;
     private final ConversionService<?> service;

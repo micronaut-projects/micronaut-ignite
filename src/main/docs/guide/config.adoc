@@ -1,0 +1,7 @@
+The full list of configurable options via micronaut properties is below:
+
+include::{includedir}configurationProperties/io.micronaut.ignite.configuration.DefaultIgniteConfiguration.adoc[]
+
+To apply additional configuration a bean created event listener can be registered to intercept the creation of the IgniteConfiguration.
+
+snippet::io.micronaut.ignite.docs.config.IgniteConfigurationFactoryInterceptor[ project-base="docs-examples/example]

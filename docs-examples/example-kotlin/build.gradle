@@ -1,0 +1,30 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "${kotlinVersion}"
+    id "org.jetbrains.kotlin.kapt" version "${kotlinVersion}"
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    kaptTest(enforcedPlatform("io.micronaut:micronaut-bom:$micronautVersion"))
+    kaptTest "io.micronaut:micronaut-inject-java"
+    testCompile 'io.kotlintest:kotlintest-runner-junit5:3.4.2'
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    testCompile project(":ignite-core")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = '1.8'
+        javaParameters = true
+    }
+}

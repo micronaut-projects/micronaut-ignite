@@ -1,0 +1,27 @@
+It is possible to configure multiple Ignite Caches.
+
+[source,yaml]
+----
+ignite:
+  enabled: true
+    cache-configurations:
+      name:
+        group-name: one
+        query-entities:
+        - table-name: "ACCOUNTS"
+          keyFieldName: ID
+          keyType: java.lang.Long
+          valueType: java.lang.Object
+          fields:
+            ID: java.lang.Long
+            amount: java.lang.Double
+            updateDate: java.util.Date
+      second:
+        group-name: two
+----
+
+include::{includedir}configurationProperties/io.micronaut.ignite.configuration.DefaultCacheConfiguration.adoc[]
+
+A factory can provide configurations that can't ideally be configured from properties .
+
+snippet::io.micronaut.ignite.docs.config.IgniteCacheConfigurationFactory[ project-base="docs-examples/example]
