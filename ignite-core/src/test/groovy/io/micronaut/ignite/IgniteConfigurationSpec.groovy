@@ -34,9 +34,7 @@ class IgniteConfigurationSpec extends Specification {
         ApplicationContext ctx = ApplicationContext.run([
             "ignite.enabled"    : true,
             "ignite.communication-spi.local-port": "${ignite.getMappedPort(10800)}",
-            "ignite.discovery-spi.ip-finder-type": "STATIC",
-            "ignite.discovery-spi.static-ip-finder.addresses[0]": "127.0.0.1:47500",
-            "ignite.discovery-spi.static-ip-finder.addresses[0]": "127.0.0.1:47501",
+            "ignite.client-mode": "true",
         ])
         when:
         Ignite inst = ctx.getBean(Ignite.class)
@@ -45,10 +43,6 @@ class IgniteConfigurationSpec extends Specification {
         then:
         inst != null
         cfg.clientMode
-
-        TcpDiscoveryIpFinder ipFinder = ((TcpDiscoverySpi)cfg.discoverySpi).ipFinder;
-        ipFinder instanceof TcpDiscoveryVmIpFinder
-        ipFinder.registeredAddresses.contains("127.0.0.1:45700") || ipFinder.registeredAddresses.contains("127.0.0.1:45701")
 
         cleanup:
         ctx.close()
