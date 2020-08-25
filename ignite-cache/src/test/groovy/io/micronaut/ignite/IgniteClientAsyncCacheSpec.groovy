@@ -22,7 +22,6 @@ class IgniteClientAsyncCacheSpec extends AbstractAsyncCacheSpec {
     ApplicationContext createApplicationContext() {
         return ApplicationContext.run([
             "ignite.enabled"                     : true,
-            "ignite.cache.enabled"               : true,
             "ignite.client-mode"                 : true,
             "ignite.communication-spi.local-port": "${ignite.getMappedPort(10800)}",
         ])

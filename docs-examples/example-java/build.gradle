@@ -1,0 +1,20 @@
+plugins {
+    id "java"
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testAnnotationProcessor "io.micronaut:micronaut-inject-java"
+    testCompile "io.micronaut:micronaut-inject"
+    testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testCompile project(":ignite-core")
+}
+
+
+test {
+    useJUnitPlatform()
+}
