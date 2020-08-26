@@ -1,0 +1,11 @@
+[source,yaml]
+----
+ignite-thin-client:
+  enabled: true
+  addresses:
+    - "127.0.0.1:10800"
+    - "127.0.0.1:10801"
+----
+
+include::{includedir}configurationProperties/io.micronaut.ignite.configuration.DefaultIgniteThinClientConfiguration.adoc[]
+

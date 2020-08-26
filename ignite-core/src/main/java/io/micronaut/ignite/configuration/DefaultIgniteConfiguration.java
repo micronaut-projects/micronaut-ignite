@@ -56,12 +56,12 @@ public class DefaultIgniteConfiguration extends IgniteConfiguration implements T
     @ConfigurationBuilder(value = "atomic-configuration")
     final AtomicConfiguration atomicConfiguration = new AtomicConfiguration();
 
-    private boolean isEnabled;
+    private boolean enabled;
 
     /**
      * Default Ignite configuration.
      *
-     * @param ipFinder ip finder
+     * @param ipFinder            ip finder
      * @param cacheConfigurations list of cacheConfigurations
      */
     @Inject
@@ -81,11 +81,11 @@ public class DefaultIgniteConfiguration extends IgniteConfiguration implements T
      * @param enabled True if it is.
      */
     public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
+        this.enabled = enabled;
     }
 
     @Override
     public boolean isEnabled() {
-        return isEnabled;
+        return enabled;
     }
 }

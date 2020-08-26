@@ -32,7 +32,7 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.kubernetes.TcpDiscoveryKuber
 @Requires(property = DefaultTcpDiscoveryKubernetesIpFinder.PREFIX + "." + "enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 public class DefaultTcpDiscoveryKubernetesIpFinder extends TcpDiscoveryKubernetesIpFinder implements Toggleable {
     public static final String PREFIX = DefaultIgniteConfiguration.PREFIX_DISCOVERY + ".kubernetes-ip-finder";
-    private boolean isEnabled;
+    private boolean enabled;
 
     /**
      * Sets whether the DefaultTcpDiscoveryKubernetesIpFinder is enabled.
@@ -40,11 +40,11 @@ public class DefaultTcpDiscoveryKubernetesIpFinder extends TcpDiscoveryKubernete
      * @param enabled Ture if it is
      */
     public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
+        this.enabled = enabled;
     }
 
     @Override
     public boolean isEnabled() {
-        return isEnabled;
+        return enabled;
     }
 }

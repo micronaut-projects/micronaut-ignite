@@ -1,0 +1,28 @@
+## Discovery IP Finder
+
+[source,yaml]
+----
+ignite:
+  enabled: true
+  discovery-spi:
+    static-ip-finder:
+      enabled: true
+      addresses:
+        - "127.0.0.1:47500"
+        - "127.0.0.1:47501"
+----
+
+include::{includedir}configurationProperties/io.micronaut.ignite.configuration.ipfinder.DefaultDiscoveryVmIpFinder.adoc[]
+
+## Discovery Kubernetes
+
+[source,yaml]
+----
+ignite:
+  enabled: true
+  discovery-spi:
+    kubernetes-ip-finder:
+      enabled: true
+----
+
+include::{includedir}configurationProperties/io.micronaut.ignite.configuration.ipfinder.DefaultTcpDiscoveryKubernetesIpFinder.adoc[]

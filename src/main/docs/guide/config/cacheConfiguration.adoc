@@ -5,7 +5,7 @@ It is possible to configure multiple Ignite Caches.
 ignite:
   enabled: true
     cache-configurations:
-      name:
+      bank:
         group-name: one
         query-entities:
         - table-name: "ACCOUNTS"

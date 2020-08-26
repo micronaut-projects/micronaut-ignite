@@ -30,11 +30,11 @@ import java.util.Collection;
  * Micronaut configuration for {@link TcpDiscoveryVmIpFinder}.
  */
 @IgnitePrimary
-@ConfigurationProperties(value = DefaultDiscoveryVmIpFinder.PREFIX)
+@ConfigurationProperties(value = DefaultDiscoveryVmIpFinder.PREFIX, excludes = {"static-ip-finder-addresses"})
 @Requires(property = DefaultDiscoveryVmIpFinder.PREFIX + "." + "enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 public class DefaultDiscoveryVmIpFinder extends TcpDiscoveryVmIpFinder implements Toggleable {
     public static final String PREFIX = DefaultIgniteConfiguration.PREFIX_DISCOVERY + ".static-ip-finder";
-    private boolean isEnabled;
+    private boolean enabled;
 
     /**
      * vm ip finder is enabled.
@@ -42,12 +42,12 @@ public class DefaultDiscoveryVmIpFinder extends TcpDiscoveryVmIpFinder implement
      * @param enabled is enabled
      */
     public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
+        this.enabled = enabled;
     }
 
     @Override
     public boolean isEnabled() {
-        return isEnabled;
+        return enabled;
     }
 
     @EachProperty(value = "addresses")
