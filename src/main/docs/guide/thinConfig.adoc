@@ -1,3 +1,5 @@
+
+.Configuring Thin Client
 [source,yaml]
 ----
 ignite-thin-client:

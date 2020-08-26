@@ -1,5 +1,6 @@
 It is possible to configure multiple Ignite Caches.
 
+.Configuring Cache
 [source,yaml]
 ----
 ignite:

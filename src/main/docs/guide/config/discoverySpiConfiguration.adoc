@@ -1,5 +1,11 @@
-## Discovery IP Finder
+Ignite nodes, can discover each other by using the `TcpDiscoverySpi`. There are a couple configuration options supported by Ignite for Discovery.
+Additional information can be found under https://apacheignite.readme.io/docs/tcpip-discovery[TCP/IP Discovery].
 
+== Static IP Finder
+
+The `static-ip-finder.enabled` flag has to be true to use the static ip finder.
+
+.Configuring Static Ip Finder
 [source,yaml]
 ----
 ignite:
@@ -14,8 +20,12 @@ ignite:
 
 include::{includedir}configurationProperties/io.micronaut.ignite.configuration.ipfinder.DefaultDiscoveryVmIpFinder.adoc[]
 
-## Discovery Kubernetes
+== Discovery Kubernetes
 
+
+The `kubernetes-ip-finder.enabled` flag has to be true to use kubernetes discovery.
+
+.Configuring Kubernetes
 [source,yaml]
 ----
 ignite:

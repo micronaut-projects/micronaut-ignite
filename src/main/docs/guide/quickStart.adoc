@@ -4,12 +4,11 @@ dependency:ignite-core[groupId="io.micronaut.ignite"]
 
 The minimum requirement for configure Ignite is set the value of the `ignite.enabled` property in `application.yaml`.
 
+.Configure Ignite
 [source,yaml]
 ----
 ignite:
   enabled: true
-  comunication-spi:
-    local-port: 5555
 ----
 
 

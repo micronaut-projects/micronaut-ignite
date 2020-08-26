@@ -4,8 +4,8 @@ introduction:
 quickStart: Ignite Quick Start
 config:
   title: Configuration Ignite
-  cacheConfiguration: Cache
-  discoverySpiConfiguration: Discovery Spi
+  cacheConfiguration: Configuring Ignite Cache
+  discoverySpiConfiguration: Configuring Discovery SPI
 thinConfig:
   title: Configuration Thin Client
 igniteCache:
