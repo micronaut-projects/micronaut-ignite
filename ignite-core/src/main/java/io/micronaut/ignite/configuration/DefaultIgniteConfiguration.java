@@ -47,7 +47,7 @@ import java.util.Optional;
     "warmupClosure", "serviceConfiguration", "odbcConfiguration", "connectorConfiguration", "persistentStoreConfiguration",
     "memoryConfiguration", "binaryConfiguration", "dataStorageConfiguration", "failoverSpi", "checkpointSpi", "deploymentSpi", "collisionSpi",
     "communicationSpi", "eventStorageSpi", "sslContextFactory", "lifecycleBeans", "marshaller", "MBeanServer", "gridLogger", "segmentationResolvers",
-    "addressResolver", "cacheKeyConfiguration"})
+    "addressResolver", "cacheKeyConfiguration", "communicationFailureResolver"})
 @Requires(property = DefaultIgniteThinClientConfiguration.PREFIX + "." + "enabled", value = StringUtils.FALSE, defaultValue = StringUtils.FALSE)
 @Requires(property = DefaultIgniteConfiguration.PREFIX + "." + "enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 public class DefaultIgniteConfiguration extends IgniteConfiguration implements Toggleable {
