@@ -5,7 +5,9 @@ import org.apache.ignite.configuration.DataStorageConfiguration
 import org.apache.ignite.configuration.IgniteConfiguration
 import spock.lang.Specification
 
+//TODO: figure out data storage configuration
 class IgniteDataStorageConfigurationSpec extends Specification {
+
 //    def "test ignite data-storage configuration"() {
 //        given:
 //        ApplicationContext ctx = ApplicationContext.run([

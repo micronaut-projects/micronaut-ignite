@@ -40,17 +40,25 @@ import java.util.Optional;
 @Named("default")
 @Primary
 @ConfigurationProperties(value = DefaultIgniteConfiguration.PREFIX, excludes = {"cacheConfiguration",
-    "fileSystemConfiguration", "hadoopConfiguration"})
+    "fileSystemConfiguration", "hadoopConfiguration", "discoveryStartupDelay", "loadBalancingSpi",
+    "indexingSpi", "encryptionSpi", "metricExporterSpi", "systemViewExporterSpi", "discoverySpi", "atomicConfiguration",
+    "cacheStoreSessionListenerFactories", "pluginProviders", "failureHandler", "clientConnectorConfiguration",
+    "sqlConnectorConfiguration", "executorConfiguration", "platformConfiguration", "pluginConfigurations", "transactionConfiguration",
+    "warmupClosure", "serviceConfiguration", "odbcConfiguration", "connectorConfiguration", "persistentStoreConfiguration",
+    "memoryConfiguration", "binaryConfiguration", "dataStorageConfiguration", "failoverSpi", "checkpointSpi", "deploymentSpi", "collisionSpi",
+    "communicationSpi", "eventStorageSpi", "sslContextFactory", "lifecycleBeans", "marshaller", "MBeanServer", "gridLogger", "segmentationResolvers",
+    "addressResolver", "cacheKeyConfiguration"})
 @Requires(property = DefaultIgniteThinClientConfiguration.PREFIX + "." + "enabled", value = StringUtils.FALSE, defaultValue = StringUtils.FALSE)
 @Requires(property = DefaultIgniteConfiguration.PREFIX + "." + "enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 public class DefaultIgniteConfiguration extends IgniteConfiguration implements Toggleable {
     public static final String PREFIX = "ignite";
     public static final String PREFIX_DISCOVERY = "ignite.discovery-spi";
 
-    @ConfigurationBuilder(value = "communication-spi")
+    @ConfigurationBuilder(value = "communication-spi", excludes = {"addressResolver", "listener"})
     final TcpCommunicationSpi communicationSpi = new TcpCommunicationSpi();
 
-    @ConfigurationBuilder(value = "discovery-spi")
+    @ConfigurationBuilder(value = "discovery-spi", excludes = {"authenticator", "dataExchange",
+        "listener", "metricsProvider", "internalListener", "ipFinder", "addressResolver"})
     final TcpDiscoverySpi discoverySpi = new TcpDiscoverySpi();
 
     @ConfigurationBuilder(value = "atomic-configuration")

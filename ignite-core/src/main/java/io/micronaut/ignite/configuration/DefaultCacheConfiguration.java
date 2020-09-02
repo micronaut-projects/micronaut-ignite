@@ -29,7 +29,9 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the cache value
  */
 @IgnitePrimary
-@EachProperty(value = DefaultCacheConfiguration.PREFIX)
+@EachProperty(value = DefaultCacheConfiguration.PREFIX, excludes = {"cacheLoaderFactory", "cacheWriterFactory",
+    "expiryPolicyFactory", "evictionPolicyFactory", "affinity", "cacheStoreFactory", "nearConfiguration", "evictionFilter", "nodeFilter",
+    "interceptor", "pluginConfigurations", "topologyValidator", "cacheStoreSessionListenerFactories", "affinityMapper", "keyConfiguration"})
 public class DefaultCacheConfiguration<K, V> extends CacheConfiguration<K, V> implements Named {
     public static final String PREFIX = DefaultIgniteConfiguration.PREFIX + "." + "cache-configurations";
     private final String name;

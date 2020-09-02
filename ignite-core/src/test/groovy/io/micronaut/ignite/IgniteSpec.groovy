@@ -22,7 +22,7 @@ import spock.lang.Specification
 
 @Testcontainers
 @Retry
-class IgniteConfigurationSpec extends Specification {
+class IgniteSpec extends Specification {
     final static String IGNITE_VERSION = System.getProperty("igniteVersion")
 
     @Shared @AutoCleanup

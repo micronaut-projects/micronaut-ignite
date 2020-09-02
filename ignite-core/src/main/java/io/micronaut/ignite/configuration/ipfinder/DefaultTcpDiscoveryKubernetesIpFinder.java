@@ -28,7 +28,7 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.kubernetes.TcpDiscoveryKuber
  * Micronaut configuration for {@link TcpDiscoveryKubernetesIpFinder}.
  */
 @IgnitePrimary
-@ConfigurationProperties(value = DefaultTcpDiscoveryKubernetesIpFinder.PREFIX)
+@ConfigurationProperties(value = DefaultTcpDiscoveryKubernetesIpFinder.PREFIX, excludes = {"ignite"})
 @Requires(property = DefaultTcpDiscoveryKubernetesIpFinder.PREFIX + "." + "enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 public class DefaultTcpDiscoveryKubernetesIpFinder extends TcpDiscoveryKubernetesIpFinder implements Toggleable {
     public static final String PREFIX = DefaultIgniteConfiguration.PREFIX_DISCOVERY + ".kubernetes-ip-finder";

@@ -30,7 +30,7 @@ import java.util.Collection;
  * Micronaut configuration for {@link TcpDiscoveryVmIpFinder}.
  */
 @IgnitePrimary
-@ConfigurationProperties(value = DefaultDiscoveryVmIpFinder.PREFIX, excludes = {"static-ip-finder-addresses"})
+@ConfigurationProperties(value = DefaultDiscoveryVmIpFinder.PREFIX, excludes = {"static-ip-finder-addresses", "ignite"})
 @Requires(property = DefaultDiscoveryVmIpFinder.PREFIX + "." + "enabled", value = StringUtils.TRUE, defaultValue = StringUtils.FALSE)
 public class DefaultDiscoveryVmIpFinder extends TcpDiscoveryVmIpFinder implements Toggleable {
     public static final String PREFIX = DefaultIgniteConfiguration.PREFIX_DISCOVERY + ".static-ip-finder";
@@ -50,6 +50,14 @@ public class DefaultDiscoveryVmIpFinder extends TcpDiscoveryVmIpFinder implement
         return enabled;
     }
 
+
+    /**
+     * Parses provided values and initializes the internal collection of addresses via {@link #setAddresses(Collection)}.
+     *
+     * @param addresses Known nodes addresses.
+     * @throws org.apache.ignite.spi.IgniteSpiException If any error occurs.
+     * @return {@code this} for chaining.
+     */
     @EachProperty(value = "addresses")
     public void setStaticIpFinderAddresses(Collection<String> addresses) {
         this.setAddresses(addresses);
