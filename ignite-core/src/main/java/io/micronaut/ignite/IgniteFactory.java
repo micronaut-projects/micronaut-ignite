@@ -19,12 +19,15 @@ import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Factory for the implementation of {@link Ignite}.
@@ -32,7 +35,7 @@ import javax.inject.Singleton;
 @Factory
 public class IgniteFactory implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(IgniteFactory.class);
-
+    private List<Ignite> instances = new ArrayList<>(2);
 
     /**
      * Create {@link Ignite} instance from {@link IgniteConfiguration}.
@@ -45,9 +48,11 @@ public class IgniteFactory implements AutoCloseable {
     @Bean(preDestroy = "close")
     public Ignite ignite(IgniteConfiguration configuration) {
         try {
-            return Ignition.start(configuration);
+            Ignite instance = Ignition.start(configuration);
+            instances.add(instance);
+            return instance;
         } catch (Exception e) {
-            LOG.error("Failed to instantiate Ignite Client: " + e.getMessage(), e);
+            LOG.error("Failed to instantiate an Ignite node: " + e.getMessage(), e);
             throw e;
         }
     }
@@ -57,6 +62,14 @@ public class IgniteFactory implements AutoCloseable {
      */
     @Override
     public void close() {
-        Ignition.stopAll(true);
+        for (Ignite ignite : instances) {
+            try {
+                ignite.close();
+            } catch (IgniteException ex) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn(String.format("Error closing ignite node [%s]: %s", ignite, ex.getMessage()), ex);
+                }
+            }
+        }
     }
 }

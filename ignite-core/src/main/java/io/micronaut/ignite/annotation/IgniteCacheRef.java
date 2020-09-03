@@ -15,11 +15,29 @@
  */
 package io.micronaut.ignite.annotation;
 
-import javax.inject.Qualifier;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Qualifier
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IgniteLifecycle {
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
+public @interface IgniteCacheRef {
+
+    /**
+     * Name of the cache instance.
+     *
+     * @return the cache name.
+     */
+    String value();
+
+    /**
+     * The client to used with cache. uses primary if not specified.
+     *
+     * @return the client to used with cache
+     */
+    String igniteInstance() default "default";
+
 }

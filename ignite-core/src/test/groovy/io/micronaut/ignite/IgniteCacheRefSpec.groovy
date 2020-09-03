@@ -4,7 +4,7 @@ import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
-import io.micronaut.ignite.annotation.IgniteRef
+import io.micronaut.ignite.annotation.IgniteCacheRef
 import io.micronaut.test.annotation.MicronautTest
 import org.apache.ignite.IgniteCache
 import org.testcontainers.containers.GenericContainer
@@ -21,7 +21,7 @@ import javax.inject.Inject;
 @Property( name  = "ignite.communication-spi.local-port", value= "10800.")
 @Testcontainers
 @Retry
-class IgniteRefSpec extends Specification {
+class IgniteCacheRefSpec extends Specification {
     final static String IGNITE_VERSION = System.getProperty("igniteVersion")
 
     @Shared
@@ -34,7 +34,7 @@ class IgniteRefSpec extends Specification {
     HttpClient client;
 
     @Inject
-    @IgniteRef("t1")
+    @IgniteCacheRef("t1")
     IgniteCache<String,String> cache;
 
     def "Ignite ref cache sample controller"() {

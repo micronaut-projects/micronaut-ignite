@@ -11,6 +11,6 @@ public class IgniteCacheConfigurationFactory {
     @IgnitePrimary
     CacheConfiguration<String,String> cacheInstance() {
         return new CacheConfiguration<String, String>("my-cache")
-            .setBackups(10);
+            .setBackups(2);
     }
 }

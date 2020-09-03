@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 import java.util.Collections;
 
 @Factory
-public class IgniteInitial {
+public class IgniteConfigurationFactory {
     @Singleton
     @Bean
     @Named("one")

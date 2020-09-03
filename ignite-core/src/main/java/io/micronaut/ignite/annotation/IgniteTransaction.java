@@ -39,5 +39,5 @@ public @interface IgniteTransaction {
      * ignite client by id. uses primary client by default.
      * @return ignite client id
      */
-    String client() default "default";
+    String igniteInstance() default "default";
 }

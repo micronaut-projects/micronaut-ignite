@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Factory for the implementation of {@link IgniteClient}.
@@ -37,6 +39,7 @@ import javax.inject.Singleton;
 @Factory
 public class IgniteThinClientFactory implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(IgniteThinClientFactory.class);
+    private List<IgniteClient> instances = new ArrayList<>(2);
 
     /**
      * Ignite {@link ClientConfiguration}.
@@ -61,7 +64,9 @@ public class IgniteThinClientFactory implements AutoCloseable {
     @Bean(preDestroy = "close")
     public IgniteClient igniteThinClient(ClientConfiguration configuration) {
         try {
-            return Ignition.startClient(configuration);
+            IgniteClient client = Ignition.startClient(configuration);
+            instances.add(client);
+            return client;
         } catch (Exception e) {
             LOG.error("Failed to instantiate Ignite Client: " + e.getMessage(), e);
             throw e;
@@ -73,6 +78,14 @@ public class IgniteThinClientFactory implements AutoCloseable {
      */
     @Override
     public void close() {
-        Ignition.stopAll(true);
+        for (IgniteClient client : instances) {
+            try {
+                client.close();
+            } catch (Exception e) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn(String.format("Error closing ignite node [%s]: %s", client, e.getMessage()), e);
+                }
+            }
+        }
     }
 }

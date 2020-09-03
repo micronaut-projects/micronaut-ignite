@@ -21,13 +21,11 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.core.annotation.AnnotationMetadata;
 import io.micronaut.core.annotation.AnnotationValue;
-import io.micronaut.ignite.annotation.IgniteRef;
+import io.micronaut.ignite.annotation.IgniteCacheRef;
 import io.micronaut.inject.InjectionPoint;
 import io.micronaut.inject.qualifiers.Qualifiers;
-import io.micronaut.runtime.http.scope.RequestScope;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
-import org.apache.ignite.IgniteDataStreamer;
 
 @Factory
 public class IgniteRegistry {
@@ -67,43 +65,11 @@ public class IgniteRegistry {
      * @return The cache
      */
     public <K, V> IgniteCache<K, V> resolveIgniteCache(AnnotationMetadata metadata) {
-        AnnotationValue<IgniteRef> igniteCache = metadata.findAnnotation(IgniteRef.class)
+        AnnotationValue<IgniteCacheRef> igniteCache = metadata.findAnnotation(IgniteCacheRef.class)
             .orElseThrow(() -> new IllegalStateException("Requires @IgniteCache"));
-        String client = igniteCache.stringValue("client").orElse("default");
+        String instance = igniteCache.stringValue("client").orElse("default");
         String name = igniteCache.stringValue("value").orElseThrow(() -> new IllegalStateException("Missing value for cache"));
-        Ignite ignite = beanContext.getBean(Ignite.class, Qualifiers.byName(client));
+        Ignite ignite = beanContext.getBean(Ignite.class, Qualifiers.byName(instance));
         return ignite.getOrCreateCache(name);
-    }
-
-    /**
-     * Create {@link IgniteDataStreamer} from the given injection point.
-     *
-     * @param injectionPoint The injection point
-     * @param <K>            key
-     * @param <V>            value
-     * @return The data streamer
-     */
-    @RequestScope
-    @Bean
-    public <K, V> IgniteDataStreamer<K, V> igniteDataStreamer(InjectionPoint<?> injectionPoint) {
-        AnnotationMetadata metadata = injectionPoint.getAnnotationMetadata();
-        return resolveDataStream(metadata);
-    }
-
-    /**
-     * resolve {@link IgniteDataStreamer}.
-     *
-     * @param metadata annotation metadata
-     * @param <K>      the key
-     * @param <V>      the value
-     * @return The data streamer
-     */
-    public <K, V> IgniteDataStreamer<K, V> resolveDataStream(AnnotationMetadata metadata) {
-        AnnotationValue<IgniteRef> igniteCache = metadata.findAnnotation(IgniteRef.class)
-            .orElseThrow(() -> new IllegalStateException("Requires @IgniteCache"));
-        String client = igniteCache.stringValue("client").orElse("default");
-        String name = igniteCache.stringValue("value").orElseThrow(() -> new IllegalStateException("Missing value for cache"));
-        Ignite ignite = beanContext.getBean(Ignite.class, Qualifiers.byName(client));
-        return ignite.dataStreamer(name);
     }
 }

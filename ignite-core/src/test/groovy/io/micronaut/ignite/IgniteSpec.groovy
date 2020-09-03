@@ -48,4 +48,20 @@ class IgniteSpec extends Specification {
         ctx.close()
     }
 
+    def "test ignite client instance is created from factory configuration"() {
+        given:
+        ApplicationContext ctx = ApplicationContext.run()
+        when:
+        Ignite inst = ctx.getBean(Ignite.class)
+
+        then:
+        inst != null
+        inst.configuration().clientMode == true
+
+        cleanup:
+        ctx.close()
+
+
+    }
+
 }

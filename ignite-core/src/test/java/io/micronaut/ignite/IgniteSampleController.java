@@ -2,7 +2,7 @@ package io.micronaut.ignite;
 
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.ignite.annotation.IgniteRef;
+import io.micronaut.ignite.annotation.IgniteCacheRef;
 import org.apache.ignite.IgniteCache;
 
 import javax.inject.Inject;
@@ -10,7 +10,7 @@ import javax.inject.Inject;
 @Controller("/ignite")
 public class IgniteSampleController {
     @Inject
-    @IgniteRef("t1")
+    @IgniteCacheRef("t1")
     IgniteCache<String, String> cache;
 
     @Get("/{key}/{value}")
