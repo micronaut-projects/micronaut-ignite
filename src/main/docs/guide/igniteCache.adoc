@@ -1,6 +1,4 @@
-
 ## Micronaut Cache
-
 
 To take advantage of Micronaut Cache, this can be enabled by including the following dependency:
 

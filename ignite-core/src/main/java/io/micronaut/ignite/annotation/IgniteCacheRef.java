@@ -38,6 +38,6 @@ public @interface IgniteCacheRef {
      *
      * @return the client to used with cache
      */
-    String igniteInstance() default "default";
+    String instanceName() default "default";
 
 }

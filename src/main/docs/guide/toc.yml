@@ -8,5 +8,8 @@ config:
   discoverySpiConfiguration: Configuring Discovery SPI
 thinConfig:
   title: Configuration Thin Client
+igniteTransaction:
+  title: Ignite Transaction
 igniteCache:
   title: Micronaut Cache
+

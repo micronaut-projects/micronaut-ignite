@@ -38,11 +38,11 @@ class IgniteSpec extends Specification {
         ])
         when:
         Ignite inst = ctx.getBean(Ignite.class)
-        IgniteConfiguration cfg = ctx.getBean(IgniteConfiguration.class);
 
         then:
         inst != null
-        cfg.clientMode
+        inst.configuration().clientMode
+        inst.configuration().igniteInstanceName == "default"
 
         cleanup:
         ctx.close()
@@ -56,6 +56,7 @@ class IgniteSpec extends Specification {
 
         then:
         inst != null
+        inst.configuration().igniteInstanceName == "one"
         inst.configuration().clientMode == true
 
         cleanup:

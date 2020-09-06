@@ -80,7 +80,6 @@ public class DefaultIgniteConfiguration extends IgniteConfiguration implements T
         ipFinder.ifPresent(discoverySpi::setIpFinder);
         super.setCacheConfiguration(cacheConfigurations.toArray(new CacheConfiguration[0]));
         super.setDiscoverySpi(discoverySpi);
-
     }
 
     /**

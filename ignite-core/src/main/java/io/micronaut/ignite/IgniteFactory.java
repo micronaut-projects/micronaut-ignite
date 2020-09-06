@@ -15,9 +15,11 @@
  */
 package io.micronaut.ignite;
 
+import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Parameter;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
@@ -46,7 +48,8 @@ public class IgniteFactory implements AutoCloseable {
     @Singleton
     @EachBean(IgniteConfiguration.class)
     @Bean(preDestroy = "close")
-    public Ignite ignite(IgniteConfiguration configuration) {
+    public Ignite ignite(@Parameter String name, IgniteConfiguration configuration) {
+        configuration.setIgniteInstanceName(name);
         try {
             Ignite instance = Ignition.start(configuration);
             instances.add(instance);
