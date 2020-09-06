@@ -42,6 +42,7 @@ public class IgniteFactory implements AutoCloseable {
     /**
      * Create {@link Ignite} instance from {@link IgniteConfiguration}.
      *
+     * @param name name of the bean
      * @param configuration ignite configuration
      * @return create ignite instance
      */
