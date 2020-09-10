@@ -1,0 +1,7 @@
+## Ignite Transaction
+
+A method call in micronaut can be wrapped with `@IgniteTransaction` to ensure consistency.
+
+For example the follow is an example case for `@IgniteTransaction`:
+
+snippet::io.micronaut.ignite.docs.transaction.SampleIgniteTransaction[ project-base="docs-examples/example]

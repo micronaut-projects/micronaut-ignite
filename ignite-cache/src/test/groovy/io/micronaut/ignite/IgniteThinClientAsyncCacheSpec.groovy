@@ -22,11 +22,8 @@ class IgniteThinClientAsyncCacheSpec extends AbstractAsyncCacheSpec {
     @Override
     ApplicationContext createApplicationContext() {
         return ApplicationContext.run([
-            "ignite.enabled"                      : true,
-            "ignite.thin-clients.default.addresses": ["127.0.0.1:${ignite.getMappedPort(10800)}"],
-            "ignite.thin-caches.counter.client"   : "default",
-            "ignite.thin-caches.counter2.client"  : "default",
-            "ignite.thin-caches.test.client"      : "default"
+            "ignite-thin-client.enabled"  : true,
+            "ignite-thin-client.addresses": ["127.0.0.1:${ignite.getMappedPort(10800)}"]
         ])
     }
 }

@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 public class IgniteAsyncCache implements AsyncCache<IgniteCache> {
-
     private final ConversionService<?> conversionService;
     private final IgniteCache nativeCache;
     private final ExecutorService executorService;
