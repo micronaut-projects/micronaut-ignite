@@ -1,16 +1,11 @@
-introduction:
-  title: Introduction
+introduction: Introduction
 releaseHistory: Release History
 quickStart: Ignite Quick Start
 config:
   title: Configuration Ignite
   cacheConfiguration: Configuring Ignite Cache
   discoverySpiConfiguration: Configuring Discovery SPI
-thinConfig:
-  title: Configuration Thin Client
-igniteTransaction:
-  title: Ignite Transaction
-igniteCache:
-  title: Micronaut Cache
+thinConfig: Configuration Thin Client
+igniteTransaction: Ignite Transaction
+igniteCache: Micronaut Cache
 repository: Repository
-
