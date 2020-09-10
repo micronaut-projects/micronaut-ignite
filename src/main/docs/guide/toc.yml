@@ -12,4 +12,5 @@ igniteTransaction:
   title: Ignite Transaction
 igniteCache:
   title: Micronaut Cache
+repository: Repository
 
