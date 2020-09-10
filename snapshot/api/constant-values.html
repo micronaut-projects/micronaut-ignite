@@ -81,7 +81,7 @@
 <ul class="blockList">
 <li class="blockList">
 <table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
-<caption><span>io.micronaut.ignite.configuration.<a href="io/micronaut/ignite/configuration/IgniteCacheConfiguration.html" title="class in io.micronaut.ignite.configuration">IgniteCacheConfiguration</a></span><span class="tabEnd">&nbsp;</span></caption>
+<caption><span>io.micronaut.ignite.configuration.<a href="io/micronaut/ignite/configuration/DefaultCacheConfiguration.html" title="class in io.micronaut.ignite.configuration">DefaultCacheConfiguration</a>&lt;<a href="io/micronaut/ignite/configuration/DefaultCacheConfiguration.html" title="type parameter in DefaultCacheConfiguration">K</a>,<a href="io/micronaut/ignite/configuration/DefaultCacheConfiguration.html" title="type parameter in DefaultCacheConfiguration">V</a>&gt;</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th scope="col">Constant Field</th>
@@ -89,18 +89,18 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a name="io.micronaut.ignite.configuration.IgniteCacheConfiguration.PREFIX">
+<td class="colFirst"><a name="io.micronaut.ignite.configuration.DefaultCacheConfiguration.PREFIX">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="io/micronaut/ignite/configuration/IgniteCacheConfiguration.html#PREFIX">PREFIX</a></code></td>
-<td class="colLast"><code>"ignite.caches"</code></td>
+<td><code><a href="io/micronaut/ignite/configuration/DefaultCacheConfiguration.html#PREFIX">PREFIX</a></code></td>
+<td class="colLast"><code>"ignite.cache-configurations"</code></td>
 </tr>
 </tbody>
 </table>
 </li>
 <li class="blockList">
 <table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
-<caption><span>io.micronaut.ignite.configuration.<a href="io/micronaut/ignite/configuration/IgniteClientConfiguration.html" title="class in io.micronaut.ignite.configuration">IgniteClientConfiguration</a></span><span class="tabEnd">&nbsp;</span></caption>
+<caption><span>io.micronaut.ignite.configuration.<a href="io/micronaut/ignite/configuration/DefaultIgniteConfiguration.html" title="class in io.micronaut.ignite.configuration">DefaultIgniteConfiguration</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th scope="col">Constant Field</th>
@@ -108,37 +108,25 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a name="io.micronaut.ignite.configuration.IgniteClientConfiguration.PREFIX">
+<td class="colFirst"><a name="io.micronaut.ignite.configuration.DefaultIgniteConfiguration.PREFIX">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="io/micronaut/ignite/configuration/IgniteClientConfiguration.html#PREFIX">PREFIX</a></code></td>
-<td class="colLast"><code>"ignite.clients"</code></td>
-</tr>
-</tbody>
-</table>
-</li>
-<li class="blockList">
-<table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
-<caption><span>io.micronaut.ignite.configuration.<a href="io/micronaut/ignite/configuration/IgniteConfiguration.html" title="class in io.micronaut.ignite.configuration">IgniteConfiguration</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th scope="col">Constant Field</th>
-<th class="colLast" scope="col">Value</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><a name="io.micronaut.ignite.configuration.IgniteConfiguration.PREFIX">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="io/micronaut/ignite/configuration/IgniteConfiguration.html#PREFIX">PREFIX</a></code></td>
+<td><code><a href="io/micronaut/ignite/configuration/DefaultIgniteConfiguration.html#PREFIX">PREFIX</a></code></td>
 <td class="colLast"><code>"ignite"</code></td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><a name="io.micronaut.ignite.configuration.DefaultIgniteConfiguration.PREFIX_DISCOVERY">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="io/micronaut/ignite/configuration/DefaultIgniteConfiguration.html#PREFIX_DISCOVERY">PREFIX_DISCOVERY</a></code></td>
+<td class="colLast"><code>"ignite.discovery-spi"</code></td>
+</tr>
 </tbody>
 </table>
 </li>
 <li class="blockList">
 <table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
-<caption><span>io.micronaut.ignite.configuration.<a href="io/micronaut/ignite/configuration/IgniteThinCacheConfiguration.html" title="class in io.micronaut.ignite.configuration">IgniteThinCacheConfiguration</a></span><span class="tabEnd">&nbsp;</span></caption>
+<caption><span>io.micronaut.ignite.configuration.<a href="io/micronaut/ignite/configuration/DefaultIgniteThinClientConfiguration.html" title="class in io.micronaut.ignite.configuration">DefaultIgniteThinClientConfiguration</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th scope="col">Constant Field</th>
@@ -146,18 +134,20 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a name="io.micronaut.ignite.configuration.IgniteThinCacheConfiguration.PREFIX">
+<td class="colFirst"><a name="io.micronaut.ignite.configuration.DefaultIgniteThinClientConfiguration.PREFIX">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="io/micronaut/ignite/configuration/IgniteThinCacheConfiguration.html#PREFIX">PREFIX</a></code></td>
-<td class="colLast"><code>"ignite.thin-caches"</code></td>
+<td><code><a href="io/micronaut/ignite/configuration/DefaultIgniteThinClientConfiguration.html#PREFIX">PREFIX</a></code></td>
+<td class="colLast"><code>"ignite-thin-client"</code></td>
 </tr>
 </tbody>
 </table>
 </li>
+</ul>
+<ul class="blockList">
 <li class="blockList">
 <table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
-<caption><span>io.micronaut.ignite.configuration.<a href="io/micronaut/ignite/configuration/IgniteThinClientConfiguration.html" title="class in io.micronaut.ignite.configuration">IgniteThinClientConfiguration</a></span><span class="tabEnd">&nbsp;</span></caption>
+<caption><span>io.micronaut.ignite.configuration.ipfinder.<a href="io/micronaut/ignite/configuration/ipfinder/DefaultDiscoveryStaticIpFinder.html" title="class in io.micronaut.ignite.configuration.ipfinder">DefaultDiscoveryStaticIpFinder</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th scope="col">Constant Field</th>
@@ -165,11 +155,30 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a name="io.micronaut.ignite.configuration.IgniteThinClientConfiguration.PREFIX">
+<td class="colFirst"><a name="io.micronaut.ignite.configuration.ipfinder.DefaultDiscoveryStaticIpFinder.PREFIX">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="io/micronaut/ignite/configuration/IgniteThinClientConfiguration.html#PREFIX">PREFIX</a></code></td>
-<td class="colLast"><code>"ignite.thin-clients"</code></td>
+<td><code><a href="io/micronaut/ignite/configuration/ipfinder/DefaultDiscoveryStaticIpFinder.html#PREFIX">PREFIX</a></code></td>
+<td class="colLast"><code>"ignite.discovery-spi.static-ip-finder"</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList">
+<table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
+<caption><span>io.micronaut.ignite.configuration.ipfinder.<a href="io/micronaut/ignite/configuration/ipfinder/DefaultTcpDiscoveryKubernetesIpFinder.html" title="class in io.micronaut.ignite.configuration.ipfinder">DefaultTcpDiscoveryKubernetesIpFinder</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th scope="col">Constant Field</th>
+<th class="colLast" scope="col">Value</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><a name="io.micronaut.ignite.configuration.ipfinder.DefaultTcpDiscoveryKubernetesIpFinder.PREFIX">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="io/micronaut/ignite/configuration/ipfinder/DefaultTcpDiscoveryKubernetesIpFinder.html#PREFIX">PREFIX</a></code></td>
+<td class="colLast"><code>"ignite.discovery-spi.kubernetes-ip-finder"</code></td>
 </tr>
 </tbody>
 </table>
