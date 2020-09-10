@@ -5,9 +5,10 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 
 public class SampleIgniteTransaction {
+
     private final Ignite ignite;
 
-    SampleIgniteTransaction(Ignite ignite){
+    SampleIgniteTransaction(Ignite ignite) {
         this.ignite = ignite;
     }
 
