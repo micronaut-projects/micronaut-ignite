@@ -1315,9 +1315,44 @@ Additional information can be found under <a href="https://apacheignite.readme.i
         - "127.0.0.1:47501"</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Unresolved directive in &lt;stdin&gt; - include::/home/runner/work/micronaut-ignite/micronaut-ignite/build/generated/configurationProperties/io.micronaut.ignite.configuration.ipfinder.DefaultDiscoveryVmIpFinder.adoc[]</p>
-</div>
+<a id="io.micronaut.ignite.configuration.ipfinder.DefaultDiscoveryStaticIpFinder" href="#io.micronaut.ignite.configuration.ipfinder.DefaultDiscoveryStaticIpFinder">&#128279;</a>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Configuration Properties for <a href="../api/io/micronaut/ignite/configuration/ipfinder/DefaultDiscoveryStaticIpFinder.html">DefaultDiscoveryStaticIpFinder</a></caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.discovery-spi.static-ip-finder.enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vm ip finder is enabled.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.discovery-spi.static-ip-finder.addresses</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.Collection</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.discovery-spi.static-ip-finder.shared</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ignite.discovery-spi.static-ip-finder.static-ip-finder-addresses</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.Collection</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parses provided values and initializes the internal collection of addresses via {@link #setAddresses(Collection)}.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -1338,7 +1373,7 @@ Additional information can be found under <a href="https://apacheignite.readme.i
 </div>
 <a id="io.micronaut.ignite.configuration.ipfinder.DefaultTcpDiscoveryKubernetesIpFinder" href="#io.micronaut.ignite.configuration.ipfinder.DefaultTcpDiscoveryKubernetesIpFinder">&#128279;</a>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. Configuration Properties for <a href="../api/io/micronaut/ignite/configuration/ipfinder/DefaultTcpDiscoveryKubernetesIpFinder.html">DefaultTcpDiscoveryKubernetesIpFinder</a></caption>
+<caption class="title">Table 2. Configuration Properties for <a href="../api/io/micronaut/ignite/configuration/ipfinder/DefaultTcpDiscoveryKubernetesIpFinder.html">DefaultTcpDiscoveryKubernetesIpFinder</a></caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1572,9 +1607,10 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 
 public class SampleIgniteTransaction {
+
     private final Ignite ignite;
 
-    SampleIgniteTransaction(Ignite ignite){
+    SampleIgniteTransaction(Ignite ignite) {
         this.ignite = ignite;
     }
 
@@ -1582,6 +1618,48 @@ public class SampleIgniteTransaction {
     public void method() {
         IgniteCache cache = this.ignite.cache("sample");
         cache.put("key", "value");
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">package io.micronaut.ignite.docs.transaction
+
+import io.micronaut.ignite.annotation.IgniteTransaction
+import org.apache.ignite.Ignite
+import org.apache.ignite.IgniteCache
+
+class SampleIgniteTransaction {
+
+    private final Ignite ignite
+
+    SampleIgniteTransaction(Ignite ignite) {
+        this.ignite = ignite
+    }
+
+    @IgniteTransaction
+    void method() {
+        IgniteCache cache = this.ignite.cache("sample")
+        cache.put("key", "value")
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock multi-language-sample">
+<div class="content">
+<pre class="highlight"><code class="language-kotlin" data-lang="kotlin">package io.micronaut.ignite.docs.transaction
+
+import io.micronaut.ignite.annotation.IgniteTransaction
+import org.apache.ignite.Ignite
+import org.apache.ignite.IgniteCache
+
+class SampleIgniteTransaction constructor(private val ignite: Ignite) {
+
+    @IgniteTransaction
+    fun method() {
+        val cache: IgniteCache&lt;String, String&gt; = ignite.cache("sample")
+        cache.put("key", "value")
     }
 }</code></pre>
 </div>
