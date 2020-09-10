@@ -18,7 +18,7 @@ ignite:
         - "127.0.0.1:47501"
 ----
 
-include::{includedir}configurationProperties/io.micronaut.ignite.configuration.ipfinder.DefaultDiscoveryVmIpFinder.adoc[]
+include::{includedir}configurationProperties/io.micronaut.ignite.configuration.ipfinder.DefaultDiscoveryStaticIpFinder.adoc[]
 
 == Discovery Kubernetes
 
