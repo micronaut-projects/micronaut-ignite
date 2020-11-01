@@ -6,6 +6,7 @@ import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.type.Argument;
+import io.micronaut.core.type.ReturnType;
 import io.micronaut.ignite.annotation.PubSubClient;
 import io.micronaut.ignite.annotation.Topic;
 import io.micronaut.inject.ExecutableMethod;
@@ -13,10 +14,12 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteDataStreamer;
 import org.apache.ignite.IgniteMessaging;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 @Singleton
@@ -42,8 +45,18 @@ public class PubSubClientIntroductionAdvice implements MethodInterceptor<Object,
                 () -> new IllegalStateException("No @PubSubClient annotation present")
             );
             AnnotationValue<Topic> topicAnnotation = method.findAnnotation(Topic.class).get();
-            String topic = topicAnnotation.stringValue().get();
-//            messaging.send(topic, );
+            String subscriptionName = topicAnnotation.stringValue().get();
+            try (IgniteDataStreamer stmr = ignite.dataStreamer(subscriptionName)) {
+
+            }
+
+            ReturnType returnType = method.getReturnType();
+            Class type = returnType.getType();
+            if(type == Map.Entry.class) {
+
+            }
+
+
 
             Argument[] arguments = context.getArguments();
             if(arguments.length != 1){
@@ -53,9 +66,9 @@ public class PubSubClientIntroductionAdvice implements MethodInterceptor<Object,
 
 
             Object result = context.proceed();
-            messaging.send(topic, result);
+//            messaging.send(topic, result);
 
-            messaging.sendOrdered(topic,result,0);
+//            messaging.sendOrdered(topic,result,0);
 
             return result;
         } else {

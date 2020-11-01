@@ -9,6 +9,8 @@ import java.util.Optional;
 public class PubSubBinderRegistry implements ArgumentBinderRegistry<PubSubConsumerState> {
     @Override
     public <T> Optional<ArgumentBinder<T, PubSubConsumerState>> findArgumentBinder(Argument<T> argument, PubSubConsumerState source) {
+
+
         return Optional.empty();
     }
 }
