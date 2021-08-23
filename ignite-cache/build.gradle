@@ -8,6 +8,6 @@ dependencies {
     api "org.apache.ignite:ignite-core:$igniteVersion"
     api "io.micronaut.cache:micronaut-cache-core"
 
-    testImplementation "io.micronaut.cache:micronaut-cache-tck:2.1.0"
+    testImplementation "io.micronaut.cache:micronaut-cache-tck:3.0.0"
     testImplementation "org.testcontainers:spock:1.15.1"
 }
