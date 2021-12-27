@@ -20,7 +20,7 @@ subprojects { Project subproject ->
     configurations.all {
         resolutionStrategy {
             // h2 database required to work with ignite
-            force "com.h2database:h2:1.4.197"
+            force "com.h2database:h2:2.0.204"
         }
     }
 
