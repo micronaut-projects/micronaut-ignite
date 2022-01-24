@@ -9,5 +9,5 @@ dependencies {
     api "io.micronaut.cache:micronaut-cache-core"
 
     testImplementation "io.micronaut.cache:micronaut-cache-tck:2.1.0"
-    testImplementation "org.testcontainers:spock:1.15.1"
+    testImplementation "org.testcontainers:spock:1.16.3"
 }
